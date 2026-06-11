@@ -1,0 +1,265 @@
+# Small shared helpers for Howl.
+#
+# Pure string / list utilities with no I/O so they stay trivially testable and
+# reusable across modules. Howl's renderers all funnel untrusted example text
+# through the escaping helpers here, so this is the single place to reason about
+# safe output.
+
+# ---- predicates --------------------------------------------------------
+
+# Normalize Kujo's mixed truthy returns (contains -> 1/0, ends_with -> bool)
+# to a single bool so call sites do not have to remember which is which.
+export func truthy(v) {
+    return v == true || v == 1
+}
+
+export func is_blank(s) {
+    if type(s) == "null" {
+        return true
+    }
+    return trim(s) == ""
+}
+
+# ---- errors ------------------------------------------------------------
+
+# Print a clear, prefixed error and stop with a non-zero status.
+export func die(msg) {
+    print("howl: " + msg)
+    exit(1)
+}
+
+# ---- paths -------------------------------------------------------------
+
+export func ensure_trailing_slash(p) {
+    if p == "" {
+        return p
+    }
+    if ends_with(p, "/") {
+        return p
+    }
+    return p + "/"
+}
+
+export func join_path(dir, name) {
+    return ensure_trailing_slash(dir) + name
+}
+
+func is_absolute_path(path) {
+    if type(path) == "null" {
+        return false
+    }
+    return len(path) > 0 && char_at(path, 0) == "/"
+}
+
+func path_parts(path) {
+    mut parts := []
+    if type(path) == "null" || path == "" {
+        return parts
+    }
+    raw := split(path, "/")
+    mut i := 0
+    while i < len(raw) {
+        part := raw[i]
+        if part != "" && part != "." {
+            parts = push(parts, part)
+        }
+        i = i + 1
+    }
+    return parts
+}
+
+func normalize_relative_parts(path) {
+    mut parts := []
+    raw := path_parts(path)
+    mut i := 0
+    while i < len(raw) {
+        part := raw[i]
+        if part == ".." {
+            if len(parts) > 0 && parts[len(parts) - 1] != ".." {
+                parts = slice(parts, 0, len(parts) - 1)
+            } else {
+                parts = push(parts, "..")
+            }
+        } else {
+            parts = push(parts, part)
+        }
+        i = i + 1
+    }
+    return parts
+}
+
+func normalize_absolute_parts(path) {
+    mut parts := []
+    raw := path_parts(path)
+    mut i := 0
+    while i < len(raw) {
+        part := raw[i]
+        if part == ".." {
+            if len(parts) > 0 {
+                parts = slice(parts, 0, len(parts) - 1)
+            }
+        } else {
+            parts = push(parts, part)
+        }
+        i = i + 1
+    }
+    return parts
+}
+
+func parts_to_path(parts, absolute) {
+    if len(parts) == 0 {
+        if absolute {
+            return "/"
+        }
+        return ""
+    }
+    path := join(parts, "/")
+    if absolute {
+        return "/" + path
+    }
+    return path
+}
+
+func parts_have_prefix(prefix, parts) {
+    if len(parts) < len(prefix) {
+        return false
+    }
+    mut i := 0
+    while i < len(prefix) {
+        if prefix[i] != parts[i] {
+            return false
+        }
+        i = i + 1
+    }
+    return true
+}
+
+# Resolve a manifest file path and reject paths that escape the manifest tree.
+# The returned dict has `ok` and `path` keys.
+export func resolve_contained_path(base_dir, rel) {
+    mut result := {}
+    result["ok"] := false
+    result["path"] := ""
+
+    if type(rel) == "null" {
+        return result
+    }
+
+    base_abs := is_absolute_path(base_dir)
+    rel_abs := is_absolute_path(rel)
+
+    mut base_parts := []
+    if base_abs {
+        base_parts = normalize_absolute_parts(base_dir)
+    } else {
+        base_parts = normalize_relative_parts(base_dir)
+    }
+
+    if rel_abs {
+        if base_abs == false {
+            return result
+        }
+        candidate_parts := normalize_absolute_parts(rel)
+        if parts_have_prefix(base_parts, candidate_parts) == false {
+            return result
+        }
+        result["ok"] := true
+        result["path"] := parts_to_path(candidate_parts, true)
+        return result
+    }
+
+    mut stack := base_parts
+    base_depth := len(base_parts)
+    rel_parts := path_parts(rel)
+    mut i := 0
+    while i < len(rel_parts) {
+        part := rel_parts[i]
+        if part == ".." {
+            if len(stack) > base_depth {
+                stack = slice(stack, 0, len(stack) - 1)
+            } else {
+                return result
+            }
+        } else {
+            stack = push(stack, part)
+        }
+        i = i + 1
+    }
+
+    result["ok"] := true
+    result["path"] := parts_to_path(stack, base_abs)
+    return result
+}
+
+# ---- ids ---------------------------------------------------------------
+
+# Filesystem-safe ids: lowercase letters, digits, hyphen, underscore. We
+# validate rather than rewrite so the manifest stays the source of truth and
+# output filenames remain stable across renders.
+export func is_safe_id(id) {
+    if type(id) == "null" {
+        return false
+    }
+    if id == "" {
+        return false
+    }
+    allowed := "abcdefghijklmnopqrstuvwxyz0123456789-_"
+    n := len(id)
+    mut i := 0
+    mut ok := true
+    while i < n {
+        c := char_at(id, i)
+        if index_of(allowed, c) < 0 {
+            ok = false
+        }
+        i = i + 1
+    }
+    return ok
+}
+
+# ---- escaping ----------------------------------------------------------
+
+# Escape the five characters that matter for HTML/SVG text and attributes.
+# Ampersand MUST be replaced first or we double-escape the entities below.
+export func escape_html(s) {
+    if type(s) == "null" {
+        return ""
+    }
+    mut out := replace(s, "&", "&amp;")
+    out = replace(out, "<", "&lt;")
+    out = replace(out, ">", "&gt;")
+    out = replace(out, "\"", "&quot;")
+    out = replace(out, "'", "&#39;")
+    return out
+}
+
+# ---- text shaping ------------------------------------------------------
+
+export func split_lines(s) {
+    if type(s) == "null" {
+        return []
+    }
+    normalized := replace(s, "\r\n", "\n")
+    return split(normalized, "\n")
+}
+
+export func count_lines(s) {
+    return len(split_lines(s))
+}
+
+# Return the first `max` lines of `s`, joined back into a string.
+export func take_lines(s, max) {
+    lines := split_lines(s)
+    if len(lines) <= max {
+        return s
+    }
+    return join(slice(lines, 0, max), "\n")
+}
+
+# Render a list of strings as "a, b, c". Empty/null -> "".
+export func comma_list(items) {
+    if type(items) == "null" {
+        return ""
+    }
+    return join(items, ", ")
+}

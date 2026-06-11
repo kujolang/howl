@@ -1,0 +1,283 @@
+# Tests for Howl.
+#
+# A self-contained, filesystem-isolated harness. It exercises the library
+# modules directly (the same functions the CLI delegates to), writing throwaway
+# fixtures under a unique temp dir. No network, no API key, no global machine
+# state.
+#
+# NOTE: the built-in `test "..." {}` framework cannot see file-level imports on
+# this runtime, so this hand-rolled harness is used instead. It runs on the
+# standard `kujo run` path where module imports work normally. Each group of
+# assertions lives in its own `func` so no single scope accumulates a large
+# number of locals (a flat top-level script tripped a VM "index out of bounds"
+# quirk on this runtime — see docs/session-notes.md).
+#
+# Run with: kujo run tests/howl_test.kujo -- <project_dir>
+
+from src.util import escape_html, is_safe_id, take_lines, split_lines, is_blank
+from src.manifest import validate_manifest, build_cards, find_card, manifest_project, default_limits
+from src.caption import build_caption, build_caption_x
+from src.render_md import render_markdown
+from src.render_html import render_html
+from src.render_svg import render_svg
+from src.gallery import render_gallery
+
+mut passed := 0
+mut failed := 0
+
+func check(label, cond) {
+    if cond == true {
+        passed = passed + 1
+    } else {
+        failed = failed + 1
+        print("  FAIL: " + label)
+    }
+}
+
+func has_sub(haystack, needle) {
+    return index_of(haystack, needle) >= 0
+}
+
+# write_file refuses to overwrite, so callers use fresh paths under base.
+func put(path, content) {
+    if file_exists(path) {
+        delete_file(path)
+    }
+    write_file(path, content)
+}
+
+# ---- fixture builders --------------------------------------------------
+
+func card_ok() {
+    mut c := {}
+    c["id"] := "ex"
+    c["title"] := "Example card"
+    c["tagline"] := "A tagline"
+    c["file"] := "examples/ex.kujo"
+    c["concepts"] := ["clear intent", "low noise"]
+    c["expected_output"] := "hi"
+    c["caption"] := "Short caption."
+    c["cta"] := "Kujo."
+    return c
+}
+
+func project_ok() {
+    mut p := {}
+    p["name"] := "Kujo"
+    p["tagline"] := "Programming language for AI-native software"
+    return p
+}
+
+func wrap_manifest(cards) {
+    mut m := {}
+    m["project"] := project_ok()
+    m["cards"] := cards
+    return m
+}
+
+# A render-ready card from the fixture file, built through the real pipeline.
+func built_card(base) {
+    return build_cards(wrap_manifest([card_ok()]), base, default_limits())[0]
+}
+
+# ---- escaping ----------------------------------------------------------
+
+func test_escaping() {
+    check("escape ampersand first", escape_html("a & <b>") == "a &amp; &lt;b&gt;")
+    check("escape quotes", escape_html("\"x\" 'y'") == "&quot;x&quot; &#39;y&#39;")
+    check("escape null -> empty", escape_html(null) == "")
+}
+
+# ---- id safety ---------------------------------------------------------
+
+func test_id_safety() {
+    check("safe id ok", is_safe_id("clear-intent_2"))
+    check("unsafe id space", is_safe_id("has space") == false)
+    check("unsafe id slash", is_safe_id("a/b") == false)
+    check("unsafe id empty", is_safe_id("") == false)
+    check("unsafe id upper", is_safe_id("Abc") == false)
+}
+
+# ---- line shaping ------------------------------------------------------
+
+func test_line_shaping() {
+    check("split_lines crlf", len(split_lines("a\r\nb")) == 2)
+    check("take_lines truncates", len(split_lines(take_lines("a\nb\nc\nd", 2))) == 2)
+    check("take_lines keeps short", take_lines("a\nb", 5) == "a\nb")
+    check("is_blank null", is_blank(null))
+    check("is_blank spaces", is_blank("   "))
+    check("is_blank text false", is_blank("x") == false)
+}
+
+# ---- validation --------------------------------------------------------
+
+func test_validation(base) {
+    check("valid manifest has no problems", len(validate_manifest(wrap_manifest([card_ok()]), base)) == 0)
+
+    mut bad := {}
+    bad["cards"] := [{"id": "x"}]
+    check("missing title+file reported", len(validate_manifest(bad, base)) == 2)
+
+    mut missfile := card_ok()
+    missfile["file"] := "examples/missing.kujo"
+    check("missing file reported", len(validate_manifest(wrap_manifest([missfile]), base)) == 1)
+
+    mut badid := card_ok()
+    badid["id"] := "Bad Id"
+    check("unsafe id reported", len(validate_manifest(wrap_manifest([badid]), base)) >= 1)
+
+    check("duplicate id reported", len(validate_manifest(wrap_manifest([card_ok(), card_ok()]), base)) == 1)
+
+    check("no cards array reported", len(validate_manifest({"project": project_ok()}, base)) == 1)
+}
+
+# ---- path containment -------------------------------------------------
+
+func test_path_containment(base) {
+    put(base + "/../outside.kujo", "func sneaky() {\n    print(\"phase10-placeholder-token\")\n}\n<script>alert(\"x\")</script>\n")
+
+    mut rel := card_ok()
+    rel["file"] := "../outside.kujo"
+    rel_problems := validate_manifest(wrap_manifest([rel]), base)
+    check("relative escape rejected", len(rel_problems) == 1)
+    check("relative escape message", has_sub(rel_problems[0], "escapes manifest directory"))
+
+    mut abs := card_ok()
+    abs["file"] := base + "/../outside.kujo"
+    abs_problems := validate_manifest(wrap_manifest([abs]), base)
+    check("absolute escape rejected", len(abs_problems) == 1)
+    check("absolute escape message", has_sub(abs_problems[0], "escapes manifest directory"))
+
+    hostile := build_cards(wrap_manifest([rel]), base, default_limits())[0]
+    check("escaped card omits outside code", has_sub(hostile["code"], "phase10-placeholder-token") == false)
+    check("escaped card omits script text", has_sub(hostile["code"], "<script>") == false)
+
+    md := render_markdown(hostile, project_ok())
+    html := render_html(hostile, project_ok())
+    svg := render_svg(hostile, project_ok())
+    gal := render_gallery([hostile], project_ok())
+    check("markdown omits outside content", has_sub(md, "phase10-placeholder-token") == false)
+    check("html omits outside content", has_sub(html, "phase10-placeholder-token") == false)
+    check("svg omits outside content", has_sub(svg, "phase10-placeholder-token") == false)
+    check("gallery omits outside content", has_sub(gal, "phase10-placeholder-token") == false)
+}
+
+# ---- card model + truncation -------------------------------------------
+
+func test_card_model(base) {
+    mut tight := default_limits()
+    tight["max_code_lines"] := 2
+    cards := build_cards(wrap_manifest([card_ok()]), base, tight)
+    check("build_cards count", len(cards) == 1)
+    card := cards[0]
+    check("card reads code", has_sub(card["code"], "print"))
+    check("code truncated flag", card["code_truncated"] == true)
+    check("code shown lines capped", card["code_shown_lines"] == 2)
+
+    check("find_card hit", type(find_card(cards, "ex")) != "null")
+    check("find_card miss", type(find_card(cards, "nope")) == "null")
+}
+
+# ---- captions ----------------------------------------------------------
+
+func test_captions(base) {
+    c0 := built_card(base)
+    proj := project_ok()
+    check("caption uses explicit caption", has_sub(build_caption(c0, proj), "Short caption."))
+    check("caption includes cta", has_sub(build_caption(c0, proj), "Kujo."))
+
+    mut nocap := card_ok()
+    nocap["caption"] := ""
+    nc := build_cards(wrap_manifest([nocap]), base, default_limits())[0]
+    capf := build_caption(nc, proj)
+    check("fallback caption uses title", has_sub(capf, "Example card"))
+    check("fallback caption uses tagline", has_sub(capf, "A tagline"))
+
+    cx := build_caption_x(c0, proj)
+    check("caption x non-empty", len(cx) > 0)
+    check("caption x within budget", len(cx) <= 280)
+}
+
+# ---- markdown ----------------------------------------------------------
+
+func test_markdown(base) {
+    md := render_markdown(built_card(base), project_ok())
+    check("md has title heading", has_sub(md, "# Example card"))
+    check("md has kujo fence", has_sub(md, "```kujo"))
+    check("md has expected output", has_sub(md, "Expected output"))
+    check("md has concepts", has_sub(md, "clear intent"))
+}
+
+# ---- html + escaping ---------------------------------------------------
+
+func evil_card(base) {
+    mut evilc := card_ok()
+    evilc["title"] := "<x> & \"y\""
+    return build_cards(wrap_manifest([evilc]), base, default_limits())[0]
+}
+
+func test_html(base) {
+    html := render_html(evil_card(base), project_ok())
+    check("html escapes title", has_sub(html, "&lt;x&gt; &amp; &quot;y&quot;"))
+    check("html no raw tag", has_sub(html, "<x>") == false)
+    check("html standalone doctype", has_sub(html, "<!DOCTYPE html>"))
+    check("html no remote http", has_sub(html, "http://") == false && has_sub(html, "https://") == false)
+}
+
+# ---- svg + escaping ----------------------------------------------------
+
+func test_svg(base) {
+    svg := render_svg(evil_card(base), project_ok())
+    check("svg has viewBox", has_sub(svg, "viewBox=\"0 0 1600 900\""))
+    check("svg escapes title", has_sub(svg, "&lt;x&gt;"))
+    check("svg no raw tag", has_sub(svg, "<x>") == false)
+    check("svg no external href", has_sub(svg, "xlink:href") == false)
+}
+
+# ---- gallery -----------------------------------------------------------
+
+func test_gallery(base) {
+    cards := build_cards(wrap_manifest([card_ok()]), base, default_limits())
+    gal := render_gallery(cards, project_ok())
+    check("gallery links html", has_sub(gal, "ex.html"))
+    check("gallery links svg", has_sub(gal, "ex.svg"))
+    check("gallery links md", has_sub(gal, "ex.md"))
+    check("gallery shows title", has_sub(gal, "Example card"))
+}
+
+# ---- run ---------------------------------------------------------------
+
+func setup(base) {
+    create_dir(base)
+    create_dir(base + "/examples")
+    put(base + "/examples/ex.kujo", "func main() {\n    print(\"hi\")\n}\n")
+}
+
+# The whole sequence runs inside one func. Driving the renderers from
+# top-level script scope tripped a VM "index out of bounds" crash on this
+# runtime (the same calls succeed from inside a func, which is how the CLI
+# invokes them). See docs/session-notes.md.
+func run_all(base) {
+    setup(base)
+    test_escaping()
+    test_id_safety()
+    test_line_shaping()
+    test_validation(base)
+    test_path_containment(base)
+    test_card_model(base)
+    test_captions(base)
+    test_markdown(base)
+    test_html(base)
+    test_svg(base)
+    test_gallery(base)
+    print("")
+    print("Howl tests: " + to_string(passed) + " passed, " + to_string(failed) + " failed")
+    if failed > 0 {
+        return 1
+    }
+    return 0
+}
+
+project_dir := args()[0]
+base := project_dir + "/tmp_test_" + to_string(now()) + "/project"
+exit(run_all(base))

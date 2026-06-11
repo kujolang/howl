@@ -1,0 +1,261 @@
+# Manifest loading, validation, and the card data model.
+#
+# The manifest (howl.json by default) is the single source of truth. This
+# module turns it into a list of fully-resolved "card" dicts: metadata from the
+# manifest plus the example file's text, already truncated to card-sized
+# limits. Renderers consume these dicts and never touch the filesystem.
+
+from src.util import die, is_blank, is_safe_id, split_lines, take_lines, resolve_contained_path
+
+# ---- defaults ----------------------------------------------------------
+
+# Conservative, deterministic limits keep cards readable and shareable.
+export func default_limits() {
+    return {"max_code_lines": 40, "max_code_chars": 4000, "max_output_lines": 20}
+}
+
+# ---- loading -----------------------------------------------------------
+
+# Read and parse the manifest into a raw dict. Fails clearly when the file is
+# missing or the JSON does not parse, so the user never sees a raw stack.
+export func load_manifest(path) {
+    if file_exists(path) == false {
+        die("manifest not found: " + path + " (run `howl init` to create one)")
+    }
+    content := read_file(path)
+    data := parse_json(content)
+    if type(data) == "Error" {
+        die("manifest is not valid JSON: " + path)
+    }
+    return data
+}
+
+export func manifest_project(data) {
+    if has_key(data, "project") == 1 {
+        return data["project"]
+    }
+    return {}
+}
+
+export func manifest_theme(data) {
+    if has_key(data, "theme") == 1 {
+        return data["theme"]
+    }
+    return {}
+}
+
+export func manifest_cards(data) {
+    if has_key(data, "cards") == 1 {
+        return data["cards"]
+    }
+    return []
+}
+
+# ---- validation --------------------------------------------------------
+
+# Return a list of human-readable problem strings ([] means valid). Every
+# problem is collected so a user can fix a manifest in one pass.
+export func validate_manifest(data, base_dir) {
+    mut problems := []
+    if has_key(data, "cards") == 0 {
+        problems = push(problems, "manifest has no \"cards\" array")
+        return problems
+    }
+    cards := data["cards"]
+    n := len(cards)
+    if n == 0 {
+        problems = push(problems, "manifest \"cards\" array is empty")
+    }
+    mut seen := {}
+    mut i := 0
+    while i < n {
+        card := cards[i]
+        where := "card[" + to_string(i) + "]"
+        cp := card_problems(card, where, base_dir)
+        mut j := 0
+        while j < len(cp) {
+            problems = push(problems, cp[j])
+            j = j + 1
+        }
+        if has_key(card, "id") == 1 {
+            id := card["id"]
+            if is_safe_id(id) {
+                if has_key(seen, id) == 1 {
+                    problems = push(problems, where + ": duplicate id \"" + id + "\"")
+                }
+                seen[id] := true
+            }
+        }
+        i = i + 1
+    }
+    return problems
+}
+
+# Required fields for a single card: id, title, file. Everything else is
+# optional. Duplicate-id detection lives in validate_manifest (it owns the
+# shared `seen` set).
+export func card_problems(card, where, base_dir) {
+    mut problems := []
+    if has_key(card, "id") == 0 {
+        problems = push(problems, where + ": missing required field \"id\"")
+    } else {
+        id := card["id"]
+        if is_safe_id(id) == false {
+            problems = push(problems, where + ": id \"" + to_string(id) + "\" is not filesystem-safe (use a-z 0-9 - _)")
+        }
+    }
+    if has_key(card, "title") == 0 {
+        problems = push(problems, where + ": missing required field \"title\"")
+    } else {
+        if is_blank(card["title"]) {
+            problems = push(problems, where + ": \"title\" must not be empty")
+        }
+    }
+    if has_key(card, "file") == 0 {
+        problems = push(problems, where + ": missing required field \"file\"")
+    } else {
+        if is_blank(card["file"]) {
+            problems = push(problems, where + ": \"file\" must not be empty")
+        } else {
+            resolved := resolve_contained_path(base_dir, card["file"])
+            if resolved["ok"] == false {
+                problems = push(problems, where + ": referenced file escapes manifest directory: " + card["file"])
+            } else if file_exists(resolved["path"]) == false {
+                problems = push(problems, where + ": referenced file not found: " + card["file"])
+            }
+        }
+    }
+    return problems
+}
+
+# Manifest file paths are relative to the manifest's directory.
+export func resolve_file(base_dir, rel) {
+    resolved := resolve_contained_path(base_dir, rel)
+    if resolved["ok"] == false {
+        return ""
+    }
+    return resolved["path"]
+}
+
+# ---- card model --------------------------------------------------------
+
+func opt_str(card, key) {
+    if has_key(card, key) == 0 {
+        return ""
+    }
+    v := card[key]
+    if type(v) == "null" {
+        return ""
+    }
+    return v
+}
+
+func opt_list(card, key) {
+    if has_key(card, key) == 0 {
+        return []
+    }
+    v := card[key]
+    if type(v) == "null" {
+        return []
+    }
+    return v
+}
+
+func default_language(raw) {
+    if has_key(raw, "language") == 0 {
+        return "kujo"
+    }
+    v := raw["language"]
+    if is_blank(v) {
+        return "kujo"
+    }
+    return v
+}
+
+# Truncate code by lines first, then characters; return both the shown text and
+# honest bookkeeping so renderers can show a "truncated" notice instead of
+# silently dropping content.
+func truncate_code(code, limits) {
+    max_lines := limits["max_code_lines"]
+    max_chars := limits["max_code_chars"]
+    total_lines := len(split_lines(code))
+    mut truncated := false
+    mut shown := code
+    if total_lines > max_lines {
+        shown = take_lines(code, max_lines)
+        truncated = true
+    }
+    if len(shown) > max_chars {
+        shown = substring(shown, 0, max_chars)
+        truncated = true
+    }
+    return {"shown": shown, "truncated": truncated, "total": total_lines, "shown_lines": len(split_lines(shown))}
+}
+
+func truncate_output(out, limits) {
+    max_lines := limits["max_output_lines"]
+    mut truncated := false
+    mut shown := out
+    if len(split_lines(out)) > max_lines {
+        shown = take_lines(out, max_lines)
+        truncated = true
+    }
+    return {"shown": shown, "truncated": truncated}
+}
+
+# Resolve one raw manifest entry into a render-ready card dict: read the example
+# file, apply truncation, and normalize optional fields so renderers stay dumb.
+export func build_card(raw, base_dir, limits) {
+    full := resolve_file(base_dir, raw["file"])
+    mut code := ""
+    if file_exists(full) {
+        code = read_file(full)
+    }
+    ct := truncate_code(code, limits)
+    ot := truncate_output(opt_str(raw, "expected_output"), limits)
+
+    mut card := {}
+    card["id"] := raw["id"]
+    card["title"] := raw["title"]
+    card["file"] := raw["file"]
+    card["tagline"] := opt_str(raw, "tagline")
+    card["language"] := default_language(raw)
+    card["concepts"] := opt_list(raw, "concepts")
+    card["caption"] := opt_str(raw, "caption")
+    card["cta"] := opt_str(raw, "cta")
+    card["notes"] := opt_str(raw, "notes")
+    card["url"] := opt_str(raw, "url")
+    card["variant"] := opt_str(raw, "variant")
+    card["code"] := ct["shown"]
+    card["code_truncated"] := ct["truncated"]
+    card["code_total_lines"] := ct["total"]
+    card["code_shown_lines"] := ct["shown_lines"]
+    card["expected_output"] := ot["shown"]
+    card["expected_truncated"] := ot["truncated"]
+    return card
+}
+
+export func build_cards(data, base_dir, limits) {
+    raw_cards := manifest_cards(data)
+    mut result := []
+    n := len(raw_cards)
+    mut i := 0
+    while i < n {
+        result = push(result, build_card(raw_cards[i], base_dir, limits))
+        i = i + 1
+    }
+    return result
+}
+
+export func find_card(cards, id) {
+    n := len(cards)
+    mut i := 0
+    while i < n {
+        c := cards[i]
+        if c["id"] == id {
+            return c
+        }
+        i = i + 1
+    }
+    return null
+}

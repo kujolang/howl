@@ -1,0 +1,96 @@
+# Deterministic share-caption generation.
+#
+# No AI, no network, no randomness: the same card always produces the same
+# caption. If the manifest supplies a `caption`, we trust it. Otherwise we
+# assemble one from title + tagline + cta. We never invent claims — only the
+# fields present in the manifest are used.
+
+from src.util import is_blank
+
+# Title as a sentence: add a period if the author did not end with punctuation.
+func headline(card) {
+    title := card["title"]
+    if ends_with(title, ".") {
+        return title
+    }
+    if ends_with(title, "!") {
+        return title
+    }
+    if ends_with(title, "?") {
+        return title
+    }
+    return title + "."
+}
+
+# Prefer an explicit per-card cta; otherwise fall back to the project name +
+# tagline so the call to action stays consistent across a gallery.
+func caption_cta(card, project) {
+    if is_blank(card["cta"]) == false {
+        return card["cta"]
+    }
+    if type(project) == "null" {
+        return ""
+    }
+    if has_key(project, "tagline") == 1 {
+        t := project["tagline"]
+        if is_blank(t) == false {
+            mut name := "Kujo"
+            if has_key(project, "name") == 1 {
+                if is_blank(project["name"]) == false {
+                    name = project["name"]
+                }
+            }
+            return name + ": " + t
+        }
+    }
+    return ""
+}
+
+# Long-form caption: a few short lines suitable for a README blurb, blog intro,
+# or release note. Deterministic and claim-free.
+export func build_caption(card, project) {
+    mut parts := []
+    if is_blank(card["caption"]) == false {
+        parts = push(parts, card["caption"])
+    } else {
+        parts = push(parts, headline(card))
+        if is_blank(card["tagline"]) == false {
+            parts = push(parts, card["tagline"])
+        }
+    }
+    cta := caption_cta(card, project)
+    if is_blank(cta) == false {
+        parts = push(parts, cta)
+    }
+    return join(parts, "\n\n")
+}
+
+# No native rindex; scan forward and remember the last hit.
+func last_index_of(s, needle) {
+    n := len(s)
+    mut i := 0
+    mut found := 0 - 1
+    while i < n {
+        if char_at(s, i) == needle {
+            found = i
+        }
+        i = i + 1
+    }
+    return found
+}
+
+# X.com-friendly variant: a single compact block trimmed to a common post
+# length budget on a word boundary. We do NOT post anything; this only formats.
+export func build_caption_x(card, project) {
+    full := build_caption(card, project)
+    budget := 280
+    if len(full) <= budget {
+        return full
+    }
+    mut cut := substring(full, 0, budget - 1)
+    last_space := last_index_of(cut, " ")
+    if last_space > 0 {
+        cut = substring(cut, 0, last_space)
+    }
+    return cut + "…"
+}

@@ -1,0 +1,40 @@
+# Markdown renderer: one .md file per card.
+#
+# Markdown is the most portable artifact (README sections, GitHub discussions,
+# blog drafts), so we keep it plain and diff-friendly. No HTML, no escaping
+# needed beyond fenced code blocks. Built by single-string accumulation to keep
+# allocations low (see docs/session-notes.md).
+
+from src.util import is_blank, comma_list
+from src.caption import build_caption
+
+func fence(language, body) {
+    mut lang := language
+    if is_blank(lang) {
+        lang = ""
+    }
+    return "```" + lang + "\n" + body + "\n```"
+}
+
+export func render_markdown(card, project) {
+    mut out := "# " + card["title"] + "\n"
+    if is_blank(card["tagline"]) == false {
+        out = out + "\n" + card["tagline"] + "\n"
+    }
+    out = out + "\n" + fence(card["language"], card["code"]) + "\n"
+    if card["code_truncated"] == true {
+        out = out + "\n> Example truncated for display. See the source file for the full example.\n"
+    }
+    if is_blank(card["expected_output"]) == false {
+        out = out + "\n**Expected output:**\n\n" + fence("text", card["expected_output"]) + "\n"
+    }
+    concepts := card["concepts"]
+    if len(concepts) > 0 {
+        out = out + "\n**Concepts:** " + comma_list(concepts) + "\n"
+    }
+    if is_blank(card["notes"]) == false {
+        out = out + "\n" + card["notes"] + "\n"
+    }
+    out = out + "\n---\n\n" + build_caption(card, project) + "\n"
+    return out
+}

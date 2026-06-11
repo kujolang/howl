@@ -1,0 +1,179 @@
+# SVG renderer: one .svg file per card.
+#
+# A 1600x900 social-share card. No external assets or fonts (generic family
+# names only), safe-escaped text, and a deterministic layout: text is
+# wrapped/clipped here because SVG <text> does not reflow on its own. Minimal
+# black/white technical aesthetic with a single accent rule.
+#
+# Built by single-string accumulation with a literal <style> block to keep
+# total allocations low (see docs/session-notes.md).
+
+from src.util import escape_html, is_blank, comma_list
+
+# ---- text shaping for fixed-width layout -------------------------------
+
+func clip(s, max) {
+    if len(s) <= max {
+        return s
+    }
+    return substring(s, 0, max - 1) + "…"
+}
+
+func cap_lines(lines, max_lines) {
+    n := len(lines)
+    if n <= max_lines {
+        return lines
+    }
+    out := slice(lines, 0, max_lines)
+    out[max_lines - 1] := out[max_lines - 1] + " …"
+    return out
+}
+
+# Greedy word wrap into at most max_lines lines. The final line is marked when
+# content remains, so long titles never overflow the card.
+func wrap_words(text, max_chars, max_lines) {
+    words := split(text, " ")
+    mut lines := []
+    mut current := ""
+    n := len(words)
+    mut i := 0
+    while i < n {
+        w := words[i]
+        mut candidate := w
+        if current != "" {
+            candidate = current + " " + w
+        }
+        if len(candidate) <= max_chars {
+            current = candidate
+        } else {
+            if current != "" {
+                lines = push(lines, current)
+            }
+            current = w
+        }
+        i = i + 1
+    }
+    if current != "" {
+        lines = push(lines, current)
+    }
+    return cap_lines(lines, max_lines)
+}
+
+# How many 38px rows fit in a panel of height `panel_h` (with 60px padding).
+func rows_that_fit(panel_h) {
+    avail := panel_h - 60
+    mut rows := 0
+    while (rows + 1) * 38 <= avail {
+        rows = rows + 1
+    }
+    return rows
+}
+
+# ---- svg emission ------------------------------------------------------
+
+func text_el(x, y, cls, content) {
+    return "<text x=\"" + to_string(x) + "\" y=\"" + to_string(y) + "\" class=\"" + cls + "\">" + escape_html(content) + "</text>\n"
+}
+
+# Append wrapped/word lines as <text> elements onto `acc`, returning the new
+# accumulator. Avoids building an intermediate list of elements.
+func emit_lines(acc, lines, x, start_y, line_h, cls) {
+    mut out := acc
+    n := len(lines)
+    mut i := 0
+    mut y := start_y
+    while i < n {
+        out = out + text_el(x, y, cls, lines[i])
+        y = y + line_h
+        i = i + 1
+    }
+    return out
+}
+
+func svg_styles() {
+    return ".eyebrow{font-family:monospace;font-size:26px;fill:#2563eb;letter-spacing:6px}.title{font-family:sans-serif;font-size:66px;font-weight:700;fill:#111}.tag{font-family:sans-serif;font-size:30px;fill:#666}.code{font-family:monospace;font-size:26px;fill:#e6e6e6}.concepts{font-family:sans-serif;font-size:26px;fill:#666}.cta{font-family:sans-serif;font-size:26px;font-weight:600;fill:#111}"
+}
+
+func project_name(project) {
+    if type(project) == "null" {
+        return "KUJO"
+    }
+    if has_key(project, "name") == 1 {
+        if is_blank(project["name"]) == false {
+            return to_upper(project["name"])
+        }
+    }
+    return "KUJO"
+}
+
+func cta_text(card, project) {
+    if is_blank(card["cta"]) == false {
+        return card["cta"]
+    }
+    if type(project) != "null" {
+        if has_key(project, "tagline") == 1 {
+            if is_blank(project["tagline"]) == false {
+                return project["tagline"]
+            }
+        }
+    }
+    return ""
+}
+
+# Append the code lines (clipped/capped) as <text> elements onto `acc`.
+func emit_code(acc, code, max_lines, max_cols, x, start_y, line_h) {
+    raw := split(replace(code, "\r\n", "\n"), "\n")
+    n := len(raw)
+    mut limit := n
+    if limit > max_lines {
+        limit = max_lines
+    }
+    mut out := acc
+    mut i := 0
+    mut y := start_y
+    while i < limit {
+        out = out + text_el(x, y, "code", clip(raw[i], max_cols))
+        y = y + line_h
+        i = i + 1
+    }
+    if n > max_lines {
+        out = out + text_el(x, y, "code", "… (" + to_string(n - max_lines) + " more lines)")
+    }
+    return out
+}
+
+export func render_svg(card, project) {
+    mut out := "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1600\" height=\"900\" viewBox=\"0 0 1600 900\">\n"
+    out = out + "<style>" + svg_styles() + "</style>\n"
+    out = out + "<rect width=\"1600\" height=\"900\" fill=\"#ffffff\"/>\n"
+    out = out + "<rect x=\"0\" y=\"0\" width=\"1600\" height=\"10\" fill=\"#2563eb\"/>\n"
+
+    out = out + text_el(80, 120, "eyebrow", project_name(project))
+
+    title_lines := wrap_words(card["title"], 34, 2)
+    out = emit_lines(out, title_lines, 80, 210, 78, "title")
+    mut y := 210 + len(title_lines) * 78
+
+    if is_blank(card["tagline"]) == false {
+        tag_lines := wrap_words(card["tagline"], 70, 2)
+        out = emit_lines(out, tag_lines, 80, y + 8, 40, "tag")
+        y = y + 8 + len(tag_lines) * 40
+    }
+
+    # Code panel fills the remaining vertical space above the footer.
+    panel_y := y + 24
+    panel_h := 800 - panel_y
+    out = out + "<rect x=\"80\" y=\"" + to_string(panel_y) + "\" width=\"1440\" height=\"" + to_string(panel_h) + "\" rx=\"16\" fill=\"#0f1115\"/>\n"
+    out = emit_code(out, card["code"], rows_that_fit(panel_h), 78, 116, panel_y + 56, 38)
+
+    concepts := card["concepts"]
+    if len(concepts) > 0 {
+        out = out + text_el(80, 858, "concepts", comma_list(concepts))
+    }
+    cta := cta_text(card, project)
+    if is_blank(cta) == false {
+        out = out + text_el(80, 895, "cta", clip(cta, 90))
+    }
+
+    return out + "</svg>\n"
+}

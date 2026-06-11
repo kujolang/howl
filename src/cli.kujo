@@ -1,0 +1,386 @@
+# Command-line interface for Howl.
+#
+# The only module that talks to argv / stdout / the output directory directly,
+# so the rest of the code stays pure and testable. Dispatches to the manifest
+# model, the three renderers, and the gallery.
+
+from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy
+from src.manifest import load_manifest, validate_manifest, build_cards, find_card, manifest_project, default_limits
+from src.caption import build_caption, build_caption_x
+from src.render_md import render_markdown
+from src.render_html import render_html
+from src.render_svg import render_svg
+from src.gallery import render_gallery
+
+VERSION := "1.0.0"
+
+# ---- argv / option parsing ---------------------------------------------
+
+# Collect flags and positionals after the command word (argv[0]). Value flags
+# consume the next token; everything else is a positional.
+func parse_opts(argv) {
+    mut opts := {}
+    opts["manifest"] := "howl.json"
+    opts["out"] := "dist/howl"
+    opts["format"] := "all"
+    opts["platform"] := ""
+    opts["force"] := false
+    opts["max_code_lines"] := 40
+    opts["max_output_lines"] := 20
+    mut positionals := []
+    n := len(argv)
+    mut i := 1
+    while i < n {
+        arg := argv[i]
+        if arg == "--manifest" {
+            i = i + 1
+            opts["manifest"] := argv[i]
+        } else if arg == "--out" {
+            i = i + 1
+            opts["out"] := argv[i]
+        } else if arg == "--format" {
+            i = i + 1
+            opts["format"] := argv[i]
+        } else if arg == "--platform" {
+            i = i + 1
+            opts["platform"] := argv[i]
+        } else if arg == "--max-code-lines" {
+            i = i + 1
+            opts["max_code_lines"] := parse_int(argv[i])
+        } else if arg == "--max-output-lines" {
+            i = i + 1
+            opts["max_output_lines"] := parse_int(argv[i])
+        } else if arg == "--force" {
+            opts["force"] := true
+        } else {
+            positionals = push(positionals, arg)
+        }
+        i = i + 1
+    }
+    opts["positionals"] := positionals
+    return opts
+}
+
+func limits_from_opts(opts) {
+    mut limits := default_limits()
+    limits["max_code_lines"] := opts["max_code_lines"]
+    limits["max_output_lines"] := opts["max_output_lines"]
+    return limits
+}
+
+# Directory containing a file path, "" when there is none.
+func dir_of(path) {
+    idx := last_slash(path)
+    if idx < 0 {
+        return ""
+    }
+    return substring(path, 0, idx)
+}
+
+func last_slash(s) {
+    n := len(s)
+    mut i := 0
+    mut found := 0 - 1
+    while i < n {
+        if char_at(s, i) == "/" {
+            found = i
+        }
+        i = i + 1
+    }
+    return found
+}
+
+# ---- output helpers ----------------------------------------------------
+
+# Plain write_file refuses to overwrite on the VM, so delete first.
+func write_out(path, content) {
+    if file_exists(path) {
+        delete_file(path)
+    }
+    write_file(path, content)
+}
+
+func ensure_dir(path) {
+    if file_exists(path) == false {
+        create_dir(path)
+    }
+}
+
+func wants(format, kind) {
+    return format == "all" || format == kind
+}
+
+func print_problems(problems) {
+    n := len(problems)
+    mut i := 0
+    while i < n {
+        print("  - " + problems[i])
+        i = i + 1
+    }
+}
+
+# ---- shared load -------------------------------------------------------
+
+# Load + validate the manifest, then build the card model. Centralized so every
+# command fails the same clear way on a bad manifest.
+func load_model(opts) {
+    manifest_path := opts["manifest"]
+    data := load_manifest(manifest_path)
+    base := dir_of(manifest_path)
+    problems := validate_manifest(data, base)
+    if len(problems) > 0 {
+        print("howl: manifest has " + to_string(len(problems)) + " problem(s):")
+        print_problems(problems)
+        exit(1)
+    }
+    mut model := {}
+    model["project"] := manifest_project(data)
+    model["cards"] := build_cards(data, base, limits_from_opts(opts))
+    return model
+}
+
+# ---- commands ----------------------------------------------------------
+
+func cmd_validate(opts) {
+    manifest_path := opts["manifest"]
+    data := load_manifest(manifest_path)
+    base := dir_of(manifest_path)
+    problems := validate_manifest(data, base)
+    if len(problems) > 0 {
+        print("howl: manifest has " + to_string(len(problems)) + " problem(s):")
+        print_problems(problems)
+        return 1
+    }
+    count := len(data["cards"])
+    print("ok: " + manifest_path + " is valid (" + to_string(count) + " card(s))")
+    return 0
+}
+
+func cmd_list(opts) {
+    model := load_model(opts)
+    cards := model["cards"]
+    n := len(cards)
+    mut i := 0
+    while i < n {
+        c := cards[i]
+        print(c["id"] + "  —  " + c["title"])
+        print("    file: " + c["file"])
+        concepts := c["concepts"]
+        if len(concepts) > 0 {
+            print("    concepts: " + comma_list(concepts))
+        }
+        i = i + 1
+    }
+    if n == 0 {
+        print("(no cards)")
+    }
+    return 0
+}
+
+func cmd_show(opts) {
+    id := first_positional(opts, "show")
+    model := load_model(opts)
+    card := find_card(model["cards"], id)
+    if type(card) == "null" {
+        die("no card with id \"" + id + "\"")
+    }
+    print("id:       " + card["id"])
+    print("title:    " + card["title"])
+    if is_blank(card["tagline"]) == false {
+        print("tagline:  " + card["tagline"])
+    }
+    print("file:     " + card["file"])
+    print("language: " + card["language"])
+    concepts := card["concepts"]
+    if len(concepts) > 0 {
+        print("concepts: " + comma_list(concepts))
+    }
+    print("")
+    print("--- code preview ---")
+    print(card["code"])
+    if card["code_truncated"] == true {
+        print("... (truncated)")
+    }
+    if is_blank(card["expected_output"]) == false {
+        print("")
+        print("--- expected output ---")
+        print(card["expected_output"])
+    }
+    return 0
+}
+
+func cmd_caption(opts) {
+    id := first_positional(opts, "caption")
+    model := load_model(opts)
+    card := find_card(model["cards"], id)
+    if type(card) == "null" {
+        die("no card with id \"" + id + "\"")
+    }
+    if opts["platform"] == "x" {
+        print(build_caption_x(card, model["project"]))
+    } else {
+        print(build_caption(card, model["project"]))
+    }
+    return 0
+}
+
+func cmd_render(opts) {
+    model := load_model(opts)
+    cards := model["cards"]
+    project := model["project"]
+    out := opts["out"]
+    format := opts["format"]
+    ensure_dir(out)
+    n := len(cards)
+    mut i := 0
+    mut written := 0
+    while i < n {
+        card := cards[i]
+        id := card["id"]
+        if wants(format, "markdown") {
+            write_out(join_path(out, id + ".md"), render_markdown(card, project))
+            written = written + 1
+        }
+        if wants(format, "html") {
+            write_out(join_path(out, id + ".html"), render_html(card, project))
+            written = written + 1
+        }
+        if wants(format, "svg") {
+            write_out(join_path(out, id + ".svg"), render_svg(card, project))
+            written = written + 1
+        }
+        i = i + 1
+    }
+    if wants(format, "html") {
+        write_out(join_path(out, "index.html"), render_gallery(cards, project))
+    }
+    print("rendered " + to_string(n) + " card(s) -> " + ensure_trailing_slash(out) + " (" + to_string(written) + " files)")
+    return 0
+}
+
+func first_positional(opts, cmd) {
+    positionals := opts["positionals"]
+    if len(positionals) == 0 {
+        die(cmd + " requires a card id (try `howl list`)")
+    }
+    return positionals[0]
+}
+
+# ---- init --------------------------------------------------------------
+
+# Scaffold a starter manifest and one example. Never clobber existing files
+# unless --force is given.
+func cmd_init(opts) {
+    force := truthy(opts["force"])
+    manifest_path := opts["manifest"]
+    mut made := 0
+
+    ensure_dir("examples")
+    example_path := "examples/clear-intent.kujo"
+    if file_exists(example_path) && force == false {
+        print("skip (exists): " + example_path)
+    } else {
+        write_out(example_path, starter_example())
+        made = made + 1
+    }
+
+    if file_exists(manifest_path) && force == false {
+        print("skip (exists): " + manifest_path + " (use --force to overwrite)")
+    } else {
+        write_out(manifest_path, starter_manifest())
+        made = made + 1
+    }
+
+    if made == 0 {
+        print("nothing created; manifest and example already exist")
+    } else {
+        print("created " + to_string(made) + " file(s); next: howl render")
+    }
+    return 0
+}
+
+func starter_example() {
+    mut lines := []
+    lines = push(lines, "# Clear intent over boilerplate.")
+    lines = push(lines, "# A tiny program that says what it does, with nothing extra.")
+    lines = push(lines, "")
+    lines = push(lines, "func greet(name) {")
+    lines = push(lines, "    return \"Ready, \" + name")
+    lines = push(lines, "}")
+    lines = push(lines, "")
+    lines = push(lines, "print(greet(\"agent\"))")
+    return join(lines, "\n") + "\n"
+}
+
+# Built as a dict and serialized so the output is always valid JSON.
+func starter_manifest() {
+    mut card := {}
+    card["id"] := "clear-intent"
+    card["title"] := "Clear intent over boilerplate"
+    card["tagline"] := "Kujo favors code that humans and agents can continue safely."
+    card["file"] := "examples/clear-intent.kujo"
+    card["language"] := "kujo"
+    card["concepts"] := ["clear intent", "agent-readable code", "low-noise syntax"]
+    card["expected_output"] := "Ready, agent"
+    card["caption"] := "AI-native software needs code that explains intent without burying it in ceremony."
+    card["cta"] := "Kujo: programming language for AI-native software."
+
+    mut project := {}
+    project["name"] := "Kujo"
+    project["tagline"] := "Programming language for AI-native software"
+    project["url"] := ""
+
+    mut theme := {}
+    theme["name"] := "minimal"
+    theme["mode"] := "light"
+
+    mut manifest := {}
+    manifest["project"] := project
+    manifest["theme"] := theme
+    manifest["cards"] := [card]
+    return to_json_pretty(manifest) + "\n"
+}
+
+# ---- help / dispatch ---------------------------------------------------
+
+func help_text() {
+    # One literal block (not a push-built list) to keep allocations low.
+    return "howl — turn Kujo examples into shareable showcase artifacts\n\nUsage: howl <command> [options]\n\nCommands:\n  init                 Scaffold howl.json + examples/ (won't overwrite)\n  validate             Validate the manifest and referenced files\n  list                 List cards (id, title, file, concepts)\n  show <id>            Show one card's metadata and code preview\n  caption <id>         Print a deterministic share caption\n  render               Render SVG + Markdown + HTML + gallery\n  help                 Show this help\n  version              Show version\n\nOptions:\n  --manifest PATH      Manifest file (default: howl.json)\n  --out DIR            Output dir for render (default: dist/howl)\n  --format FMT         all | svg | html | markdown (default: all)\n  --platform x         Caption variant for X.com (caption only)\n  --max-code-lines N   Code lines per card before truncation (default: 40)\n  --max-output-lines N Output lines per card before truncation (default: 20)\n  --force              Allow init to overwrite existing files\n\nHowl is offline and deterministic: it never posts to social media,\nnever calls AI/network APIs, and never invents claims about Kujo."
+}
+
+export func main(argv) {
+    if len(argv) == 0 {
+        print(help_text())
+        return 0
+    }
+    cmd := argv[0]
+    opts := parse_opts(argv)
+    if cmd == "init" {
+        return cmd_init(opts)
+    }
+    if cmd == "validate" {
+        return cmd_validate(opts)
+    }
+    if cmd == "list" {
+        return cmd_list(opts)
+    }
+    if cmd == "show" {
+        return cmd_show(opts)
+    }
+    if cmd == "caption" {
+        return cmd_caption(opts)
+    }
+    if cmd == "render" {
+        return cmd_render(opts)
+    }
+    if cmd == "help" || cmd == "--help" || cmd == "-h" {
+        print(help_text())
+        return 0
+    }
+    if cmd == "version" || cmd == "--version" || cmd == "-v" {
+        print("howl " + VERSION)
+        return 0
+    }
+    print("howl: unknown command \"" + cmd + "\" (try `howl help`)")
+    return 1
+}

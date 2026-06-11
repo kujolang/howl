@@ -1,0 +1,44 @@
+{
+  "project": {
+    "name": "Kujo",
+    "tagline": "Programming language for AI-native software",
+    "url": ""
+  },
+  "theme": {
+    "name": "minimal",
+    "mode": "light"
+  },
+  "cards": [
+    {
+      "id": "clear-intent",
+      "title": "Clear intent over boilerplate",
+      "tagline": "Kujo favors code that humans and agents can continue safely.",
+      "file": "examples/clear-intent.kujo",
+      "language": "kujo",
+      "concepts": ["clear intent", "agent-readable code", "low-noise syntax"],
+      "expected_output": "Ready, agent",
+      "caption": "AI-native software needs code that explains intent without burying it in ceremony.",
+      "cta": "Kujo: programming language for AI-native software."
+    },
+    {
+      "id": "safe-refactor",
+      "title": "Refactors that preserve behavior",
+      "tagline": "Same output, fewer moving parts — a diff you can trust.",
+      "file": "examples/safe-refactor.kujo",
+      "language": "kujo",
+      "concepts": ["behavior preservation", "reviewable diffs", "testable code"],
+      "expected_output": "10",
+      "cta": "Kujo: programming language for AI-native software."
+    },
+    {
+      "id": "agent-handoff",
+      "title": "Built for the next agent",
+      "tagline": "Explicit names and one obvious path make work easy to continue.",
+      "file": "examples/agent-handoff.kujo",
+      "language": "kujo",
+      "concepts": ["safe agent collaboration", "durable code", "token-efficient"],
+      "expected_output": "review",
+      "cta": "Kujo: programming language for AI-native software."
+    }
+  ]
+}

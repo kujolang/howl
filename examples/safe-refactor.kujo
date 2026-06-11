@@ -1,0 +1,14 @@
+# Behavior-preserving refactor: same output, fewer moving parts.
+# Easy for a human or an agent to diff and trust.
+
+func total(items) {
+    mut sum := 0
+    mut i := 0
+    while i < len(items) {
+        sum = sum + items[i]
+        i = i + 1
+    }
+    return sum
+}
+
+print(total([2, 3, 5]))

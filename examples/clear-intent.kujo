@@ -1,0 +1,8 @@
+# Clear intent over boilerplate.
+# A tiny program that says what it does, with nothing extra.
+
+func greet(name) {
+    return "Ready, " + name
+}
+
+print(greet("agent"))

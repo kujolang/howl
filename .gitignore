@@ -1,0 +1,4 @@
+# Howl output and scratch
+dist/
+tmp_test_*/
+.DS_Store
