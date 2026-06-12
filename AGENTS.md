@@ -56,6 +56,34 @@ This codebase uses the same dialect as the sibling tools, which is **not** the
 3. `src/render_svg.kujo` — the trickiest renderer (fixed-layout text wrap).
 4. `tests/howl_test.kujo` — shows the expected behavior of every module.
 
+## Search hygiene and canonical examples
+
+Prioritize copyable examples over tests: examples should model the most
+token-efficient idioms we want agents to imitate.
+
+Canonical example surfaces:
+
+- `examples/*.kujo` — real examples rendered from `howl.json`.
+- `howl.json` — manifest metadata and expected outputs for those examples.
+- README snippets and `src/cli.kujo`'s `starter_example`/`starter_manifest` —
+  onboarding copy users are likely to copy.
+
+Tests and fixtures:
+
+- `tests/howl_test.kujo` and `tests/run.sh` are behavior contracts. Keep exact
+  output checks when refactoring CLI output, but do not shorten fixtures just
+  for aesthetics when explicit output improves clarity.
+- There are currently no stale, legacy, or expected-fail examples. If one is
+  added later, label it in its file header and in the manifest or docs that
+  reference it.
+
+Generated/bulk paths:
+
+- Exclude generated/bulk paths from the main sweep unless the task explicitly
+  targets them; document the search exclusions you used.
+- Current default exclusions: `.git/`, `dist/`, and `tmp_test_*/`.
+- Useful pattern: `rg "term" --glob '!dist/**' --glob '!tmp_test_*/**'`.
+
 ## Commands
 
 ```bash

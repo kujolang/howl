@@ -11,6 +11,10 @@ discussions, release notes, demo galleries, and agent-handoff examples.
 Howl is **fully offline and deterministic** — the same inputs produce stable
 outputs, so artifacts are safe to commit, diff, and review.
 
+For contributor and agent sweeps, prioritize copyable examples over tests:
+examples should model the most token-efficient idioms we want agents to
+imitate.
+
 | | |
 | --- | --- |
 | **Status** | v1.0.0 — stable |
@@ -106,6 +110,21 @@ howl render      # write dist/howl/*.{svg,md,html} + index.html
 
 Open `dist/howl/index.html` in any browser — no server, no network, no build
 step.
+
+### Canonical examples
+
+The root `examples/*.kujo` files are the canonical, copyable examples rendered
+by `howl.json`. Their expected outputs are:
+
+| Example | Expected output |
+| --- | --- |
+| `examples/clear-intent.kujo` | `Ready, agent` |
+| `examples/safe-refactor.kujo` | `10` |
+| `examples/agent-handoff.kujo` | `review` |
+
+`tests/` contains fixtures and output contracts, not style examples to copy.
+`dist/howl/` is generated render output and is ignored; regenerate it with
+`howl render` instead of editing it by hand.
 
 ## Command reference
 

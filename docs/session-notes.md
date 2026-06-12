@@ -1,5 +1,16 @@
 # Howl — session notes
 
+## 2026-06-12 — readability and search-hygiene cleanup
+
+- Added canonical-example guidance to README and AGENTS: `examples/*.kujo` and
+  `howl.json` are the copyable surfaces; `tests/` is a behavior-contract area.
+- Documented search exclusions for future agent sweeps: `.git/`, `dist/`, and
+  `tmp_test_*/`. `dist/howl/` is generated output and intentionally ignored.
+- Added shell-level exact output contracts for `howl validate`, `howl list`,
+  and `howl show clear-intent` before refactoring shared CLI print helpers.
+- Refactored repeated CLI output shapes into tiny local helpers without
+  changing user-visible text.
+
 ## 2026-05-29 — initial build (v1.0.0)
 
 Built Howl from scratch: a standalone CLI in the Kujo language that turns
