@@ -119,6 +119,29 @@ func print_problems(problems) {
     }
 }
 
+func print_manifest_problems(problems) {
+    print("howl: manifest has " + to_string(len(problems)) + " problem(s):")
+    print_problems(problems)
+}
+
+func print_field(label, value) {
+    print(label + value)
+}
+
+func print_section(title) {
+    print("")
+    print("--- " + title + " ---")
+}
+
+func print_card_listing(card) {
+    print(card["id"] + "  —  " + card["title"])
+    print("    file: " + card["file"])
+    concepts := card["concepts"]
+    if len(concepts) > 0 {
+        print("    concepts: " + comma_list(concepts))
+    }
+}
+
 # ---- shared load -------------------------------------------------------
 
 # Load + validate the manifest, then build the card model. Centralized so every
@@ -129,8 +152,7 @@ func load_model(opts) {
     base := dir_of(manifest_path)
     problems := validate_manifest(data, base)
     if len(problems) > 0 {
-        print("howl: manifest has " + to_string(len(problems)) + " problem(s):")
-        print_problems(problems)
+        print_manifest_problems(problems)
         exit(1)
     }
     mut model := {}
@@ -147,8 +169,7 @@ func cmd_validate(opts) {
     base := dir_of(manifest_path)
     problems := validate_manifest(data, base)
     if len(problems) > 0 {
-        print("howl: manifest has " + to_string(len(problems)) + " problem(s):")
-        print_problems(problems)
+        print_manifest_problems(problems)
         return 1
     }
     count := len(data["cards"])
@@ -162,13 +183,7 @@ func cmd_list(opts) {
     n := len(cards)
     mut i := 0
     while i < n {
-        c := cards[i]
-        print(c["id"] + "  —  " + c["title"])
-        print("    file: " + c["file"])
-        concepts := c["concepts"]
-        if len(concepts) > 0 {
-            print("    concepts: " + comma_list(concepts))
-        }
+        print_card_listing(cards[i])
         i = i + 1
     }
     if n == 0 {
@@ -184,26 +199,24 @@ func cmd_show(opts) {
     if type(card) == "null" {
         die("no card with id \"" + id + "\"")
     }
-    print("id:       " + card["id"])
-    print("title:    " + card["title"])
+    print_field("id:       ", card["id"])
+    print_field("title:    ", card["title"])
     if is_blank(card["tagline"]) == false {
-        print("tagline:  " + card["tagline"])
+        print_field("tagline:  ", card["tagline"])
     }
-    print("file:     " + card["file"])
-    print("language: " + card["language"])
+    print_field("file:     ", card["file"])
+    print_field("language: ", card["language"])
     concepts := card["concepts"]
     if len(concepts) > 0 {
-        print("concepts: " + comma_list(concepts))
+        print_field("concepts: ", comma_list(concepts))
     }
-    print("")
-    print("--- code preview ---")
+    print_section("code preview")
     print(card["code"])
     if card["code_truncated"] == true {
         print("... (truncated)")
     }
     if is_blank(card["expected_output"]) == false {
-        print("")
-        print("--- expected output ---")
+        print_section("expected output")
         print(card["expected_output"])
     }
     return 0
