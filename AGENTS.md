@@ -14,7 +14,7 @@ full product description and non-goals.
 ## Current status
 
 v1.0.0, complete and working. All commands implemented (`init validate list
-show caption render help version`). Tests pass (48 assertions). All `.kujo`
+show caption render help version`). Tests pass (58 assertions). All `.kujo`
 files pass `kujo check`. End-to-end render verified, including HTML/SVG
 escaping of hostile input.
 
@@ -67,6 +67,9 @@ Canonical example surfaces:
 - `howl.json` — manifest metadata and expected outputs for those examples.
 - README snippets and `src/cli.kujo`'s `starter_example`/`starter_manifest` —
   onboarding copy users are likely to copy.
+- For fixed starter text or help prose, prefer one literal string with `\n`
+  escapes. Use push-built line arrays only when the content is genuinely
+  assembled from data.
 
 Tests and fixtures:
 
@@ -90,7 +93,9 @@ Generated/bulk paths:
 export KUJO=/path/to/kujo/target/release/kujo
 ./bin/howl <command>        # run the CLI
 ./tests/run.sh              # run tests (writes/cleans tmp_test_* under root)
-$KUJO check src/*.kujo      # lint
+for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
+  "$KUJO" check "$f" || exit 1
+done                        # lint
 ```
 
 ## Repo map
@@ -156,8 +161,10 @@ These shaped the code — see `docs/session-notes.md` and the shared memory
 
 ```bash
 export KUJO=/path/to/kujo/target/release/kujo
-$KUJO check src/*.kujo howl.kujo tests/howl_test.kujo   # clean
-./tests/run.sh                                          # passed=48 failed=0
+for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
+  "$KUJO" check "$f" || exit 1
+done                                                   # clean
+./tests/run.sh                                          # passed=58 failed=0
 T=$(mktemp -d) && cd "$T" && \
   "$OLDPWD/bin/howl" init && "$OLDPWD/bin/howl" validate && \
   "$OLDPWD/bin/howl" render && ls dist/howl/            # 4 artifact types

@@ -142,6 +142,20 @@ func print_card_listing(card) {
     }
 }
 
+func print_card_metadata(card) {
+    print_field("id:       ", card["id"])
+    print_field("title:    ", card["title"])
+    if is_blank(card["tagline"]) == false {
+        print_field("tagline:  ", card["tagline"])
+    }
+    print_field("file:     ", card["file"])
+    print_field("language: ", card["language"])
+    concepts := card["concepts"]
+    if len(concepts) > 0 {
+        print_field("concepts: ", comma_list(concepts))
+    }
+}
+
 # ---- shared load -------------------------------------------------------
 
 # Load + validate the manifest, then build the card model. Centralized so every
@@ -159,6 +173,14 @@ func load_model(opts) {
     model["project"] := manifest_project(data)
     model["cards"] := build_cards(data, base, limits_from_opts(opts))
     return model
+}
+
+func require_card(cards, id) {
+    card := find_card(cards, id)
+    if type(card) == "null" {
+        die("no card with id \"" + id + "\"")
+    }
+    return card
 }
 
 # ---- commands ----------------------------------------------------------
@@ -195,21 +217,8 @@ func cmd_list(opts) {
 func cmd_show(opts) {
     id := first_positional(opts, "show")
     model := load_model(opts)
-    card := find_card(model["cards"], id)
-    if type(card) == "null" {
-        die("no card with id \"" + id + "\"")
-    }
-    print_field("id:       ", card["id"])
-    print_field("title:    ", card["title"])
-    if is_blank(card["tagline"]) == false {
-        print_field("tagline:  ", card["tagline"])
-    }
-    print_field("file:     ", card["file"])
-    print_field("language: ", card["language"])
-    concepts := card["concepts"]
-    if len(concepts) > 0 {
-        print_field("concepts: ", comma_list(concepts))
-    }
+    card := require_card(model["cards"], id)
+    print_card_metadata(card)
     print_section("code preview")
     print(card["code"])
     if card["code_truncated"] == true {
@@ -225,16 +234,31 @@ func cmd_show(opts) {
 func cmd_caption(opts) {
     id := first_positional(opts, "caption")
     model := load_model(opts)
-    card := find_card(model["cards"], id)
-    if type(card) == "null" {
-        die("no card with id \"" + id + "\"")
-    }
+    card := require_card(model["cards"], id)
     if opts["platform"] == "x" {
         print(build_caption_x(card, model["project"]))
     } else {
         print(build_caption(card, model["project"]))
     }
     return 0
+}
+
+func write_card_outputs(out, format, card, project) {
+    id := card["id"]
+    mut written := 0
+    if wants(format, "markdown") {
+        write_out(join_path(out, id + ".md"), render_markdown(card, project))
+        written = written + 1
+    }
+    if wants(format, "html") {
+        write_out(join_path(out, id + ".html"), render_html(card, project))
+        written = written + 1
+    }
+    if wants(format, "svg") {
+        write_out(join_path(out, id + ".svg"), render_svg(card, project))
+        written = written + 1
+    }
+    return written
 }
 
 func cmd_render(opts) {
@@ -248,20 +272,7 @@ func cmd_render(opts) {
     mut i := 0
     mut written := 0
     while i < n {
-        card := cards[i]
-        id := card["id"]
-        if wants(format, "markdown") {
-            write_out(join_path(out, id + ".md"), render_markdown(card, project))
-            written = written + 1
-        }
-        if wants(format, "html") {
-            write_out(join_path(out, id + ".html"), render_html(card, project))
-            written = written + 1
-        }
-        if wants(format, "svg") {
-            write_out(join_path(out, id + ".svg"), render_svg(card, project))
-            written = written + 1
-        }
+        written = written + write_card_outputs(out, format, cards[i], project)
         i = i + 1
     }
     if wants(format, "html") {
@@ -313,16 +324,7 @@ func cmd_init(opts) {
 }
 
 func starter_example() {
-    mut lines := []
-    lines = push(lines, "# Clear intent over boilerplate.")
-    lines = push(lines, "# A tiny program that says what it does, with nothing extra.")
-    lines = push(lines, "")
-    lines = push(lines, "func greet(name) {")
-    lines = push(lines, "    return \"Ready, \" + name")
-    lines = push(lines, "}")
-    lines = push(lines, "")
-    lines = push(lines, "print(greet(\"agent\"))")
-    return join(lines, "\n") + "\n"
+    return "# Clear intent over boilerplate.\n# A tiny program that says what it does, with nothing extra.\n\nfunc greet(name) {\n    return \"Ready, \" + name\n}\n\nprint(greet(\"agent\"))\n"
 }
 
 # Built as a dict and serialized so the output is always valid JSON.

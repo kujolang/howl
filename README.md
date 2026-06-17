@@ -20,7 +20,7 @@ imitate.
 | **Status** | v1.0.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 48 assertions, filesystem-isolated, `./tests/run.sh` |
+| **Tests** | 58 assertions, filesystem-isolated, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -334,10 +334,12 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-KUJO=/path/to/kujo/target/release/kujo ./tests/run.sh      # 48 assertions
+KUJO=/path/to/kujo/target/release/kujo ./tests/run.sh      # 58 assertions
 
 # Lint every module:
-KUJO=/path/to/kujo/target/release/kujo kujo check src/*.kujo howl.kujo
+for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
+  /path/to/kujo/target/release/kujo check "$f" || exit 1
+done
 ```
 
 See [AGENTS.md](AGENTS.md) for a contributor/agent orientation guide and

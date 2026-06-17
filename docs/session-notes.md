@@ -112,7 +112,8 @@ static gallery. Sibling of RunLedger and ChangeBudget; same project shape.
 - Keep it small. Do not add a scheduler, poster, AI/network call, docs-site
   generator, or theme engine. Do not invent claims about Kujo.
 - Read a sibling `src/*.kujo` for the dialect before editing.
-- Run `./tests/run.sh` and `kujo check src/*.kujo` after any change.
+- Run `./tests/run.sh` and check files one at a time after any change:
+  `for f in src/*.kujo howl.kujo tests/howl_test.kujo; do "$KUJO" check "$f" || exit 1; done`.
 - New card field → add it in `manifest.build_card`, then read it in renderers.
 - Use `while`, not `for`. Use `to_string()` around numbers. Use `write_out`
   for any file you might re-render. `arr = push(arr, x)`. Prefer string
