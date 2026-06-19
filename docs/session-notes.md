@@ -1,5 +1,32 @@
 # Howl — session notes
 
+## 2026-06-19 — production-readiness hardening review
+
+- Reviewed the full repo shape after the move to `src/`. No obsolete root
+  implementation files were found; the root keeps only the thin `howl.kujo`
+  entrypoint, package/docs/examples/tests, and launcher.
+- Hardened CLI option parsing: value flags now fail clearly when a value is
+  missing, numeric limits must be positive integers, unknown options are
+  rejected, and invalid `--format` / `--platform` values stop before work
+  starts.
+- Added render output path guardrails through `util.is_safe_output_dir`.
+  Howl still supports normal relative paths and absolute custom directories,
+  but refuses blank, root, current, parent, traversal, and ambiguous paths.
+- Tightened manifest validation so bad top-level shapes, non-array `cards`,
+  malformed `project` / `theme`, non-string required fields, non-string
+  optional fields, and malformed `concepts` are reported as itemized manifest
+  problems.
+- Hardened Markdown output: manifest prose is escaped and fenced code blocks
+  switch markers when the example text contains backticks.
+- Removed stale `tests/howl_test.out`; it recorded an old failing result and
+  was not referenced by the runner.
+- Updated README with precise production-readiness language and refreshed
+  security notes. Added `docs/next-session-review-2026-06-19.md` for the next
+  improvement queue.
+- Verification result: `kujo check` passed for all `src/*.kujo`, `howl.kujo`,
+  and `tests/howl_test.kujo`; `./tests/run.sh` passed at **70 passed, 0
+  failed**.
+
 ## 2026-06-12 — readability and search-hygiene cleanup
 
 - Added canonical-example guidance to README and AGENTS: `examples/*.kujo` and

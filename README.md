@@ -20,7 +20,7 @@ imitate.
 | **Status** | v1.0.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 58 assertions, filesystem-isolated, `./tests/run.sh` |
+| **Tests** | 70 assertions, filesystem-isolated, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -28,6 +28,7 @@ imitate.
 ## Table of contents
 
 - [Why Howl](#why-howl)
+- [Production readiness](#production-readiness)
 - [What Howl does not do](#what-howl-does-not-do)
 - [Install](#install)
 - [Quick start](#quick-start)
@@ -59,6 +60,20 @@ Howl makes the example the source of truth. You keep real `.kujo` files in your
 repo, describe them once in a manifest, and regenerate every artifact with one
 command. Because rendering is deterministic and claim-free, what ships is
 exactly what your code does — nothing invented, nothing stale.
+
+## Production readiness
+
+Howl is production-ready for its intended scope: an offline, deterministic CLI
+that turns trusted project examples and manifest metadata into reviewable,
+committable showcase artifacts. It is suitable for local workflows, CI gates,
+release prep, documentation pipelines, and language-marketing repositories that
+want stable output with no network or service dependency.
+
+That does not make Howl an enterprise platform in the broad sense. It is not a
+multi-tenant service, scheduler, CMS, poster, analytics product, package
+manager, or semantic Kujo verifier. Its strength is narrower and sharper: small
+inputs, clear validation, safe output escaping, portable static artifacts, and
+behavior covered by tests.
 
 ## What Howl does **not** do
 
@@ -189,8 +204,11 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 
 **Validation rules:**
 
+- The manifest must be a JSON object and `cards` must be an array.
 - `id` must be filesystem-safe (`a-z`, `0-9`, `-`, `_`) and unique across cards.
-- `title` must not be empty.
+- Required fields must be strings; `title` must not be empty.
+- Optional string fields must be strings when present; `concepts` must be an
+  array of strings when present.
 - The referenced `file` must exist and stay within the manifest directory tree.
 - Missing optional fields never fail rendering.
 - Invalid manifests produce a clear, itemized list of every problem at once.
@@ -202,9 +220,9 @@ examples travel with it.
 ## Example file handling
 
 Howl reads `.kujo`, `.md`, `.txt`, and any other text file a card references. It
-preserves indentation, escapes all content safely for HTML/SVG, and truncates
-oversized examples with an honest on-card notice rather than silently dumping
-them:
+preserves indentation, escapes content safely for rendered markup, adapts
+Markdown code fences when examples contain backticks, and truncates oversized
+examples with an honest on-card notice rather than silently dumping them:
 
 | Limit | Default | Override |
 | --- | --- | --- |
@@ -279,10 +297,16 @@ git diff --exit-code dist/howl
 - **No network.** Howl never opens a connection; artifacts reference no remote
   fonts, scripts, or stylesheets.
 - **Output is escaped.** All untrusted card content (titles, code, concepts,
-  project name) is HTML/SVG-escaped through a single audited helper, so example
-  text containing `<script>`, `&`, or quotes cannot break out of the markup.
+  project name) is escaped before it reaches HTML/SVG, and manifest prose is
+  escaped in Markdown. Example text containing `<script>`, `&`, quotes, or code
+  fences cannot break out of the intended artifact structure.
 - **Manifest paths are contained.** Example files stay within the manifest
   directory tree; `../` traversal is rejected before Howl reads the file.
+- **Output paths are guarded.** Render output rejects blank, root, current
+  directory, traversal, and ambiguous paths before writing.
+- **Options fail clearly.** Missing option values, invalid formats, invalid
+  caption platforms, unknown flags, and non-positive line limits stop with
+  friendly `howl:` errors.
 - **No telemetry.** Howl collects nothing and phones home to no one.
 
 ## Architecture
@@ -334,7 +358,7 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-KUJO=/path/to/kujo/target/release/kujo ./tests/run.sh      # 58 assertions
+KUJO=/path/to/kujo/target/release/kujo ./tests/run.sh      # 70 assertions
 
 # Lint every module:
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
