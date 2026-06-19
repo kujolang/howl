@@ -1,25 +1,45 @@
 # Markdown renderer: one .md file per card.
 #
 # Markdown is the most portable artifact (README sections, GitHub discussions,
-# blog drafts), so we keep it plain and diff-friendly. No HTML, no escaping
-# needed beyond fenced code blocks. Built by single-string accumulation to keep
-# allocations low (see docs/session-notes.md).
+# blog drafts), so we keep it plain and diff-friendly. Manifest prose is
+# escaped as text, while example code stays inside a fence that adapts if the
+# code itself contains backticks.
 
-from src.util import is_blank, comma_list
+from src.util import is_blank, comma_list, escape_html, truthy
 from src.caption import build_caption
 
-func fence(language, body) {
-    mut lang := language
-    if is_blank(lang) {
-        lang = ""
+func fence_marker(body) {
+    if truthy(contains(body, "```")) == false {
+        return "```"
     }
-    return "```" + lang + "\n" + body + "\n```"
+    if truthy(contains(body, "~~~")) == false {
+        return "~~~"
+    }
+    return "````"
+}
+
+func fence_language(language) {
+    if is_blank(language) {
+        return ""
+    }
+    if truthy(contains(language, "\n")) {
+        return ""
+    }
+    if truthy(contains(language, "`")) {
+        return ""
+    }
+    return language
+}
+
+func fence(language, body) {
+    marker := fence_marker(body)
+    return marker + fence_language(language) + "\n" + body + "\n" + marker
 }
 
 export func render_markdown(card, project) {
-    mut out := "# " + card["title"] + "\n"
+    mut out := "# " + escape_html(card["title"]) + "\n"
     if is_blank(card["tagline"]) == false {
-        out = out + "\n" + card["tagline"] + "\n"
+        out = out + "\n" + escape_html(card["tagline"]) + "\n"
     }
     out = out + "\n" + fence(card["language"], card["code"]) + "\n"
     if card["code_truncated"] == true {
@@ -30,11 +50,11 @@ export func render_markdown(card, project) {
     }
     concepts := card["concepts"]
     if len(concepts) > 0 {
-        out = out + "\n**Concepts:** " + comma_list(concepts) + "\n"
+        out = out + "\n**Concepts:** " + escape_html(comma_list(concepts)) + "\n"
     }
     if is_blank(card["notes"]) == false {
-        out = out + "\n" + card["notes"] + "\n"
+        out = out + "\n" + escape_html(card["notes"]) + "\n"
     }
-    out = out + "\n---\n\n" + build_caption(card, project) + "\n"
+    out = out + "\n---\n\n" + escape_html(build_caption(card, project)) + "\n"
     return out
 }

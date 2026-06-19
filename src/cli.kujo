@@ -4,7 +4,7 @@
 # so the rest of the code stays pure and testable. Dispatches to the manifest
 # model, the three renderers, and the gallery.
 
-from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy
+from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy, is_safe_output_dir
 from src.manifest import load_manifest, validate_manifest, build_cards, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
@@ -33,25 +33,27 @@ func parse_opts(argv) {
     while i < n {
         arg := argv[i]
         if arg == "--manifest" {
+            opts["manifest"] := option_value(argv, i, arg)
             i = i + 1
-            opts["manifest"] := argv[i]
         } else if arg == "--out" {
+            opts["out"] := option_value(argv, i, arg)
             i = i + 1
-            opts["out"] := argv[i]
         } else if arg == "--format" {
+            opts["format"] := option_value(argv, i, arg)
             i = i + 1
-            opts["format"] := argv[i]
         } else if arg == "--platform" {
+            opts["platform"] := option_value(argv, i, arg)
             i = i + 1
-            opts["platform"] := argv[i]
         } else if arg == "--max-code-lines" {
+            opts["max_code_lines"] := parse_positive_int(option_value(argv, i, arg), arg)
             i = i + 1
-            opts["max_code_lines"] := parse_int(argv[i])
         } else if arg == "--max-output-lines" {
+            opts["max_output_lines"] := parse_positive_int(option_value(argv, i, arg), arg)
             i = i + 1
-            opts["max_output_lines"] := parse_int(argv[i])
         } else if arg == "--force" {
             opts["force"] := true
+        } else if starts_with(arg, "--") {
+            die("unknown option \"" + arg + "\"")
         } else {
             positionals = push(positionals, arg)
         }
@@ -59,6 +61,48 @@ func parse_opts(argv) {
     }
     opts["positionals"] := positionals
     return opts
+}
+
+func valid_render_format(format) {
+    return format == "all" || format == "svg" || format == "html" || format == "markdown"
+}
+
+func validate_opts(opts) {
+    if valid_render_format(opts["format"]) == false {
+        die("--format must be one of: all, svg, html, markdown")
+    }
+    platform := opts["platform"]
+    if platform != "" && platform != "x" {
+        die("--platform must be x")
+    }
+    if is_safe_output_dir(opts["out"]) == false {
+        die("--out must be a safe directory path (not blank, root, '.', '..', traversal, or ambiguous segments)")
+    }
+}
+
+func option_value(argv, i, flag) {
+    if i + 1 >= len(argv) {
+        die(flag + " requires a value")
+    }
+    value := argv[i + 1]
+    if starts_with(value, "--") {
+        die(flag + " requires a value")
+    }
+    return value
+}
+
+func parse_positive_int(value, flag) {
+    mut parsed := 0
+    mut threw := false
+    try {
+        parsed = parse_int(value)
+    } except e {
+        threw = true
+    }
+    if threw || parsed < 1 {
+        die(flag + " must be a positive integer")
+    }
+    return parsed
 }
 
 func limits_from_opts(opts) {
@@ -370,6 +414,7 @@ export func main(argv) {
     }
     cmd := argv[0]
     opts := parse_opts(argv)
+    validate_opts(opts)
     if cmd == "init" {
         return cmd_init(opts)
     }

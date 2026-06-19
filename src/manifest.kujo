@@ -57,11 +57,20 @@ export func manifest_cards(data) {
 # problem is collected so a user can fix a manifest in one pass.
 export func validate_manifest(data, base_dir) {
     mut problems := []
+    if type(data) != "dict" {
+        problems = push(problems, "manifest must be a JSON object")
+        return problems
+    }
+    problems = manifest_metadata_problems(problems, data)
     if has_key(data, "cards") == 0 {
         problems = push(problems, "manifest has no \"cards\" array")
         return problems
     }
     cards := data["cards"]
+    if type(cards) != "array" {
+        problems = push(problems, "manifest \"cards\" must be an array")
+        return problems
+    }
     n := len(cards)
     if n == 0 {
         problems = push(problems, "manifest \"cards\" array is empty")
@@ -91,40 +100,118 @@ export func validate_manifest(data, base_dir) {
     return problems
 }
 
+func manifest_metadata_problems(problems, data) {
+    mut out := problems
+    if has_key(data, "project") == 1 {
+        project := data["project"]
+        if type(project) != "dict" {
+            out = push(out, "manifest \"project\" must be an object")
+        } else {
+            out = optional_string_problem(out, project, "project", "name")
+            out = optional_string_problem(out, project, "project", "tagline")
+            out = optional_string_problem(out, project, "project", "url")
+        }
+    }
+    if has_key(data, "theme") == 1 {
+        theme := data["theme"]
+        if type(theme) != "dict" {
+            out = push(out, "manifest \"theme\" must be an object")
+        } else {
+            out = optional_string_problem(out, theme, "theme", "name")
+            out = optional_string_problem(out, theme, "theme", "mode")
+        }
+    }
+    return out
+}
+
+func optional_string_problem(problems, card, where, key) {
+    mut out := problems
+    if has_key(card, key) == 1 {
+        v := card[key]
+        if type(v) != "null" && type(v) != "string" {
+            out = push(out, where + ": \"" + key + "\" must be a string")
+        }
+    }
+    return out
+}
+
+func concepts_problem(problems, card, where) {
+    mut out := problems
+    if has_key(card, "concepts") == 1 {
+        concepts := card["concepts"]
+        if type(concepts) == "null" {
+            return out
+        }
+        if type(concepts) != "array" {
+            out = push(out, where + ": \"concepts\" must be an array of strings")
+            return out
+        }
+        mut i := 0
+        while i < len(concepts) {
+            if type(concepts[i]) != "string" {
+                out = push(out, where + ": \"concepts[" + to_string(i) + "]\" must be a string")
+            }
+            i = i + 1
+        }
+    }
+    return out
+}
+
 # Required fields for a single card: id, title, file. Everything else is
 # optional. Duplicate-id detection lives in validate_manifest (it owns the
 # shared `seen` set).
 export func card_problems(card, where, base_dir) {
     mut problems := []
+    if type(card) != "dict" {
+        problems = push(problems, where + ": card must be an object")
+        return problems
+    }
     if has_key(card, "id") == 0 {
         problems = push(problems, where + ": missing required field \"id\"")
     } else {
         id := card["id"]
-        if is_safe_id(id) == false {
+        if type(id) != "string" {
+            problems = push(problems, where + ": \"id\" must be a string")
+        } else if is_safe_id(id) == false {
             problems = push(problems, where + ": id \"" + to_string(id) + "\" is not filesystem-safe (use a-z 0-9 - _)")
         }
     }
     if has_key(card, "title") == 0 {
         problems = push(problems, where + ": missing required field \"title\"")
     } else {
-        if is_blank(card["title"]) {
+        title := card["title"]
+        if type(title) != "string" {
+            problems = push(problems, where + ": \"title\" must be a string")
+        } else if is_blank(title) {
             problems = push(problems, where + ": \"title\" must not be empty")
         }
     }
     if has_key(card, "file") == 0 {
         problems = push(problems, where + ": missing required field \"file\"")
     } else {
-        if is_blank(card["file"]) {
+        file := card["file"]
+        if type(file) != "string" {
+            problems = push(problems, where + ": \"file\" must be a string")
+        } else if is_blank(file) {
             problems = push(problems, where + ": \"file\" must not be empty")
         } else {
-            resolved := resolve_contained_path(base_dir, card["file"])
+            resolved := resolve_contained_path(base_dir, file)
             if resolved["ok"] == false {
-                problems = push(problems, where + ": referenced file escapes manifest directory: " + card["file"])
+                problems = push(problems, where + ": referenced file escapes manifest directory: " + file)
             } else if file_exists(resolved["path"]) == false {
-                problems = push(problems, where + ": referenced file not found: " + card["file"])
+                problems = push(problems, where + ": referenced file not found: " + file)
             }
         }
     }
+    problems = optional_string_problem(problems, card, where, "tagline")
+    problems = optional_string_problem(problems, card, where, "language")
+    problems = optional_string_problem(problems, card, where, "expected_output")
+    problems = optional_string_problem(problems, card, where, "caption")
+    problems = optional_string_problem(problems, card, where, "cta")
+    problems = optional_string_problem(problems, card, where, "notes")
+    problems = optional_string_problem(problems, card, where, "url")
+    problems = optional_string_problem(problems, card, where, "variant")
+    problems = concepts_problem(problems, card, where)
     return problems
 }
 

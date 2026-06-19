@@ -51,6 +51,63 @@ func is_absolute_path(path) {
     return len(path) > 0 && char_at(path, 0) == "/"
 }
 
+func has_segment(path, target) {
+    if type(path) == "null" {
+        return false
+    }
+    parts := split(path, "/")
+    mut i := 0
+    while i < len(parts) {
+        if parts[i] == target {
+            return true
+        }
+        i = i + 1
+    }
+    return false
+}
+
+func has_ambiguous_empty_segment(path) {
+    if type(path) == "null" {
+        return false
+    }
+    parts := split(path, "/")
+    n := len(parts)
+    mut i := 0
+    while i < n {
+        part := parts[i]
+        if part == "" {
+            allowed_edge := (i == 0 && is_absolute_path(path)) || i == n - 1
+            if allowed_edge == false {
+                return true
+            }
+        }
+        i = i + 1
+    }
+    return false
+}
+
+export func is_safe_output_dir(path) {
+    if type(path) == "null" {
+        return false
+    }
+    if trim(path) == "" {
+        return false
+    }
+    if path == "." || path == ".." || path == "/" {
+        return false
+    }
+    if has_segment(path, "..") {
+        return false
+    }
+    if has_segment(path, ".") {
+        return false
+    }
+    if has_ambiguous_empty_segment(path) {
+        return false
+    }
+    return true
+}
+
 func path_parts(path) {
     mut parts := []
     if type(path) == "null" || path == "" {

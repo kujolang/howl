@@ -14,7 +14,7 @@
 #
 # Run with: kujo run tests/howl_test.kujo -- <project_dir>
 
-from src.util import escape_html, is_safe_id, take_lines, split_lines, is_blank
+from src.util import escape_html, is_safe_id, take_lines, split_lines, is_blank, is_safe_output_dir
 from src.manifest import validate_manifest, build_cards, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
@@ -98,6 +98,15 @@ func test_id_safety() {
     check("unsafe id upper", is_safe_id("Abc") == false)
 }
 
+func test_output_dir_safety() {
+    check("safe output dir default", is_safe_output_dir("dist/howl"))
+    check("safe output dir absolute", is_safe_output_dir("/tmp/howl"))
+    check("unsafe output dir blank", is_safe_output_dir("") == false)
+    check("unsafe output dir root", is_safe_output_dir("/") == false)
+    check("unsafe output dir traversal", is_safe_output_dir("../howl") == false)
+    check("unsafe output dir ambiguous", is_safe_output_dir("dist//howl") == false)
+}
+
 # ---- line shaping ------------------------------------------------------
 
 func test_line_shaping() {
@@ -114,6 +123,10 @@ func test_line_shaping() {
 func test_validation(base) {
     check("valid manifest has no problems", len(validate_manifest(wrap_manifest([card_ok()]), base)) == 0)
 
+    check("manifest object required", len(validate_manifest(["bad"], base)) == 1)
+
+    check("cards array required", len(validate_manifest({"cards": "bad"}, base)) == 1)
+
     mut bad := {}
     bad["cards"] := [{"id": "x"}]
     check("missing title+file reported", len(validate_manifest(bad, base)) == 2)
@@ -129,6 +142,11 @@ func test_validation(base) {
     check("duplicate id reported", len(validate_manifest(wrap_manifest([card_ok(), card_ok()]), base)) == 1)
 
     check("no cards array reported", len(validate_manifest({"project": project_ok()}, base)) == 1)
+
+    mut badtype := card_ok()
+    badtype["title"] := 42
+    badtype["concepts"] := ["ok", 9]
+    check("field types reported", len(validate_manifest(wrap_manifest([badtype]), base)) == 2)
 }
 
 # ---- path containment -------------------------------------------------
@@ -206,6 +224,15 @@ func test_markdown(base) {
     check("md has kujo fence", has_sub(md, "```kujo"))
     check("md has expected output", has_sub(md, "Expected output"))
     check("md has concepts", has_sub(md, "clear intent"))
+
+    evil := render_markdown(evil_card(base), project_ok())
+    check("md escapes title", has_sub(evil, "&lt;x&gt; &amp; &quot;y&quot;"))
+    check("md no raw title tag", has_sub(evil, "<x>") == false)
+
+    mut fenced := built_card(base)
+    fenced["code"] := "before\n```\nafter"
+    fenced_md := render_markdown(fenced, project_ok())
+    check("md switches fence marker", has_sub(fenced_md, "~~~kujo"))
 }
 
 # ---- html + escaping ---------------------------------------------------
@@ -261,6 +288,7 @@ func run_all(base) {
     setup(base)
     test_escaping()
     test_id_safety()
+    test_output_dir_safety()
     test_line_shaping()
     test_validation(base)
     test_path_containment(base)

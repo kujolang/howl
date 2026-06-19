@@ -49,6 +49,34 @@ check_output() {
     return 0
 }
 
+check_failure() {
+    local label="$1"
+    local expected="$2"
+    shift 2
+
+    local actual
+    set +e
+    actual="$("$@" 2>&1)"
+    local command_status=$?
+    set -e
+
+    if [ "$command_status" -eq 0 ]; then
+        echo "  FAIL: $label exited 0"
+        printf '%s\n' "$actual"
+        return 1
+    fi
+
+    if [ "$actual" != "$expected" ]; then
+        echo "  FAIL: $label output changed"
+        printf '%s\n' "$expected" > "$TMP_DIR/expected"
+        printf '%s\n' "$actual" > "$TMP_DIR/actual"
+        diff -u "$TMP_DIR/expected" "$TMP_DIR/actual" || true
+        return 1
+    fi
+
+    return 0
+}
+
 run_cli_contracts() {
     local cli_status=0
 
@@ -87,6 +115,11 @@ print(greet("agent"))
 --- expected output ---
 Ready, agent'
     check_output "show exact output" "$expected_show" "$PROJECT_DIR/bin/howl" show clear-intent || cli_status=1
+
+    check_failure "missing option value" 'howl: --format requires a value' "$PROJECT_DIR/bin/howl" render --format || cli_status=1
+    check_failure "invalid render format" 'howl: --format must be one of: all, svg, html, markdown' "$PROJECT_DIR/bin/howl" render --format png || cli_status=1
+    check_failure "invalid positive integer" 'howl: --max-code-lines must be a positive integer' "$PROJECT_DIR/bin/howl" show clear-intent --max-code-lines 0 || cli_status=1
+    check_failure "unsafe output dir" "howl: --out must be a safe directory path (not blank, root, '.', '..', traversal, or ambiguous segments)" "$PROJECT_DIR/bin/howl" render --out ../outside || cli_status=1
 
     return "$cli_status"
 }
