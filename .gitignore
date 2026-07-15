@@ -2,3 +2,4 @@
 dist/
 tmp_test_*/
 .DS_Store
+.loop-engineering/
