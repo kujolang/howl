@@ -90,11 +90,10 @@ Generated/bulk paths:
 ## Commands
 
 ```bash
-export KUJO=kujo
 ./bin/howl <command>        # run the CLI
 ./tests/run.sh              # run tests (writes/cleans tmp_test_* under root)
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
-  "$KUJO" check "$f" || exit 1
+  kujo check "$f" || exit 1
 done                        # lint
 ```
 
@@ -102,7 +101,7 @@ done                        # lint
 
 ```
 howl.kujo              entrypoint: main(args()) -> exit(code)
-bin/howl               bash launcher (respects $KUJO, preserves cwd)
+bin/howl               bash launcher (uses `kujo` by default, preserves cwd)
 kujo.toml              package manifest (name/version)
 src/
   util.kujo            escaping, ids, line-shaping, errors (pure, no I/O)
@@ -160,9 +159,8 @@ These shaped the code — see `docs/session-notes.md` and the shared memory
 ## Verification checklist
 
 ```bash
-export KUJO=kujo
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
-  "$KUJO" check "$f" || exit 1
+  kujo check "$f" || exit 1
 done                                                   # clean
 ./tests/run.sh                                          # passed=70 failed=0
 T=$(mktemp -d) && cd "$T" && \

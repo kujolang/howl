@@ -99,20 +99,17 @@ Howl runs on the Kujo interpreter, so you need a `kujo` binary.
 git clone <this-repo> howl
 cd howl
 
-# Run via the bundled launcher. Use the installed `kujo` command.
-# is not already on your PATH:
-KUJO=kujo ./bin/howl help
+# Run via the bundled launcher:
+./bin/howl help
 
 # …or invoke the entrypoint directly:
 kujo run howl.kujo -- help
 ```
 
-To use `howl` from anywhere, symlink the launcher onto your `PATH` and export
-`KUJO` in your shell profile:
+To use `howl` from anywhere, symlink the launcher onto your `PATH`:
 
 ```bash
 ln -s "$PWD/bin/howl" /usr/local/bin/howl
-echo 'export KUJO=kujo' >> ~/.zshrc
 ```
 
 > The launcher preserves your working directory, so `howl` always resolves
@@ -287,7 +284,6 @@ from what's committed:
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-export KUJO=kujo
 
 howl validate                       # fail the build on a broken manifest
 howl render --out dist/howl         # regenerate artifacts
@@ -317,7 +313,7 @@ git diff --exit-code dist/howl
 
 ```
 howl.kujo              entrypoint: main(args()) -> exit(code)
-bin/howl               bash launcher (respects $KUJO, preserves cwd)
+bin/howl               bash launcher (uses `kujo` by default, preserves cwd)
 src/
   util.kujo            escaping, ids, line-shaping, errors (pure, no I/O)
   manifest.kujo        load + validate + build the card data model
@@ -362,7 +358,7 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-KUJO=kujo ./tests/run.sh      # 70 assertions
+./tests/run.sh      # 70 assertions
 
 # Lint every module:
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
