@@ -24,10 +24,10 @@ Howl is a sibling of [RunLedger](/path/to/runledger) and
 [ChangeBudget](/path/to/changebucket) — same structure: a thin
 `*.kujo` entrypoint, `src/*.kujo` modules, a `bin/` bash launcher, and a
 `tests/run.sh` + `tests/*_test.kujo` harness. The **kujo repo at
-`/path/to/kujo` is reference-only** — do not modify Kujo core
+`kujo` is reference-only** — do not modify Kujo core
 to build Howl.
 
-The Kujo interpreter is at `/path/to/kujo/target/release/kujo`.
+The Kujo interpreter is at `kujo`.
 Set `KUJO` to it for every command below.
 
 ## Kujo dialect used here (important)
@@ -90,7 +90,7 @@ Generated/bulk paths:
 ## Commands
 
 ```bash
-export KUJO=/path/to/kujo/target/release/kujo
+export KUJO=kujo
 ./bin/howl <command>        # run the CLI
 ./tests/run.sh              # run tests (writes/cleans tmp_test_* under root)
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
@@ -160,7 +160,7 @@ These shaped the code — see `docs/session-notes.md` and the shared memory
 ## Verification checklist
 
 ```bash
-export KUJO=/path/to/kujo/target/release/kujo
+export KUJO=kujo
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
   "$KUJO" check "$f" || exit 1
 done                                                   # clean

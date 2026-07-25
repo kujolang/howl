@@ -99,9 +99,9 @@ Howl runs on the Kujo interpreter, so you need a `kujo` binary.
 git clone <this-repo> howl
 cd howl
 
-# Run via the bundled launcher. Point KUJO at your interpreter if `kujo`
+# Run via the bundled launcher. Use the installed `kujo` command.
 # is not already on your PATH:
-KUJO=/path/to/kujo/target/release/kujo ./bin/howl help
+KUJO=kujo ./bin/howl help
 
 # …or invoke the entrypoint directly:
 kujo run howl.kujo -- help
@@ -112,7 +112,7 @@ To use `howl` from anywhere, symlink the launcher onto your `PATH` and export
 
 ```bash
 ln -s "$PWD/bin/howl" /usr/local/bin/howl
-echo 'export KUJO=/path/to/kujo/target/release/kujo' >> ~/.zshrc
+echo 'export KUJO=kujo' >> ~/.zshrc
 ```
 
 > The launcher preserves your working directory, so `howl` always resolves
@@ -287,7 +287,7 @@ from what's committed:
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-export KUJO=/path/to/kujo
+export KUJO=kujo
 
 howl validate                       # fail the build on a broken manifest
 howl render --out dist/howl         # regenerate artifacts
@@ -362,11 +362,11 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-KUJO=/path/to/kujo/target/release/kujo ./tests/run.sh      # 70 assertions
+KUJO=kujo ./tests/run.sh      # 70 assertions
 
 # Lint every module:
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
-  /path/to/kujo/target/release/kujo check "$f" || exit 1
+  kujo check "$f" || exit 1
 done
 ```
 

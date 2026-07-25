@@ -84,7 +84,7 @@ demonstrations of Kujo's small-module style. Run the full verification checklist
 after either change:
 
 ```bash
-export KUJO=/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo
+export KUJO=kujo
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
   "$KUJO" check "$f" || exit 1
 done
