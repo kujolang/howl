@@ -65,9 +65,9 @@ repo, describe them once in a manifest, and regenerate every artifact with one
 command. Because rendering is deterministic and claim-free, what ships is
 exactly what your code does — nothing invented, nothing stale.
 
-## Production readiness
+## Readiness
 
-Howl is production-ready for its intended scope: an offline, deterministic CLI
+Howl is release-ready for its intended local scope: an offline, deterministic CLI
 that turns trusted project examples and manifest metadata into reviewable,
 committable showcase artifacts. It is suitable for local workflows, CI gates,
 release prep, documentation pipelines, and language-marketing repositories that

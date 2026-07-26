@@ -1,0 +1,34 @@
+{
+  "name": "howl-launch-readiness",
+  "version": "0.1.0",
+  "tests": [
+    {
+      "name": "Howl help succeeds",
+      "check": "command_succeeds",
+      "params": {
+        "command": "cd /Users/robertdevore/2026/Kujolang/kujo-repos/howl && howl help"
+      }
+    },
+    {
+      "name": "Howl version succeeds",
+      "check": "command_succeeds",
+      "params": {
+        "command": "cd /Users/robertdevore/2026/Kujolang/kujo-repos/howl && howl version"
+      }
+    },
+    {
+      "name": "Howl validate succeeds",
+      "check": "command_succeeds",
+      "params": {
+        "command": "cd /Users/robertdevore/2026/Kujolang/kujo-repos/howl && howl validate"
+      }
+    },
+    {
+      "name": "Howl test suite succeeds",
+      "check": "command_succeeds",
+      "params": {
+        "command": "cd /Users/robertdevore/2026/Kujolang/kujo-repos/howl && ./tests/run.sh"
+      }
+    }
+  ]
+}
