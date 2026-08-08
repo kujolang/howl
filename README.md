@@ -1,6 +1,6 @@
 # Howl
 
-[![Version](https://img.shields.io/badge/version-1.0.0-black)](https://github.com/kujolang/howl)
+[![Version](https://img.shields.io/badge/version-1.1.0-black)](https://github.com/kujolang/howl)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
 
@@ -21,10 +21,10 @@ imitate.
 
 | | |
 | --- | --- |
-| **Status** | v1.0.0 — stable |
+| **Status** | v1.1.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 70 assertions, filesystem-isolated, `./tests/run.sh` |
+| **Tests** | 78 assertions, filesystem-isolated, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -201,7 +201,8 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 **Required card fields:** `id`, `title`, `file`.
 
 **Optional card fields:** `tagline`, `language`, `concepts`, `expected_output`,
-`caption`, `cta`, `notes`, `url`, `variant`.
+`caption`, `cta`, `notes`, `url`, `variant`, `label`, `background_image`,
+`font_file`.
 
 **Validation rules:**
 
@@ -210,13 +211,39 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 - Required fields must be strings; `title` must not be empty.
 - Optional string fields must be strings when present; `concepts` must be an
   array of strings when present.
-- The referenced `file` must exist and stay within the manifest directory tree.
+- The referenced `file`, `background_image`, and `font_file` paths must exist
+  and stay within the manifest directory tree.
 - Missing optional fields never fail rendering.
 - Invalid manifests produce a clear, itemized list of every problem at once.
 
 Manifest `file` paths are resolved relative to the manifest's own directory and
 cannot escape that directory tree, so a manifest is portable as long as its
 examples travel with it.
+
+### Branded social cards
+
+Set `variant` to `social` to render a 1200×630 SVG intended for link-preview
+images. The page, tool, or post `title` is rendered in the supplied local mono
+font over the supplied local background image. Both assets are embedded as data
+URLs, so the generated SVG remains self-contained and offline-safe.
+
+```json
+{
+  "id": "shipcheck",
+  "title": "ShipCheck",
+  "tagline": "Release readiness, made explicit.",
+  "file": "examples/social-card.txt",
+  "variant": "social",
+  "label": "ecosystem tool",
+  "url": "kujolang.ai/ecosystem/shipcheck/",
+  "background_image": "assets/images/shipcheck.webp",
+  "font_file": "assets/fonts/DepartureMono-Regular.woff2"
+}
+```
+
+Howl emits SVG by design. If a social network requires PNG or JPEG, rasterize
+the generated 1200×630 SVG with the image tooling already used by your site or
+publishing pipeline.
 
 ## Example file handling
 
@@ -260,7 +287,7 @@ Kujo: programming language for AI-native software.
 | --- | --- |
 | `<id>.md` | Portable Markdown for READMEs, blogs, and discussions. |
 | `<id>.html` | Standalone page with embedded CSS and no remote assets. |
-| `<id>.svg` | 1600×900 social card, system fonts only, no external assets. |
+| `<id>.svg` | 1600×900 showcase card, or 1200×630 for `variant: "social"`; no external assets. |
 | `index.html` | Static gallery linking every card's three artifacts. |
 
 Every artifact is self-contained, works with no network access, and has all
@@ -320,7 +347,7 @@ src/
   caption.kujo         deterministic captions (+ X.com bounded variant)
   render_md.kujo       Markdown renderer
   render_html.kujo     standalone HTML renderer (embedded CSS)
-  render_svg.kujo      1600x900 SVG renderer (manual text wrap/clip)
+  render_svg.kujo      1600x900 showcase + 1200x630 social SVG renderer
   gallery.kujo         static index.html
   cli.kujo             argv parsing, command dispatch, file output
 tests/                 filesystem-isolated test harness + runner
@@ -348,17 +375,17 @@ every artifact is plain text you can read and diff.
 
 ## Limitations
 
-- The SVG layout is fixed-size; text is wrapped and clipped to fit (it is not a
+- SVG layouts are fixed-size; text is wrapped and clipped to fit (it is not a
   full text-layout engine).
-- Theming is intentionally minimal — one light theme. The `theme` and per-card
-  `variant` fields are parsed but not yet wired to styling.
+- Theming is intentionally minimal — one light showcase theme plus the
+  background-backed `social` variant.
 - Howl renders `.kujo` files as text; it does not run or type-check them.
 
 ## Development
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-./tests/run.sh      # 70 assertions
+./tests/run.sh      # 78 assertions
 
 # Lint every module:
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do

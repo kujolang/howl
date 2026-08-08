@@ -1,6 +1,6 @@
 name: "Howl launch readiness review"
 goal: "Keep Howl locally release-ready as a Kujo-native deterministic showcase artifact renderer for trusted example manifests."
-version: "1.0.0"
+version: "1.1.0"
 background: "Howl is part of the Kujo prelaunch supporting-tooling matrix. The verified scope is offline manifest validation and deterministic Markdown/HTML/SVG/gallery rendering from trusted examples."
 scope: "Repository-local CLI behavior, launcher compatibility, manifest validation, deterministic rendering, output escaping, docs/readiness wording, and launch evidence capture."
 non_goals:

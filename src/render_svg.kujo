@@ -1,9 +1,8 @@
 # SVG renderer: one .svg file per card.
 #
-# A 1600x900 social-share card. No external assets or fonts (generic family
-# names only), safe-escaped text, and a deterministic layout: text is
-# wrapped/clipped here because SVG <text> does not reflow on its own. Minimal
-# black/white technical aesthetic with a single accent rule.
+# Deterministic, safe-escaped SVG layouts: the default 1600x900 showcase card
+# and a 1200x630 background-backed social variant. Optional local image/font
+# assets are embedded as data URLs, so outputs remain self-contained.
 #
 # Built by single-string accumulation with a literal <style> block to keep
 # total allocations low (see docs/session-notes.md).
@@ -120,6 +119,69 @@ func cta_text(card, project) {
     return ""
 }
 
+func social_font_face(card) {
+    if is_blank(card["font_data"]) {
+        return ""
+    }
+    return "@font-face{font-family:'HowlMono';src:url('" + card["font_data"] + "') format('woff2');font-weight:400;font-style:normal;font-display:block}"
+}
+
+func social_label(card) {
+    if is_blank(card["label"]) == false {
+        return to_upper(card["label"])
+    }
+    return "KUJO"
+}
+
+func social_url(card, project) {
+    if is_blank(card["url"]) == false {
+        return card["url"]
+    }
+    if type(project) != "null" && has_key(project, "url") == 1 {
+        return project["url"]
+    }
+    return ""
+}
+
+func social_title_size(title) {
+    if len(title) > 24 {
+        return 58
+    }
+    if len(title) > 15 {
+        return 68
+    }
+    return 82
+}
+
+func render_social_svg(card, project) {
+    mut out := "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"630\" viewBox=\"0 0 1200 630\">\n"
+    out = out + "<defs><linearGradient id=\"wash\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".98\"/><stop offset=\".52\" stop-color=\"#fff\" stop-opacity=\".88\"/><stop offset=\".82\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"/></linearGradient><filter id=\"grain\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".82\" numOctaves=\"2\" seed=\"17\"/><feColorMatrix type=\"saturate\" values=\"0\"/><feComponentTransfer><feFuncA type=\"table\" tableValues=\"0 .055\"/></feComponentTransfer></filter></defs>\n"
+    out = out + "<style>" + social_font_face(card) + ".mono{font-family:'HowlMono','Departure Mono',monospace;font-weight:400}.label{font-size:18px;letter-spacing:4px;fill:#111}.social-title{font-size:" + to_string(social_title_size(card["title"])) + "px;fill:#050505;letter-spacing:-2px}.social-tag{font-size:24px;fill:#282828}.social-url{font-size:17px;letter-spacing:1px;fill:#111}</style>\n"
+    if is_blank(card["background_data"]) == false {
+        out = out + "<image href=\"" + card["background_data"] + "\" x=\"0\" y=\"0\" width=\"1200\" height=\"630\" preserveAspectRatio=\"xMidYMid slice\"/>\n"
+    } else {
+        out = out + "<rect width=\"1200\" height=\"630\" fill=\"#f4f4f1\"/>\n"
+    }
+    out = out + "<rect width=\"1200\" height=\"630\" fill=\"url(#wash)\"/>\n"
+    out = out + "<rect width=\"1200\" height=\"630\" filter=\"url(#grain)\" opacity=\".7\"/>\n"
+    out = out + "<rect x=\"42\" y=\"42\" width=\"1116\" height=\"546\" fill=\"none\" stroke=\"#111\" stroke-width=\"1\"/>\n"
+    out = out + text_el(78, 98, "mono label", "KUJOLANG.AI  //  " + social_label(card))
+
+    title_lines := wrap_words(card["title"], 20, 3)
+    out = emit_lines(out, title_lines, 76, 232, social_title_size(card["title"]) + 10, "mono social-title")
+    mut y := 232 + len(title_lines) * (social_title_size(card["title"]) + 10)
+    if is_blank(card["tagline"]) == false {
+        tag_lines := wrap_words(card["tagline"], 47, 2)
+        out = emit_lines(out, tag_lines, 78, y + 18, 34, "mono social-tag")
+    }
+    url := social_url(card, project)
+    if is_blank(url) == false {
+        out = out + text_el(78, 548, "mono social-url", url)
+    }
+    out = out + "<rect x=\"78\" y=\"570\" width=\"84\" height=\"4\" fill=\"#111\"/>\n"
+    return out + "</svg>\n"
+}
+
 # Append the code lines (clipped/capped) as <text> elements onto `acc`.
 func emit_code(acc, code, max_lines, max_cols, x, start_y, line_h) {
     raw := split(replace(code, "\r\n", "\n"), "\n")
@@ -143,6 +205,9 @@ func emit_code(acc, code, max_lines, max_cols, x, start_y, line_h) {
 }
 
 export func render_svg(card, project) {
+    if card["variant"] == "social" {
+        return render_social_svg(card, project)
+    }
     mut out := "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1600\" height=\"900\" viewBox=\"0 0 1600 900\">\n"
     out = out + "<style>" + svg_styles() + "</style>\n"
     out = out + "<rect width=\"1600\" height=\"900\" fill=\"#ffffff\"/>\n"

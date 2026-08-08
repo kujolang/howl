@@ -13,8 +13,8 @@ full product description and non-goals.
 
 ## Current status
 
-v1.0.0, complete and working. All commands implemented (`init validate list
-show caption render help version`). Tests pass (70 assertions). All `.kujo`
+v1.1.0, complete and working. All commands implemented (`init validate list
+show caption render help version`). Tests pass (78 assertions). All `.kujo`
 files pass `kujo check`. End-to-end render verified, including HTML/SVG
 escaping of hostile input.
 
@@ -109,7 +109,7 @@ src/
   caption.kujo         deterministic captions (+ X.com bounded variant)
   render_md.kujo       Markdown renderer
   render_html.kujo     standalone HTML renderer (embedded CSS)
-  render_svg.kujo      1600x900 SVG renderer (manual text wrap/clip)
+  render_svg.kujo      1600x900 showcase + 1200x630 social SVG renderer
   gallery.kujo         static index.html
   cli.kujo             argv/opts parsing + command dispatch + file output
 tests/

@@ -157,6 +157,28 @@ func concepts_problem(problems, card, where) {
     return out
 }
 
+func optional_file_problem(problems, card, where, key, base_dir) {
+    mut out := problems
+    if has_key(card, key) == 0 {
+        return out
+    }
+    value := card[key]
+    if type(value) != "string" {
+        return push(out, where + ": \"" + key + "\" must be a string")
+    }
+    if is_blank(value) {
+        return out
+    }
+    resolved := resolve_contained_path(base_dir, value)
+    if resolved["ok"] == false {
+        return push(out, where + ": referenced " + key + " escapes manifest directory: " + value)
+    }
+    if file_exists(resolved["path"]) == false {
+        return push(out, where + ": referenced " + key + " not found: " + value)
+    }
+    return out
+}
+
 # Required fields for a single card: id, title, file. Everything else is
 # optional. Duplicate-id detection lives in validate_manifest (it owns the
 # shared `seen` set).
@@ -211,6 +233,9 @@ export func card_problems(card, where, base_dir) {
     problems = optional_string_problem(problems, card, where, "notes")
     problems = optional_string_problem(problems, card, where, "url")
     problems = optional_string_problem(problems, card, where, "variant")
+    problems = optional_string_problem(problems, card, where, "label")
+    problems = optional_file_problem(problems, card, where, "background_image", base_dir)
+    problems = optional_file_problem(problems, card, where, "font_file", base_dir)
     problems = concepts_problem(problems, card, where)
     return problems
 }
@@ -257,6 +282,45 @@ func default_language(raw) {
         return "kujo"
     }
     return v
+}
+
+func asset_mime(path) {
+    lower := to_lower(path)
+    if ends_with(lower, ".webp") {
+        return "image/webp"
+    }
+    if ends_with(lower, ".png") {
+        return "image/png"
+    }
+    if ends_with(lower, ".jpg") || ends_with(lower, ".jpeg") {
+        return "image/jpeg"
+    }
+    if ends_with(lower, ".svg") {
+        return "image/svg+xml"
+    }
+    if ends_with(lower, ".woff2") {
+        return "font/woff2"
+    }
+    if ends_with(lower, ".woff") {
+        return "font/woff"
+    }
+    return "application/octet-stream"
+}
+
+func embedded_asset(raw, key, base_dir) {
+    rel := opt_str(raw, key)
+    if is_blank(rel) {
+        return ""
+    }
+    full := resolve_file(base_dir, rel)
+    if is_blank(full) || file_exists(full) == false {
+        return ""
+    }
+    bytes := read_binary_file(full)
+    if type(bytes) == "Error" {
+        return ""
+    }
+    return "data:" + asset_mime(rel) + ";base64," + encode_base64(bytes)
 }
 
 # Truncate code by lines first, then characters; return both the shown text and
@@ -313,6 +377,11 @@ export func build_card(raw, base_dir, limits) {
     card["notes"] := opt_str(raw, "notes")
     card["url"] := opt_str(raw, "url")
     card["variant"] := opt_str(raw, "variant")
+    card["label"] := opt_str(raw, "label")
+    card["background_image"] := opt_str(raw, "background_image")
+    card["background_data"] := embedded_asset(raw, "background_image", base_dir)
+    card["font_file"] := opt_str(raw, "font_file")
+    card["font_data"] := embedded_asset(raw, "font_file", base_dir)
     card["code"] := ct["shown"]
     card["code_truncated"] := ct["truncated"]
     card["code_total_lines"] := ct["total"]

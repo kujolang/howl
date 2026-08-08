@@ -147,6 +147,14 @@ func test_validation(base) {
     badtype["title"] := 42
     badtype["concepts"] := ["ok", 9]
     check("field types reported", len(validate_manifest(wrap_manifest([badtype]), base)) == 2)
+
+    mut missing_asset := card_ok()
+    missing_asset["background_image"] := "assets/missing.webp"
+    check("missing background image reported", len(validate_manifest(wrap_manifest([missing_asset]), base)) == 1)
+
+    mut escaping_font := card_ok()
+    escaping_font["font_file"] := "../font.woff2"
+    check("escaping font rejected", len(validate_manifest(wrap_manifest([escaping_font]), base)) == 1)
 }
 
 # ---- path containment -------------------------------------------------
@@ -259,6 +267,21 @@ func test_svg(base) {
     check("svg escapes title", has_sub(svg, "&lt;x&gt;"))
     check("svg no raw tag", has_sub(svg, "<x>") == false)
     check("svg no external href", has_sub(svg, "xlink:href") == false)
+
+    mut social_raw := card_ok()
+    social_raw["variant"] := "social"
+    social_raw["label"] := "ecosystem tool"
+    social_raw["url"] := "kujolang.ai/ecosystem/example/"
+    social_raw["background_image"] := "assets/background.svg"
+    social_raw["font_file"] := "assets/mono.woff2"
+    social := build_cards(wrap_manifest([social_raw]), base, default_limits())[0]
+    social_svg := render_svg(social, project_ok())
+    check("social svg is 1200x630", has_sub(social_svg, "viewBox=\"0 0 1200 630\""))
+    check("social svg embeds background", has_sub(social_svg, "data:image/svg+xml;base64,"))
+    check("social svg embeds font", has_sub(social_svg, "data:font/woff2;base64,"))
+    check("social svg uses mono title", has_sub(social_svg, "class=\"mono social-title\""))
+    check("social svg includes label", has_sub(social_svg, "ECOSYSTEM TOOL"))
+    check("social svg includes url", has_sub(social_svg, "kujolang.ai/ecosystem/example/"))
 }
 
 # ---- gallery -----------------------------------------------------------
@@ -277,7 +300,10 @@ func test_gallery(base) {
 func setup(base) {
     create_dir(base)
     create_dir(base + "/examples")
+    create_dir(base + "/assets")
     put(base + "/examples/ex.kujo", "func main() {\n    print(\"hi\")\n}\n")
+    put(base + "/assets/background.svg", "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><rect width=\"10\" height=\"10\"/></svg>")
+    put(base + "/assets/mono.woff2", "fixture-font")
 }
 
 # The whole sequence runs inside one func. Driving the renderers from
