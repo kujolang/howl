@@ -10,7 +10,7 @@
 # cumulative-allocation ceiling, so low-noise output is also a correctness
 # requirement (see docs/session-notes.md).
 
-from src.util import escape_html, is_blank
+from src.util import escape_html, is_blank, is_safe_link_url
 from src.caption import build_caption
 
 # Minimal black/white technical aesthetic with one restrained accent. System
@@ -62,13 +62,16 @@ export func render_html(card, project) {
     if is_blank(card["expected_output"]) == false {
         out = out + "<p class=\"label\">Expected output</p>\n"
         out = out + "<pre class=\"out\"><code>" + escape_html(card["expected_output"]) + "</code></pre>\n"
+        if card["expected_truncated"] == true {
+            out = out + "<p class=\"trunc\">Expected output truncated for display.</p>\n"
+        }
     }
     out = out + concept_chips(card["concepts"]) + "\n"
     if is_blank(card["notes"]) == false {
         out = out + "<p class=\"note\">" + escape_html(card["notes"]) + "</p>\n"
     }
     out = out + "<div class=\"caption\">" + escape_html(build_caption(card, project)) + "</div>\n"
-    if is_blank(card["url"]) == false {
+    if is_blank(card["url"]) == false && is_safe_link_url(card["url"]) {
         u := escape_html(card["url"])
         out = out + "<footer><a href=\"" + u + "\">" + u + "</a></footer>\n"
     }

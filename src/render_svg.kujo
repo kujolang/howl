@@ -46,9 +46,13 @@ func wrap_words(text, max_chars, max_lines) {
     mut i := 0
     while i < n {
         w := words[i]
-        mut candidate := w
+        mut fitted := w
+        if len(fitted) > max_chars {
+            fitted = clip(fitted, max_chars)
+        }
+        mut candidate := fitted
         if current != "" {
-            candidate = current + " " + w
+            candidate = current + " " + fitted
         }
         if len(candidate) <= max_chars {
             current = candidate
@@ -56,7 +60,7 @@ func wrap_words(text, max_chars, max_lines) {
             if current != "" {
                 lines = push(lines, current)
             }
-            current = w
+            current = fitted
         }
         i = i + 1
     }
@@ -131,12 +135,46 @@ func social_font_face(card) {
     if is_blank(card["font_data"]) {
         return ""
     }
-    return "@font-face{font-family:'HowlMono';src:url('" + card["font_data"] + "') format('woff2');font-weight:400;font-style:normal;font-display:block}"
+    mut format := "woff2"
+    if ends_with(to_lower(card["font_file"]), ".woff") {
+        format = "woff"
+    }
+    return "@font-face{font-family:'HowlMono';src:url('" + card["font_data"] + "') format('" + format + "');font-weight:400;font-style:normal;font-display:block}"
 }
 
 func social_label(card) {
     if is_blank(card["label"]) == false {
         return to_upper(card["label"])
+    }
+    return "KUJO"
+}
+
+func social_brand(project) {
+    if type(project) == "null" {
+        return "KUJO"
+    }
+    if has_key(project, "url") == 1 {
+        raw_url := project["url"]
+        if is_blank(raw_url) == false {
+            url := trim(raw_url)
+            mut host := replace(url, "https://", "")
+            host = replace(host, "http://", "")
+            if starts_with(host, "www.") {
+                host = substring(host, 4, len(host))
+            }
+            slash := index_of(host, "/")
+            if slash >= 0 {
+                host = substring(host, 0, slash)
+            }
+            if is_blank(host) == false {
+                return to_upper(host)
+            }
+        }
+    }
+    if has_key(project, "name") == 1 {
+        if is_blank(project["name"]) == false {
+            return to_upper(project["name"])
+        }
     }
     return "KUJO"
 }
@@ -189,7 +227,7 @@ func render_social_svg(card, project) {
     if card["show_border"] {
         out = out + "<rect x=\"42\" y=\"42\" width=\"1116\" height=\"546\" fill=\"none\" stroke=\"#111\" stroke-width=\"1\"/>\n"
     }
-    out = out + text_el(78, 98, "mono label", "KUJOLANG.AI  //  " + social_label(card))
+    out = out + text_el(78, 98, "mono label", social_brand(project) + "  //  " + social_label(card))
 
     title_lines := wrap_words(card["title"], 20, 3)
     out = emit_lines(out, title_lines, 76, 232, social_title_size(card["title"]) + 10, "mono social-title")

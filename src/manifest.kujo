@@ -5,7 +5,7 @@
 # manifest plus the example file's text, already truncated to card-sized
 # limits. Renderers consume these dicts and never touch the filesystem.
 
-from src.util import die, is_blank, is_safe_id, split_lines, take_lines, resolve_contained_path
+from src.util import die, is_blank, is_safe_id, is_safe_link_url, split_lines, take_lines, resolve_contained_path
 
 # ---- defaults ----------------------------------------------------------
 
@@ -146,6 +146,30 @@ func optional_bool_problem(problems, card, where, key) {
     return out
 }
 
+func variant_problem(problems, card, where) {
+    mut out := problems
+    if has_key(card, "variant") == 0 {
+        return out
+    }
+    variant := card["variant"]
+    if type(variant) == "string" && is_blank(variant) == false && variant != "social" {
+        out = push(out, where + ": \"variant\" must be \"social\" when present")
+    }
+    return out
+}
+
+func url_problem(problems, card, where) {
+    mut out := problems
+    if has_key(card, "url") == 0 {
+        return out
+    }
+    url := card["url"]
+    if type(url) == "string" && is_blank(url) == false && is_safe_link_url(url) == false {
+        out = push(out, where + ": \"url\" must not use javascript:, vbscript:, or data: schemes")
+    }
+    return out
+}
+
 func concepts_problem(problems, card, where) {
     mut out := problems
     if has_key(card, "concepts") == 1 {
@@ -249,6 +273,8 @@ export func card_problems(card, where, base_dir) {
     problems = optional_bool_problem(problems, card, where, "show_border")
     problems = optional_bool_problem(problems, card, where, "show_url")
     problems = optional_bool_problem(problems, card, where, "transparent")
+    problems = variant_problem(problems, card, where)
+    problems = url_problem(problems, card, where)
     problems = optional_file_problem(problems, card, where, "background_image", base_dir)
     problems = optional_file_problem(problems, card, where, "font_file", base_dir)
     problems = concepts_problem(problems, card, where)

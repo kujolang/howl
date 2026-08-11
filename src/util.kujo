@@ -290,6 +290,30 @@ export func escape_html(s) {
     return out
 }
 
+# Reject active-content URL schemes before card URLs become clickable HTML.
+# Browsers ignore ASCII whitespace/control characters inside schemes, so strip
+# those characters before comparing instead of checking the raw prefix only.
+export func is_safe_link_url(url) {
+    if type(url) == "null" {
+        return false
+    }
+    mut normalized := to_lower(trim(url))
+    normalized = replace(normalized, " ", "")
+    normalized = replace(normalized, "\t", "")
+    normalized = replace(normalized, "\r", "")
+    normalized = replace(normalized, "\n", "")
+    if starts_with(normalized, "javascript:") {
+        return false
+    }
+    if starts_with(normalized, "vbscript:") {
+        return false
+    }
+    if starts_with(normalized, "data:") {
+        return false
+    }
+    return true
+}
+
 # ---- text shaping ------------------------------------------------------
 
 export func split_lines(s) {

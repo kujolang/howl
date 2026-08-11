@@ -14,7 +14,7 @@
 #
 # Run with: kujo run tests/howl_test.kujo -- <project_dir>
 
-from src.util import escape_html, is_safe_id, take_lines, split_lines, is_blank, is_safe_output_dir
+from src.util import escape_html, is_safe_id, is_safe_link_url, take_lines, split_lines, is_blank, is_safe_output_dir
 from src.manifest import validate_manifest, build_cards, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
@@ -86,6 +86,10 @@ func test_escaping() {
     check("escape ampersand first", escape_html("a & <b>") == "a &amp; &lt;b&gt;")
     check("escape quotes", escape_html("\"x\" 'y'") == "&quot;x&quot; &#39;y&#39;")
     check("escape null -> empty", escape_html(null) == "")
+    check("safe https link", is_safe_link_url("https://example.com/path"))
+    check("safe relative link", is_safe_link_url("example.com/path"))
+    check("unsafe javascript link", is_safe_link_url("java\nscript:alert(1)") == false)
+    check("unsafe data link", is_safe_link_url(" data:text/html,bad") == false)
 }
 
 # ---- id safety ---------------------------------------------------------
@@ -158,6 +162,14 @@ func test_validation(base) {
     mut escaping_font := card_ok()
     escaping_font["font_file"] := "../font.woff2"
     check("escaping font rejected", len(validate_manifest(wrap_manifest([escaping_font]), base)) == 1)
+
+    mut bad_variant := card_ok()
+    bad_variant["variant"] := "socail"
+    check("unknown variant rejected", len(validate_manifest(wrap_manifest([bad_variant]), base)) == 1)
+
+    mut unsafe_url := card_ok()
+    unsafe_url["url"] := "javascript:alert(1)"
+    check("unsafe card URL rejected", len(validate_manifest(wrap_manifest([unsafe_url]), base)) == 1)
 }
 
 # ---- path containment -------------------------------------------------
@@ -184,7 +196,7 @@ func test_path_containment(base) {
     md := render_markdown(hostile, project_ok())
     html := render_html(hostile, project_ok())
     svg := render_svg(hostile, project_ok())
-    gal := render_gallery([hostile], project_ok())
+    gal := render_gallery([hostile], project_ok(), "all")
     check("markdown omits outside content", has_sub(md, "phase10-placeholder-token") == false)
     check("html omits outside content", has_sub(html, "phase10-placeholder-token") == false)
     check("svg omits outside content", has_sub(svg, "phase10-placeholder-token") == false)
@@ -204,6 +216,13 @@ func test_card_model(base) {
     check("code shown lines capped", card["code_shown_lines"] == 2)
     check("transparent defaults off", card["transparent"] == false)
     check("alt defaults empty", card["alt"] == "")
+
+    mut output_tight := default_limits()
+    output_tight["max_output_lines"] := 1
+    mut long_output := card_ok()
+    long_output["expected_output"] := "first\nsecond"
+    output_card := build_cards(wrap_manifest([long_output]), base, output_tight)[0]
+    check("expected output truncation tracked", output_card["expected_truncated"] == true)
 
     check("find_card hit", type(find_card(cards, "ex")) != "null")
     check("find_card miss", type(find_card(cards, "nope")) == "null")
@@ -243,9 +262,14 @@ func test_markdown(base) {
     check("md no raw title tag", has_sub(evil, "<x>") == false)
 
     mut fenced := built_card(base)
-    fenced["code"] := "before\n```\nafter"
+    fenced["code"] := "before\n````\n~~~\nafter"
     fenced_md := render_markdown(fenced, project_ok())
-    check("md switches fence marker", has_sub(fenced_md, "~~~kujo"))
+    check("md fence exceeds longest body run", has_sub(fenced_md, "`````kujo"))
+
+    mut truncated := built_card(base)
+    truncated["expected_truncated"] := true
+    truncated_md := render_markdown(truncated, project_ok())
+    check("md reports truncated expected output", has_sub(truncated_md, "Expected output truncated for display"))
 }
 
 # ---- html + escaping ---------------------------------------------------
@@ -262,6 +286,14 @@ func test_html(base) {
     check("html no raw tag", has_sub(html, "<x>") == false)
     check("html standalone doctype", has_sub(html, "<!DOCTYPE html>"))
     check("html no remote http", has_sub(html, "http://") == false && has_sub(html, "https://") == false)
+
+    mut unsafe := built_card(base)
+    unsafe["url"] := "java\nscript:alert(1)"
+    check("html omits unsafe URL", has_sub(render_html(unsafe, project_ok()), "href=") == false)
+
+    mut truncated := built_card(base)
+    truncated["expected_truncated"] := true
+    check("html reports truncated expected output", has_sub(render_html(truncated, project_ok()), "Expected output truncated for display"))
 }
 
 # ---- svg + escaping ----------------------------------------------------
@@ -279,6 +311,13 @@ func test_svg(base) {
     long_social := build_cards(wrap_manifest([long_raw]), base, default_limits())[0]
     check("long social title truncates honestly", has_sub(render_svg(long_social, project_ok()), "…"))
 
+    mut unbroken_raw := card_ok()
+    unbroken_raw["variant"] := "social"
+    unbroken_raw["title"] := "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    unbroken := build_cards(wrap_manifest([unbroken_raw]), base, default_limits())[0]
+    unbroken_svg := render_svg(unbroken, project_ok())
+    check("unbroken social title is clipped", has_sub(unbroken_svg, unbroken_raw["title"]) == false && has_sub(unbroken_svg, "…"))
+
     mut social_raw := card_ok()
     social_raw["variant"] := "social"
     social_raw["label"] := "ecosystem tool"
@@ -292,6 +331,7 @@ func test_svg(base) {
     check("social svg embeds font", has_sub(social_svg, "data:font/woff2;base64,"))
     check("social svg uses mono title", has_sub(social_svg, "class=\"mono social-title\""))
     check("social svg includes label", has_sub(social_svg, "ECOSYSTEM TOOL"))
+    check("social svg derives project brand", has_sub(social_svg, "KUJO  //  ECOSYSTEM TOOL") && has_sub(social_svg, "KUJOLANG.AI") == false)
     check("social svg includes url", has_sub(social_svg, "kujolang.ai/ecosystem/example/"))
     check("social svg includes border by default", has_sub(social_svg, "x=\"42\" y=\"42\" width=\"1116\" height=\"546\""))
 
@@ -305,17 +345,25 @@ func test_svg(base) {
     check("social svg can be transparent", has_sub(clean_svg, "fill=\"url(#wash)\"") == false && has_sub(clean_svg, "data:image/svg+xml;base64,") == false)
     check("social svg exposes alt metadata", has_sub(clean_svg, "role=\"img\"") && has_sub(clean_svg, "Accessible &lt;preview&gt; &amp; context"))
     check("social svg labels title and description", has_sub(clean_svg, "aria-labelledby=\"howl-title-ex howl-desc-ex\""))
+
+    mut woff_raw := social_raw
+    woff_raw["font_file"] := "assets/mono.woff"
+    woff := build_cards(wrap_manifest([woff_raw]), base, default_limits())[0]
+    woff_svg := render_svg(woff, project_ok())
+    check("social svg declares WOFF format", has_sub(woff_svg, "data:font/woff;base64,") && has_sub(woff_svg, "format('woff')"))
 }
 
 # ---- gallery -----------------------------------------------------------
 
 func test_gallery(base) {
     cards := build_cards(wrap_manifest([card_ok()]), base, default_limits())
-    gal := render_gallery(cards, project_ok())
+    gal := render_gallery(cards, project_ok(), "all")
     check("gallery links html", has_sub(gal, "ex.html"))
     check("gallery links svg", has_sub(gal, "ex.svg"))
     check("gallery links md", has_sub(gal, "ex.md"))
     check("gallery shows title", has_sub(gal, "Example card"))
+    html_only := render_gallery(cards, project_ok(), "html")
+    check("html-only gallery omits missing formats", has_sub(html_only, "ex.html") && has_sub(html_only, "ex.svg") == false && has_sub(html_only, "ex.md") == false)
 }
 
 # ---- run ---------------------------------------------------------------
@@ -327,6 +375,7 @@ func setup(base) {
     put(base + "/examples/ex.kujo", "func main() {\n    print(\"hi\")\n}\n")
     put(base + "/assets/background.svg", "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><rect width=\"10\" height=\"10\"/></svg>")
     put(base + "/assets/mono.woff2", "fixture-font")
+    put(base + "/assets/mono.woff", "fixture-font")
 }
 
 # The whole sequence runs inside one func. Driving the renderers from

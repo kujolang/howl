@@ -8,14 +8,40 @@
 from src.util import is_blank, comma_list, escape_html, truthy
 from src.caption import build_caption
 
+func repeat_char(char, count) {
+    mut out := ""
+    mut i := 0
+    while i < count {
+        out = out + char
+        i = i + 1
+    }
+    return out
+}
+
+func longest_run(s, target) {
+    mut longest := 0
+    mut current := 0
+    mut i := 0
+    while i < len(s) {
+        if char_at(s, i) == target {
+            current = current + 1
+            if current > longest {
+                longest = current
+            }
+        } else {
+            current = 0
+        }
+        i = i + 1
+    }
+    return longest
+}
+
 func fence_marker(body) {
-    if truthy(contains(body, "```")) == false {
+    run := longest_run(body, "`")
+    if run < 3 {
         return "```"
     }
-    if truthy(contains(body, "~~~")) == false {
-        return "~~~"
-    }
-    return "````"
+    return repeat_char("`", run + 1)
 }
 
 func fence_language(language) {
@@ -47,6 +73,9 @@ export func render_markdown(card, project) {
     }
     if is_blank(card["expected_output"]) == false {
         out = out + "\n**Expected output:**\n\n" + fence("text", card["expected_output"]) + "\n"
+        if card["expected_truncated"] == true {
+            out = out + "\n> Expected output truncated for display.\n"
+        }
     }
     concepts := card["concepts"]
     if len(concepts) > 0 {

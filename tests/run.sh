@@ -15,6 +15,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 KUJO="${KUJO:-kujo}"
 export KUJO
 TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/howl-cli-contract.XXXXXX")"
+TMP_DIR="$(cd "$TMP_DIR" && pwd -P)"
 
 cleanup() {
     rm -rf "$TMP_DIR"
@@ -120,6 +121,14 @@ Ready, agent'
     check_failure "invalid render format" 'howl: --format must be one of: all, svg, html, markdown' "$PROJECT_DIR/bin/howl" render --format png || cli_status=1
     check_failure "invalid positive integer" 'howl: --max-code-lines must be a positive integer' "$PROJECT_DIR/bin/howl" show clear-intent --max-code-lines 0 || cli_status=1
     check_failure "unsafe output dir" "howl: --out must be a safe directory path (not blank, root, '.', '..', traversal, or ambiguous segments)" "$PROJECT_DIR/bin/howl" render --out ../outside || cli_status=1
+
+    local html_out="$TMP_DIR/render-html"
+    check_output "html render counts gallery" "rendered 3 card(s) -> $html_out/ (4 files)" "$PROJECT_DIR/bin/howl" render --out "$html_out" --format html || cli_status=1
+
+    local init_root="$TMP_DIR/init-custom"
+    mkdir -p "$init_root"
+    check_output "custom manifest init" 'created 2 file(s); next: howl render' bash -c 'cd "$1" && "$2" init --manifest config/howl.json' _ "$init_root" "$PROJECT_DIR/bin/howl" || cli_status=1
+    check_output "custom manifest validates" 'ok: config/howl.json is valid (1 card(s))' bash -c 'cd "$1" && "$2" validate --manifest config/howl.json' _ "$init_root" "$PROJECT_DIR/bin/howl" || cli_status=1
 
     return "$cli_status"
 }

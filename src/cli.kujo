@@ -277,6 +277,9 @@ func cmd_show(opts) {
     if is_blank(card["expected_output"]) == false {
         print_section("expected output")
         print(card["expected_output"])
+        if card["expected_truncated"] == true {
+            print("... (truncated)")
+        }
     }
     return 0
 }
@@ -326,7 +329,8 @@ func cmd_render(opts) {
         i = i + 1
     }
     if wants(format, "html") {
-        write_out(join_path(out, "index.html"), render_gallery(cards, project))
+        write_out(join_path(out, "index.html"), render_gallery(cards, project, format))
+        written = written + 1
     }
     print("rendered " + to_string(n) + " card(s) -> " + ensure_trailing_slash(out) + " (" + to_string(written) + " files)")
     return 0
@@ -347,10 +351,18 @@ func first_positional(opts, cmd) {
 func cmd_init(opts) {
     force := truthy(opts["force"])
     manifest_path := opts["manifest"]
+    manifest_dir := dir_of(manifest_path)
     mut made := 0
 
-    ensure_dir("examples")
-    example_path := "examples/clear-intent.kujo"
+    if is_blank(manifest_dir) == false {
+        ensure_dir(manifest_dir)
+    }
+    mut examples_dir := "examples"
+    if is_blank(manifest_dir) == false {
+        examples_dir = join_path(manifest_dir, "examples")
+    }
+    ensure_dir(examples_dir)
+    example_path := join_path(examples_dir, "clear-intent.kujo")
     if file_exists(example_path) && force == false {
         print("skip (exists): " + example_path)
     } else {
