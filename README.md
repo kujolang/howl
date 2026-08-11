@@ -24,7 +24,7 @@ imitate.
 | **Status** | v1.1.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 87 assertions plus deterministic release regression, `./tests/run.sh` |
+| **Tests** | 101 assertions plus deterministic release regression, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -393,7 +393,7 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-./tests/run.sh      # 87 assertions
+./tests/run.sh      # 101 assertions
 
 # Verify golden snapshots, escaping, fuzz cases, contrast, and no-op rebuilds:
 python3 tests/release_regression.py

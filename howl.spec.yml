@@ -24,7 +24,7 @@ likely_files:
   - "tests/howl_eval.json"
 acceptance_criteria:
   - "`kujo check` passes for Howl source and tests."
-  - "`./tests/run.sh` passes the full 87-assertion suite."
+  - "`./tests/run.sh` passes the full 101-assertion suite."
   - "`tests/release_regression.py` passes snapshots, fuzzing, no-op, layout, escaping, contrast, corpus, benchmark, and JPEG checks."
   - "`howl help`, `howl version`, `howl validate`, `howl list`, and `howl render` work locally."
   - "Eval suite proves help/version/validate/render and test harness behavior."

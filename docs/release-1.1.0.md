@@ -11,6 +11,9 @@ offline, inspectable renderer contract.
 - Add escaped SVG title/description metadata when a card supplies `alt`.
 - Preserve file mtimes when a rebuild produces byte-identical output.
 - Detect long-title overflow without the former array/string VM failure.
+- Reject unknown variants and active-content URL schemes before rendering.
+- Keep galleries, render counts, Markdown fences, truncation notices, font
+  declarations, and social branding faithful to the requested output.
 
 ## Release qualification
 
