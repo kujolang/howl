@@ -136,12 +136,18 @@ func last_slash(s) {
 
 # ---- output helpers ----------------------------------------------------
 
-# Plain write_file refuses to overwrite on the VM, so delete first.
+# Preserve identical outputs so a no-op rebuild does not invalidate mtimes or
+# downstream caches. Plain write_file refuses to overwrite changed files on the
+# VM, so changed outputs still use delete-then-write.
 func write_out(path, content) {
     if file_exists(path) {
+        if read_file(path) == content {
+            return false
+        }
         delete_file(path)
     }
     write_file(path, content)
+    return true
 }
 
 func ensure_dir(path) {

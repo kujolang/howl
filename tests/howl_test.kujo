@@ -147,7 +147,9 @@ func test_validation(base) {
     badtype["title"] := 42
     badtype["concepts"] := ["ok", 9]
     badtype["show_border"] := "no"
-    check("field types reported", len(validate_manifest(wrap_manifest([badtype]), base)) == 3)
+    badtype["transparent"] := "yes"
+    badtype["alt"] := 9
+    check("field types reported", len(validate_manifest(wrap_manifest([badtype]), base)) == 5)
 
     mut missing_asset := card_ok()
     missing_asset["background_image"] := "assets/missing.webp"
@@ -200,6 +202,8 @@ func test_card_model(base) {
     check("card reads code", has_sub(card["code"], "print"))
     check("code truncated flag", card["code_truncated"] == true)
     check("code shown lines capped", card["code_shown_lines"] == 2)
+    check("transparent defaults off", card["transparent"] == false)
+    check("alt defaults empty", card["alt"] == "")
 
     check("find_card hit", type(find_card(cards, "ex")) != "null")
     check("find_card miss", type(find_card(cards, "nope")) == "null")
@@ -269,6 +273,12 @@ func test_svg(base) {
     check("svg no raw tag", has_sub(svg, "<x>") == false)
     check("svg no external href", has_sub(svg, "xlink:href") == false)
 
+    mut long_raw := card_ok()
+    long_raw["variant"] := "social"
+    long_raw["title"] := "An intentionally very long title demonstrates deterministic wrapping without escaping the social card canvas"
+    long_social := build_cards(wrap_manifest([long_raw]), base, default_limits())[0]
+    check("long social title truncates honestly", has_sub(render_svg(long_social, project_ok()), "…"))
+
     mut social_raw := card_ok()
     social_raw["variant"] := "social"
     social_raw["label"] := "ecosystem tool"
@@ -287,9 +297,14 @@ func test_svg(base) {
 
     social["show_border"] := false
     social["show_url"] := false
+    social["transparent"] := true
+    social["alt"] := "Accessible <preview> & context"
     clean_svg := render_svg(social, project_ok())
     check("social svg can hide border", has_sub(clean_svg, "x=\"42\" y=\"42\" width=\"1116\" height=\"546\"") == false)
     check("social svg can hide url", has_sub(clean_svg, "kujolang.ai/ecosystem/example/") == false)
+    check("social svg can be transparent", has_sub(clean_svg, "fill=\"url(#wash)\"") == false && has_sub(clean_svg, "data:image/svg+xml;base64,") == false)
+    check("social svg exposes alt metadata", has_sub(clean_svg, "role=\"img\"") && has_sub(clean_svg, "Accessible &lt;preview&gt; &amp; context"))
+    check("social svg labels title and description", has_sub(clean_svg, "aria-labelledby=\"howl-title-ex howl-desc-ex\""))
 }
 
 # ---- gallery -----------------------------------------------------------

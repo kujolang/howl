@@ -23,8 +23,16 @@ func cap_lines(lines, max_lines) {
     if n <= max_lines {
         return lines
     }
-    out := slice(lines, 0, max_lines)
-    out[max_lines - 1] := out[max_lines - 1] + " …"
+    mut out := []
+    mut i := 0
+    while i < max_lines {
+        mut line := lines[i]
+        if i == max_lines - 1 {
+            line = line + " …"
+        }
+        out = push(out, line)
+        i = i + 1
+    }
     return out
 }
 
@@ -153,17 +161,31 @@ func social_title_size(title) {
     return 82
 }
 
+func svg_open(width, height, card) {
+    mut out := "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + to_string(width) + "\" height=\"" + to_string(height) + "\" viewBox=\"0 0 " + to_string(width) + " " + to_string(height) + "\""
+    if is_blank(card["alt"]) {
+        return out + ">\n"
+    }
+    title_id := "howl-title-" + card["id"]
+    desc_id := "howl-desc-" + card["id"]
+    out = out + " role=\"img\" aria-labelledby=\"" + title_id + " " + desc_id + "\">\n"
+    out = out + "<title id=\"" + title_id + "\">" + escape_html(card["title"]) + "</title>\n"
+    return out + "<desc id=\"" + desc_id + "\">" + escape_html(card["alt"]) + "</desc>\n"
+}
+
 func render_social_svg(card, project) {
-    mut out := "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"630\" viewBox=\"0 0 1200 630\">\n"
+    mut out := svg_open(1200, 630, card)
     out = out + "<defs><linearGradient id=\"wash\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".98\"/><stop offset=\".52\" stop-color=\"#fff\" stop-opacity=\".88\"/><stop offset=\".82\" stop-color=\"#fff\" stop-opacity=\".18\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"/></linearGradient><filter id=\"grain\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".82\" numOctaves=\"2\" seed=\"17\"/><feColorMatrix type=\"saturate\" values=\"0\"/><feComponentTransfer><feFuncA type=\"table\" tableValues=\"0 .055\"/></feComponentTransfer></filter></defs>\n"
     out = out + "<style>" + social_font_face(card) + ".mono{font-family:'HowlMono','Departure Mono',monospace;font-weight:400}.label{font-size:18px;letter-spacing:4px;fill:#111}.social-title{font-size:" + to_string(social_title_size(card["title"])) + "px;fill:#050505;letter-spacing:-2px}.social-tag{font-size:24px;fill:#282828}.social-url{font-size:17px;letter-spacing:1px;fill:#111}</style>\n"
-    if is_blank(card["background_data"]) == false {
-        out = out + "<image href=\"" + card["background_data"] + "\" x=\"0\" y=\"0\" width=\"1200\" height=\"630\" preserveAspectRatio=\"xMidYMid slice\"/>\n"
-    } else {
-        out = out + "<rect width=\"1200\" height=\"630\" fill=\"#f4f4f1\"/>\n"
+    if card["transparent"] == false {
+        if is_blank(card["background_data"]) == false {
+            out = out + "<image href=\"" + card["background_data"] + "\" x=\"0\" y=\"0\" width=\"1200\" height=\"630\" preserveAspectRatio=\"xMidYMid slice\"/>\n"
+        } else {
+            out = out + "<rect width=\"1200\" height=\"630\" fill=\"#f4f4f1\"/>\n"
+        }
+        out = out + "<rect width=\"1200\" height=\"630\" fill=\"url(#wash)\"/>\n"
+        out = out + "<rect width=\"1200\" height=\"630\" filter=\"url(#grain)\" opacity=\".7\"/>\n"
     }
-    out = out + "<rect width=\"1200\" height=\"630\" fill=\"url(#wash)\"/>\n"
-    out = out + "<rect width=\"1200\" height=\"630\" filter=\"url(#grain)\" opacity=\".7\"/>\n"
     if card["show_border"] {
         out = out + "<rect x=\"42\" y=\"42\" width=\"1116\" height=\"546\" fill=\"none\" stroke=\"#111\" stroke-width=\"1\"/>\n"
     }
@@ -212,7 +234,7 @@ export func render_svg(card, project) {
     if card["variant"] == "social" {
         return render_social_svg(card, project)
     }
-    mut out := "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1600\" height=\"900\" viewBox=\"0 0 1600 900\">\n"
+    mut out := svg_open(1600, 900, card)
     out = out + "<style>" + svg_styles() + "</style>\n"
     out = out + "<rect width=\"1600\" height=\"900\" fill=\"#ffffff\"/>\n"
     out = out + "<rect x=\"0\" y=\"0\" width=\"1600\" height=\"10\" fill=\"#2563eb\"/>\n"
