@@ -24,7 +24,7 @@ imitate.
 | **Status** | v1.1.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 81 assertions, filesystem-isolated, `./tests/run.sh` |
+| **Tests** | 87 assertions plus deterministic release regression, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -202,7 +202,7 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 
 **Optional card fields:** `tagline`, `language`, `concepts`, `expected_output`,
 `caption`, `cta`, `notes`, `url`, `variant`, `label`, `background_image`,
-`font_file`, `show_border`, `show_url`.
+`font_file`, `alt`, `show_border`, `show_url`, `transparent`.
 
 **Validation rules:**
 
@@ -237,13 +237,17 @@ URLs, so the generated SVG remains self-contained and offline-safe.
   "label": "ecosystem tool",
   "url": "kujolang.ai/ecosystem/shipcheck/",
   "background_image": "assets/images/shipcheck.webp",
-  "font_file": "assets/fonts/DepartureMono-Regular.woff2"
+  "font_file": "assets/fonts/DepartureMono-Regular.woff2",
+  "alt": "ShipCheck social preview: Release readiness, made explicit."
 }
 ```
 
 Social cards show the thin inset border and destination URL by default. Set
 `show_border` or `show_url` to `false` per card when the publishing surface
-already supplies enough framing or overlays the destination URL itself.
+already supplies enough framing or overlays the destination URL itself. Set
+`transparent` to `true` for an overlay-only SVG with no embedded background,
+fallback fill, wash, or grain. When `alt` is present, the SVG includes escaped
+`title`/`desc` metadata and an accessible `role="img"` label relationship.
 
 Howl emits SVG by design. If a social network requires PNG or JPEG, rasterize
 the generated 1200×630 SVG with the image tooling already used by your site or
@@ -389,7 +393,10 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-./tests/run.sh      # 81 assertions
+./tests/run.sh      # 87 assertions
+
+# Verify golden snapshots, escaping, fuzz cases, contrast, and no-op rebuilds:
+python3 tests/release_regression.py
 
 # Lint every module:
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
