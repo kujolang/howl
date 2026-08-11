@@ -1,0 +1,56 @@
+{
+  "project": {
+    "name": "Howl & Friends",
+    "tagline": "Deterministic <artifacts> for every surface",
+    "url": "https://example.test/"
+  },
+  "theme": {
+    "name": "minimal",
+    "mode": "light"
+  },
+  "cards": [
+    {
+      "id": "escaping-unicode",
+      "title": "Escaping <works> & Unicode 🐺",
+      "tagline": "Quotes: \"double\" and 'single'",
+      "file": "example.txt",
+      "language": "text",
+      "concepts": ["safe <markup>", "Zażółć", "日本語"],
+      "expected_output": "<ok> & complete",
+      "caption": "No raw <script> reaches markup.",
+      "cta": "Inspect & verify."
+    },
+    {
+      "id": "long-social",
+      "title": "An intentionally very long title demonstrates deterministic wrapping without escaping the social card canvas",
+      "tagline": "A long tagline also wraps predictably while preserving readable contrast.",
+      "file": "example.txt",
+      "variant": "social",
+      "label": "release fixture",
+      "url": "https://example.test/long/",
+      "background_image": "background.svg",
+      "font_file": "font.woff2",
+      "alt": "A social preview proving long-title wrapping, local assets, and accessible SVG metadata."
+    },
+    {
+      "id": "transparent-frameless",
+      "title": "Transparent overlay",
+      "tagline": "No background, frame, or destination URL.",
+      "file": "example.txt",
+      "variant": "social",
+      "url": "https://example.test/hidden/",
+      "show_border": false,
+      "show_url": false,
+      "transparent": true,
+      "alt": "A transparent, frameless social overlay with the URL hidden."
+    },
+    {
+      "id": "fallback-social",
+      "title": "Fallbacks stay local",
+      "file": "example.txt",
+      "variant": "social",
+      "show_url": false,
+      "alt": "A social preview using the deterministic background and system font fallbacks."
+    }
+  ]
+}

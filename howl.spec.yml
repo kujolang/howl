@@ -1,11 +1,9 @@
-name: "Howl launch readiness review"
-goal: "Keep Howl locally release-ready as a Kujo-native deterministic showcase artifact renderer for trusted example manifests."
+name: "Howl 1.1.0 release readiness"
+goal: "Qualify Howl 1.1.0 as a deterministic showcase artifact renderer against real downstream sites and pathological manifests."
 version: "1.1.0"
-background: "Howl is part of the Kujo prelaunch supporting-tooling matrix. The verified scope is offline manifest validation and deterministic Markdown/HTML/SVG/gallery rendering from trusted examples."
-scope: "Repository-local CLI behavior, launcher compatibility, manifest validation, deterministic rendering, output escaping, docs/readiness wording, and launch evidence capture."
+background: "Howl 1.1.0 adds social-card rendering, optional transparent and accessible overlays, cache-friendly no-op rebuilds, and release regression coverage."
+scope: "Repository-local CLI behavior, manifest validation and fuzzing, deterministic Markdown/HTML/SVG/gallery rendering, downstream raster reproducibility, output escaping, accessibility metadata, snapshots, and performance evidence."
 non_goals:
-  - "Publishing packages or public releases"
-  - "Pushing final release tags"
   - "Posting to social media or scheduling content"
   - "Semantic Kujo verification or invented marketing claims"
 relevant_systems:
@@ -14,7 +12,7 @@ relevant_systems:
   - "howl.json"
   - "examples/*.kujo"
   - "dist/howl generated artifacts"
-  - "prelaunch launch evidence packet"
+  - "tests/release_regression.py and tests/golden/"
 likely_files:
   - "README.md"
   - "howl.kujo"
@@ -26,9 +24,11 @@ likely_files:
   - "tests/howl_eval.json"
 acceptance_criteria:
   - "`kujo check` passes for Howl source and tests."
-  - "`./tests/run.sh` passes the full 70-assertion suite."
+  - "`./tests/run.sh` passes the full 87-assertion suite."
+  - "`tests/release_regression.py` passes snapshots, fuzzing, no-op, layout, escaping, contrast, corpus, benchmark, and JPEG checks."
   - "`howl help`, `howl version`, `howl validate`, `howl list`, and `howl render` work locally."
   - "Eval suite proves help/version/validate/render and test harness behavior."
+  - "robertdevore.com, python.robertdevore.com, kujolang.ai, and agents.kujolang.ai reproduce committed Howl artifacts without unreviewed diffs."
   - "Docs keep offline deterministic rendering scope clear and avoid enterprise/platform/posting claims."
 eval_requirements:
   - description: "Howl help succeeds."
@@ -43,12 +43,16 @@ eval_requirements:
     check_type: "command_succeeds"
     params:
       command: "howl validate"
+  - description: "Howl release regression succeeds."
+    check_type: "command_succeeds"
+    params:
+      command: "python3 tests/release_regression.py"
 risks:
   - risk: "Howl renders claims supplied in manifests and examples."
     mitigation: "Keep docs clear that Howl does not invent or verify claims; review manifests before launch use."
     severity: "medium"
   - risk: "Rendered artifacts can drift if generated outputs are committed without regeneration."
-    mitigation: "Run `howl render` and inspect diffs before committing generated artifacts."
+    mitigation: "Run the golden/corpus regression gate and inspect snapshot diffs before accepting an intentional rendering change."
     severity: "medium"
 dependencies:
   - "kujo on PATH or KUJO set"
@@ -57,8 +61,8 @@ review_expectations:
   - "Review manifest text and rendered HTML/SVG/Markdown before publishing showcase material."
   - "Review generated artifacts for escaping-sensitive content after renderer changes."
 human_approval_points:
-  - "Before publishing packages or public releases"
-  - "Before pushing final release tags"
+  - "Before accepting intentional golden or downstream rendering diffs"
+  - "Before publishing or tagging when any downstream validator is failing"
   - "Before posting or scheduling rendered marketing content"
 priority: "high"
 tags:

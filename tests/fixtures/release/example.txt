@@ -1,0 +1,3 @@
+<script>alert("howl")</script>
+Unicode survives: Zażółć gęślą jaźń · 日本語 · 🐺
+Markdown fence pressure: ``` and ~~~
