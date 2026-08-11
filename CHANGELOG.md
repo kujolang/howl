@@ -22,6 +22,7 @@ All notable changes to Howl are documented here.
   validation, collision-proof Markdown fences, and visible truncation notices.
 - Fixed format-aware galleries and render counts, WOFF declarations, unbroken
   social-title clipping, and project-derived social-card branding.
+- Avoided repeating the same project brand and social label in card headers.
 
 ## [1.0.0] - 2026-06-27
 

@@ -14,6 +14,7 @@ offline, inspectable renderer contract.
 - Reject unknown variants and active-content URL schemes before rendering.
 - Keep galleries, render counts, Markdown fences, truncation notices, font
   declarations, and social branding faithful to the requested output.
+- Collapse identical project brands and card labels into one social heading.
 
 ## Release qualification
 

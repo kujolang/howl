@@ -179,6 +179,15 @@ func social_brand(project) {
     return "KUJO"
 }
 
+func social_header(card, project) {
+    brand := social_brand(project)
+    label := social_label(card)
+    if brand == label {
+        return brand
+    }
+    return brand + "  //  " + label
+}
+
 func social_url(card, project) {
     if is_blank(card["url"]) == false {
         return card["url"]
@@ -227,7 +236,7 @@ func render_social_svg(card, project) {
     if card["show_border"] {
         out = out + "<rect x=\"42\" y=\"42\" width=\"1116\" height=\"546\" fill=\"none\" stroke=\"#111\" stroke-width=\"1\"/>\n"
     }
-    out = out + text_el(78, 98, "mono label", social_brand(project) + "  //  " + social_label(card))
+    out = out + text_el(78, 98, "mono label", social_header(card, project))
 
     title_lines := wrap_words(card["title"], 20, 3)
     out = emit_lines(out, title_lines, 76, 232, social_title_size(card["title"]) + 10, "mono social-title")

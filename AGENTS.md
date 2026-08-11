@@ -14,7 +14,7 @@ full product description and non-goals.
 ## Current status
 
 v1.1.0, complete and working. All commands implemented (`init validate list
-show caption render help version`). Tests pass (101 assertions). All `.kujo`
+show caption render help version`). Tests pass (102 assertions). All `.kujo`
 files pass `kujo check`. End-to-end render verified, including HTML/SVG
 escaping of hostile input.
 
