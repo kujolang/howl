@@ -14,7 +14,7 @@ full product description and non-goals.
 ## Current status
 
 v1.1.0, complete and working. All commands implemented (`init validate list
-show caption render help version`). Tests pass (78 assertions). All `.kujo`
+show caption render help version`). Tests pass (81 assertions). All `.kujo`
 files pass `kujo check`. End-to-end render verified, including HTML/SVG
 escaping of hostile input.
 
@@ -162,7 +162,7 @@ These shaped the code — see `docs/session-notes.md` and the shared memory
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
   kujo check "$f" || exit 1
 done                                                   # clean
-./tests/run.sh                                          # passed=70 failed=0
+./tests/run.sh                                          # passed=81 failed=0
 T=$(mktemp -d) && cd "$T" && \
   "$OLDPWD/bin/howl" init && "$OLDPWD/bin/howl" validate && \
   "$OLDPWD/bin/howl" render && ls dist/howl/            # 4 artifact types

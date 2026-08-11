@@ -164,7 +164,9 @@ func render_social_svg(card, project) {
     }
     out = out + "<rect width=\"1200\" height=\"630\" fill=\"url(#wash)\"/>\n"
     out = out + "<rect width=\"1200\" height=\"630\" filter=\"url(#grain)\" opacity=\".7\"/>\n"
-    out = out + "<rect x=\"42\" y=\"42\" width=\"1116\" height=\"546\" fill=\"none\" stroke=\"#111\" stroke-width=\"1\"/>\n"
+    if card["show_border"] {
+        out = out + "<rect x=\"42\" y=\"42\" width=\"1116\" height=\"546\" fill=\"none\" stroke=\"#111\" stroke-width=\"1\"/>\n"
+    }
     out = out + text_el(78, 98, "mono label", "KUJOLANG.AI  //  " + social_label(card))
 
     title_lines := wrap_words(card["title"], 20, 3)
@@ -174,9 +176,11 @@ func render_social_svg(card, project) {
         tag_lines := wrap_words(card["tagline"], 47, 2)
         out = emit_lines(out, tag_lines, 78, y + 18, 34, "mono social-tag")
     }
-    url := social_url(card, project)
-    if is_blank(url) == false {
-        out = out + text_el(78, 548, "mono social-url", url)
+    if card["show_url"] {
+        url := social_url(card, project)
+        if is_blank(url) == false {
+            out = out + text_el(78, 548, "mono social-url", url)
+        }
     }
     out = out + "<rect x=\"78\" y=\"570\" width=\"84\" height=\"4\" fill=\"#111\"/>\n"
     return out + "</svg>\n"

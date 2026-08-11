@@ -146,7 +146,8 @@ func test_validation(base) {
     mut badtype := card_ok()
     badtype["title"] := 42
     badtype["concepts"] := ["ok", 9]
-    check("field types reported", len(validate_manifest(wrap_manifest([badtype]), base)) == 2)
+    badtype["show_border"] := "no"
+    check("field types reported", len(validate_manifest(wrap_manifest([badtype]), base)) == 3)
 
     mut missing_asset := card_ok()
     missing_asset["background_image"] := "assets/missing.webp"
@@ -282,6 +283,13 @@ func test_svg(base) {
     check("social svg uses mono title", has_sub(social_svg, "class=\"mono social-title\""))
     check("social svg includes label", has_sub(social_svg, "ECOSYSTEM TOOL"))
     check("social svg includes url", has_sub(social_svg, "kujolang.ai/ecosystem/example/"))
+    check("social svg includes border by default", has_sub(social_svg, "x=\"42\" y=\"42\" width=\"1116\" height=\"546\""))
+
+    social["show_border"] := false
+    social["show_url"] := false
+    clean_svg := render_svg(social, project_ok())
+    check("social svg can hide border", has_sub(clean_svg, "x=\"42\" y=\"42\" width=\"1116\" height=\"546\"") == false)
+    check("social svg can hide url", has_sub(clean_svg, "kujolang.ai/ecosystem/example/") == false)
 }
 
 # ---- gallery -----------------------------------------------------------

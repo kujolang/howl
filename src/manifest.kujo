@@ -135,6 +135,17 @@ func optional_string_problem(problems, card, where, key) {
     return out
 }
 
+func optional_bool_problem(problems, card, where, key) {
+    mut out := problems
+    if has_key(card, key) == 1 {
+        v := card[key]
+        if type(v) != "null" && type(v) != "bool" {
+            out = push(out, where + ": \"" + key + "\" must be a boolean")
+        }
+    }
+    return out
+}
+
 func concepts_problem(problems, card, where) {
     mut out := problems
     if has_key(card, "concepts") == 1 {
@@ -234,6 +245,8 @@ export func card_problems(card, where, base_dir) {
     problems = optional_string_problem(problems, card, where, "url")
     problems = optional_string_problem(problems, card, where, "variant")
     problems = optional_string_problem(problems, card, where, "label")
+    problems = optional_bool_problem(problems, card, where, "show_border")
+    problems = optional_bool_problem(problems, card, where, "show_url")
     problems = optional_file_problem(problems, card, where, "background_image", base_dir)
     problems = optional_file_problem(problems, card, where, "font_file", base_dir)
     problems = concepts_problem(problems, card, where)
@@ -269,6 +282,17 @@ func opt_list(card, key) {
     v := card[key]
     if type(v) == "null" {
         return []
+    }
+    return v
+}
+
+func opt_bool(card, key, fallback) {
+    if has_key(card, key) == 0 {
+        return fallback
+    }
+    v := card[key]
+    if type(v) == "null" {
+        return fallback
     }
     return v
 }
@@ -378,6 +402,8 @@ export func build_card(raw, base_dir, limits) {
     card["url"] := opt_str(raw, "url")
     card["variant"] := opt_str(raw, "variant")
     card["label"] := opt_str(raw, "label")
+    card["show_border"] := opt_bool(raw, "show_border", true)
+    card["show_url"] := opt_bool(raw, "show_url", true)
     card["background_image"] := opt_str(raw, "background_image")
     card["background_data"] := embedded_asset(raw, "background_image", base_dir)
     card["font_file"] := opt_str(raw, "font_file")

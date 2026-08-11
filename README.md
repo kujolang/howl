@@ -24,7 +24,7 @@ imitate.
 | **Status** | v1.1.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 78 assertions, filesystem-isolated, `./tests/run.sh` |
+| **Tests** | 81 assertions, filesystem-isolated, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -202,7 +202,7 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 
 **Optional card fields:** `tagline`, `language`, `concepts`, `expected_output`,
 `caption`, `cta`, `notes`, `url`, `variant`, `label`, `background_image`,
-`font_file`.
+`font_file`, `show_border`, `show_url`.
 
 **Validation rules:**
 
@@ -240,6 +240,10 @@ URLs, so the generated SVG remains self-contained and offline-safe.
   "font_file": "assets/fonts/DepartureMono-Regular.woff2"
 }
 ```
+
+Social cards show the thin inset border and destination URL by default. Set
+`show_border` or `show_url` to `false` per card when the publishing surface
+already supplies enough framing or overlays the destination URL itself.
 
 Howl emits SVG by design. If a social network requires PNG or JPEG, rasterize
 the generated 1200×630 SVG with the image tooling already used by your site or
@@ -385,7 +389,7 @@ every artifact is plain text you can read and diff.
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-./tests/run.sh      # 78 assertions
+./tests/run.sh      # 81 assertions
 
 # Lint every module:
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
