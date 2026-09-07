@@ -1,0 +1,2 @@
+fixture/golden/no-op/escaping/layout/contrast/fuzz: OK (64 fuzz cases)
+howl: 3 cards, cold 0.400s, no-op 0.566s, peak RSS 15605760 bytes

@@ -1,0 +1,1 @@
+PASS: 10 root artifacts are byte-identical against starting SHA; 17360 bytes.

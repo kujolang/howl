@@ -1,0 +1,12 @@
+{
+  "before": {
+    "status": 0,
+    "stdout": "SHADOWED\n",
+    "stderr": ""
+  },
+  "after": {
+    "status": 0,
+    "stdout": "ok: howl.json is valid (1 card(s))\n",
+    "stderr": ""
+  }
+}

@@ -32,7 +32,7 @@ imitate.
 ## Table of contents
 
 - [Why Howl](#why-howl)
-- [Production readiness](#production-readiness)
+- [Readiness](#readiness)
 - [What Howl does not do](#what-howl-does-not-do)
 - [Install](#install)
 - [Quick start](#quick-start)
@@ -93,7 +93,8 @@ These are deliberate, permanent boundaries:
 
 ## Install
 
-Howl runs on the Kujo interpreter, so you need a `kujo` binary.
+Howl requires Kujo 1.3.1 or newer with `write_file_atomic`, `read_file_beneath`,
+and `read_binary_file_beneath`. Set `KUJO` to the qualified binary.
 
 ```bash
 git clone <this-repo> howl
@@ -208,11 +209,13 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 
 - The manifest must be a JSON object and `cards` must be an array.
 - `id` must be filesystem-safe (`a-z`, `0-9`, `-`, `_`) and unique across cards.
+  `index` is reserved because `index.html` is the gallery.
 - Required fields must be strings; `title` must not be empty.
 - Optional string fields must be strings when present; `concepts` must be an
   array of strings when present.
 - The referenced `file`, `background_image`, and `font_file` paths must exist
-  and stay within the manifest directory tree.
+  and name regular files within the manifest directory tree, including symlink
+  targets. In-tree symlinks remain supported.
 - Missing optional fields never fail rendering.
 - Invalid manifests produce a clear, itemized list of every problem at once.
 
@@ -336,9 +339,19 @@ git diff --exit-code dist/howl
   escaped in Markdown. Example text containing `<script>`, `&`, quotes, or code
   fences cannot break out of the intended artifact structure.
 - **Manifest paths are contained.** Example files stay within the manifest
-  directory tree; `../` traversal is rejected before Howl reads the file.
+  directory tree; traversal and escaping symlink targets are rejected. Reads use
+  descriptor-relative, no-follow access after resolving in-tree symlinks.
 - **Output paths are guarded.** Render output rejects blank, root, current
   directory, traversal, and ambiguous paths before writing.
+- **Writes preserve old files on failure.** Changed artifacts use atomic file
+  replacement; identical files keep their mtimes. Existing artifact symlinks
+  and non-files are rejected. `init` uses atomic no-overwrite creation unless
+  `--force` is supplied. The output directory and its ancestors must be trusted;
+  a render is atomic per file, not a transaction across the whole gallery.
+- **Launcher imports are isolated.** `bin/howl` loads Howl modules from its own
+  repository before restoring the caller's working directory. Prefer the
+  launcher when working in another repository; direct `kujo run` retains the
+  runtime's module search rules.
 - **Options fail clearly.** Missing option values, invalid formats, invalid
   caption platforms, unknown flags, and non-positive line limits stop with
   friendly `howl:` errors.
@@ -365,7 +378,10 @@ examples/              example .kujo files for the starter manifest
 The manifest is parsed and validated into one flat dict per card — metadata plus
 the example's (already-truncated) code. The three renderers are pure functions
 `(card, project) -> string` with no I/O, which keeps them small and trivially
-testable. Only `cli.kujo` touches argv, stdout, and the filesystem.
+testable. `cli.kujo` owns argv, stdout, and artifact writes; `manifest.kujo` owns input
+reads. List/caption commands validate every reference without loading example
+or asset contents; show loads only the selected example. Render processes one
+full card at a time and retains only metadata for the gallery.
 
 ## Kujo ethos
 
@@ -388,8 +404,24 @@ every artifact is plain text you can read and diff.
 - Theming is intentionally minimal — one light showcase theme plus the
   background-backed `social` variant.
 - Howl renders `.kujo` files as text; it does not run or type-check them.
+- Inputs are local project files: each referenced file is limited to 8 MiB,
+  matching the qualified runtime. Metadata and the manifest remain buffered;
+  there is no promise of constant memory for arbitrarily large manifests.
+- Local asset contents are embedded, not decoded or semantically validated.
 
 ## Development
+
+Run the complete offline gate with `KUJO=/path/to/kujo ./tests/verify.sh`.
+CI builds a pinned Kujo commit with locked Cargo inputs and runs that gate.
+To update the runtime pin, verify the replacement locally before editing
+`.github/workflows/verify.yml`. Intentional renderer changes require inspecting
+artifact diffs before updating `tests/golden/` with `--update-golden`.
+
+`python3 tests/benchmark.py` is an opt-in eight-card workload with five samples
+per command. It reports raw times, medians, and stdout bytes; it has no flaky
+wall-clock CI threshold. See [the hardening audit](docs/audits/repository-hardening.md)
+for measured results and compatibility details.
+
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):

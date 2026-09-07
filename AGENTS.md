@@ -14,7 +14,7 @@ full product description and non-goals.
 ## Current status
 
 v1.1.0, complete and working. All commands implemented (`init validate list
-show caption render help version`). Tests pass (102 assertions). All `.kujo`
+show caption render help version`). The unit suite has 102 assertions plus CLI/filesystem and release gates. All `.kujo`
 files pass `kujo check`. End-to-end render verified, including HTML/SVG
 escaping of hostile input.
 
@@ -23,12 +23,11 @@ escaping of hostile input.
 Howl is a sibling of [RunLedger](/path/to/runledger) and
 [ChangeBudget](/path/to/changebucket) — same structure: a thin
 `*.kujo` entrypoint, `src/*.kujo` modules, a `bin/` bash launcher, and a
-`tests/run.sh` + `tests/*_test.kujo` harness. The **kujo repo at
-`kujo` is reference-only** — do not modify Kujo core
+`tests/run.sh` + `tests/*_test.kujo` harness. The **sibling `../kujo` repo is reference-only** — do not modify Kujo core
 to build Howl.
 
-The Kujo interpreter is at `kujo`.
-Set `KUJO` to it for every command below.
+Use Kujo 1.3.1 or newer; a local binary is commonly at
+`../kujo/target/release/kujo`. Set `KUJO` to its absolute path.
 
 ## Kujo dialect used here (important)
 
@@ -51,7 +50,7 @@ This codebase uses the same dialect as the sibling tools, which is **not** the
 
 ## First files to read
 
-1. `src/cli.kujo` — argv parsing, command dispatch, the only I/O module.
+1. `src/cli.kujo` — argv parsing, command dispatch, output writes.
 2. `src/manifest.kujo` — load/validate manifest, build the card data model.
 3. `src/render_svg.kujo` — the trickiest renderer (fixed-layout text wrap).
 4. `tests/howl_test.kujo` — shows the expected behavior of every module.
@@ -91,7 +90,7 @@ Generated/bulk paths:
 
 ```bash
 ./bin/howl <command>        # run the CLI
-./tests/run.sh              # run tests (writes/cleans tmp_test_* under root)
+./tests/verify.sh           # complete offline gate; tests own unique temp dirs
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
   kujo check "$f" || exit 1
 done                        # lint
@@ -124,12 +123,12 @@ docs/session-notes.md  build notes, gotchas, decisions
 `cli.main(argv)` parses the command + options, then:
 
 - **load_model**: `manifest.load_manifest` → `validate_manifest` (fail clearly
-  on problems) → `build_cards`. A *card* is a flat dict with everything a
+  on problems) → command-specific metadata or preview loading. A *card* is a flat dict with everything a
   renderer needs: metadata + the example file's (truncated) `code` +
   truncation flags. Renderers are pure functions `(card, project) -> string`
   and never touch the filesystem.
 - **render** writes `<id>.{md,html,svg}` and `index.html` via `write_out`
-  (delete-then-write, because the VM's `write_file` refuses to overwrite).
+  (atomic replacement; no-op rebuilds preserve mtimes).
 
 The card data model lives in `manifest.build_card`. If you add a field, add it
 there and the renderers can read it via `card["..."]`.
@@ -149,8 +148,9 @@ These shaped the code — see `docs/session-notes.md` and the shared memory
 
 - **One `for` loop per function scope** — `kujo check` errors otherwise. This
   code uses index-based `while` loops everywhere; keep doing that.
-- **`write_file` refuses to overwrite** on the VM — use `write_out` (delete
-  first). Tests use fresh paths under a unique temp dir.
+- Use `write_out` for atomic replacement and unchanged-output detection.
+  `write_output(..., false)` implements no-overwrite init. Do not reintroduce
+  delete-then-write. Tests own unique temp dirs; never sweep `tmp_test_*`.
 - **No `string + number`** concat — wrap numbers in `to_string(...)`.
 - **`push` returns a new list** — always `arr = push(arr, x)`.
 - **`replace` replaces all occurrences** (no separate replace_all).
@@ -162,7 +162,7 @@ These shaped the code — see `docs/session-notes.md` and the shared memory
 for f in src/*.kujo howl.kujo tests/howl_test.kujo; do
   kujo check "$f" || exit 1
 done                                                   # clean
-./tests/run.sh                                          # passed=81 failed=0
+./tests/run.sh                                          # unit, CLI, and filesystem regression contracts
 T=$(mktemp -d) && cd "$T" && \
   "$OLDPWD/bin/howl" init && "$OLDPWD/bin/howl" validate && \
   "$OLDPWD/bin/howl" render && ls dist/howl/            # 4 artifact types
@@ -173,6 +173,16 @@ Confirm rendered HTML/SVG escape `<`, `>`, `&`, quotes (grep for `&lt;`,
 
 ## Open questions / future improvements
 
-See `docs/session-notes.md` → Future improvements. Headlines: optional dark
-theme, per-card `variant` styling (field is parsed but currently unused),
-PNG export (would need an external rasterizer — keep optional/offline).
+See `docs/audits/repository-hardening.md` for current evidence and remaining
+boundaries. `variant: social` is implemented. Older session notes are historical;
+they do not override current source or the complete `tests/verify.sh` gate.
+
+## Hardening contracts
+
+- Launcher module imports start from this repo, then CLI restores the caller cwd.
+- Validate all references; only load contents needed by the command/format.
+- Keep exported `build_card`/`build_cards` complete for direct consumers.
+- Canonical containment plus descriptor-relative reads protect examples/assets.
+- Reserve `index`; it would overwrite the gallery.
+- Escape Markdown punctuation as well as HTML entities in manifest prose.
+- Preserve exact CLI receipts and golden fixtures; benchmark timing is informational.

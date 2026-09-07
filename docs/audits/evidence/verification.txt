@@ -1,0 +1,19 @@
+check passed: src/caption.kujo
+check passed: src/cli.kujo
+check passed: src/gallery.kujo
+check passed: src/manifest.kujo
+check passed: src/render_html.kujo
+check passed: src/render_md.kujo
+check passed: src/render_svg.kujo
+check passed: src/util.kujo
+check passed: howl.kujo
+check passed: tests/howl_test.kujo
+check passed: examples/agent-handoff.kujo
+check passed: examples/clear-intent.kujo
+check passed: examples/safe-refactor.kujo
+
+Howl tests: 102 passed, 0 failed
+hardening: containment, regular files, collisions, write failures, Markdown, launcher: OK
+tests: OK (exit 0)
+fixture/golden/no-op/escaping/layout/contrast/fuzz: OK (64 fuzz cases)
+howl: 3 cards, cold 0.999s, no-op 0.897s
