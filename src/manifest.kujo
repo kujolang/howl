@@ -318,7 +318,7 @@ export func resolve_file(base_dir, rel) {
 # replaced path component cannot redirect the actual read outside the root.
 # Match Kujo 1.3.1's existing 8 MiB file-I/O ceiling, without silent truncation.
 func read_contained(base_dir, rel, binary) {
-    resolved := checked_file_path(base_dir, rel)
+    resolved := resolve_contained_path(base_dir, rel)
     if resolved["ok"] == false {
         die("referenced file escapes manifest directory: " + rel)
     }
@@ -417,10 +417,6 @@ func embedded_asset(raw, key, base_dir) {
     if is_blank(rel) {
         return ""
     }
-    full := resolve_file(base_dir, rel)
-    if is_blank(full) || file_exists(full) == false {
-        die("cannot read " + key + ": " + rel)
-    }
     bytes := read_contained(base_dir, rel, true)
     if type(bytes) == "Error" {
         die("cannot read " + key + ": " + rel)
@@ -485,14 +481,11 @@ export func card_metadata(raw) {
 
 # Preview commands need example text but no binary assets.
 export func build_card_preview(raw, base_dir, limits) {
-    full := resolve_file(base_dir, raw["file"])
+    lexical := resolve_contained_path(base_dir, raw["file"])
     # Direct model callers historically receive empty code for rejected paths.
     # CLI validation rejects those paths before this function is reached.
     mut code := ""
-    if full != "" {
-        if path_is_file(full) == false {
-            die("cannot read example: " + raw["file"])
-        }
+    if lexical["ok"] {
         code = read_contained(base_dir, raw["file"], false)
         if type(code) == "Error" {
             die("cannot read example: " + raw["file"])

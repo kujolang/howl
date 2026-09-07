@@ -4,8 +4,8 @@
 # so the rest of the code stays pure and testable. Dispatches to the manifest
 # model, the three renderers, and the gallery.
 
-from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy, is_safe_output_dir
-from src.manifest import load_manifest, validate_manifest, build_card, build_card_preview, card_metadata, resolve_file, find_card, manifest_project, default_limits
+from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy, is_safe_output_dir, resolve_contained_path
+from src.manifest import load_manifest, validate_manifest, build_card, build_card_preview, card_metadata, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
 from src.render_html import render_html
@@ -352,7 +352,7 @@ func protect_render_inputs(opts, model) {
         while j < len(keys) {
             key := keys[j]
             if has_key(raw, key) == 1 && is_blank(raw[key]) == false {
-                inputs[path_absolute(resolve_file(model["base"], raw[key]))] := true
+                inputs[path_absolute(resolve_contained_path(model["base"], raw[key])["path"])] := true
             }
             j = j + 1
         }
