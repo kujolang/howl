@@ -1,0 +1,23 @@
+name: Howl verification
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - name: Checkout qualified Kujo runtime
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: kujolang/kujo
+          ref: 9cedbf2f5ae5a0a9b126b055f4c9a6a58a2c23eb
+          path: .runtime-kujo
+      - name: Build locked runtime without unused optional capabilities
+        run: cargo build --manifest-path .runtime-kujo/Cargo.toml --locked --release --no-default-features --bin kujo
+      - name: Verify source, behavior, and deterministic artifacts
+        env:
+          KUJO: ${{ github.workspace }}/.runtime-kujo/target/release/kujo
+        run: ./tests/verify.sh
