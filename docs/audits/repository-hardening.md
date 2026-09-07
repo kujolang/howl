@@ -176,7 +176,7 @@ using disposable output directories and current manifests:
 Every HTML, SVG and gallery file is byte-identical. The 45 Markdown files have
 86 changed lines, all solely punctuation encoded as literal numeric entities;
 source fences and contents are preserved. Full diffs and the compact receipt
-are in [evidence/downstream-diffs.txt](evidence/downstream-diffs.txt) and
+are in [evidence/downstream-diffs.json](evidence/downstream-diffs.json) and
 [evidence/downstream-review.txt](evidence/downstream-review.txt). The subsequent
 redundant-resolution cleanup was qualified by the complete local gate; it does
 not alter rendering strings. No downstream publishing or regeneration in place
