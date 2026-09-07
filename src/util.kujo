@@ -302,6 +302,10 @@ export func is_safe_link_url(url) {
     normalized = replace(normalized, "\t", "")
     normalized = replace(normalized, "\r", "")
     normalized = replace(normalized, "\n", "")
+    # URL parsers discard leading C0 controls as well as ordinary whitespace.
+    while len(normalized) > 0 && char_at(normalized, 0) <= " " {
+        normalized = substring(normalized, 1, len(normalized))
+    }
     if starts_with(normalized, "javascript:") {
         return false
     }

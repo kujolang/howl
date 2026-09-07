@@ -5,7 +5,7 @@
 # model, the three renderers, and the gallery.
 
 from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy, is_safe_output_dir
-from src.manifest import load_manifest, validate_manifest, build_cards, find_card, manifest_project, default_limits
+from src.manifest import load_manifest, validate_manifest, build_card, build_card_preview, card_metadata, resolve_file, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
 from src.render_html import render_html
@@ -138,21 +138,43 @@ func last_slash(s) {
 
 # Preserve identical outputs so a no-op rebuild does not invalidate mtimes or
 # downstream caches. Plain write_file refuses to overwrite changed files on the
-# VM, so changed outputs still use delete-then-write.
+# VM; atomic replacement keeps the old file intact if writing fails.
 func write_out(path, content) {
-    if file_exists(path) {
-        if read_file(path) == content {
+    return write_output(path, content, true)
+}
+
+func write_output(path, content, overwrite) {
+    if file_exists(path) && path_is_symlink(path) {
+        die("output must not be a symlink: " + path)
+    }
+    if file_exists(path) && path_is_file(path) == false {
+        die("output must be a regular file: " + path)
+    }
+    if file_exists(path) && overwrite {
+        previous := read_file(path)
+        if type(previous) == "Error" {
+            die("cannot read existing output: " + path)
+        }
+        if previous == content {
             return false
         }
-        delete_file(path)
     }
-    write_file(path, content)
+    result := write_file_atomic(path, content, overwrite)
+    if type(result) == "Error" {
+        die("cannot write output: " + path + ": " + to_string(result))
+    }
     return true
 }
 
 func ensure_dir(path) {
+    if file_exists(path) && path_is_dir(path) == false {
+        die("not a directory: " + path)
+    }
     if file_exists(path) == false {
-        create_dir(path)
+        result := create_dir(path)
+        if type(result) == "Error" {
+            die("cannot create directory: " + path)
+        }
     }
 }
 
@@ -208,7 +230,7 @@ func print_card_metadata(card) {
 
 # ---- shared load -------------------------------------------------------
 
-# Load + validate the manifest, then build the card model. Centralized so every
+# Load + validate every manifest entry; defer content reads to each command. Centralized so every
 # command fails the same clear way on a bad manifest.
 func load_model(opts) {
     manifest_path := opts["manifest"]
@@ -221,7 +243,8 @@ func load_model(opts) {
     }
     mut model := {}
     model["project"] := manifest_project(data)
-    model["cards"] := build_cards(data, base, limits_from_opts(opts))
+    model["cards"] := data["cards"]
+    model["base"] := base
     return model
 }
 
@@ -255,7 +278,7 @@ func cmd_list(opts) {
     n := len(cards)
     mut i := 0
     while i < n {
-        print_card_listing(cards[i])
+        print_card_listing(card_metadata(cards[i]))
         i = i + 1
     }
     if n == 0 {
@@ -267,7 +290,8 @@ func cmd_list(opts) {
 func cmd_show(opts) {
     id := first_positional(opts, "show")
     model := load_model(opts)
-    card := require_card(model["cards"], id)
+    raw := require_card(model["cards"], id)
+    card := build_card_preview(raw, model["base"], limits_from_opts(opts))
     print_card_metadata(card)
     print_section("code preview")
     print(card["code"])
@@ -287,7 +311,7 @@ func cmd_show(opts) {
 func cmd_caption(opts) {
     id := first_positional(opts, "caption")
     model := load_model(opts)
-    card := require_card(model["cards"], id)
+    card := card_metadata(require_card(model["cards"], id))
     if opts["platform"] == "x" {
         print(build_caption_x(card, model["project"]))
     } else {
@@ -314,6 +338,56 @@ func write_card_outputs(out, format, card, project) {
     return written
 }
 
+# Reject source/output collisions before writing any artifacts. Existing input
+# paths are canonical keys, so hard-to-spot aliases cannot overwrite examples.
+func protect_render_inputs(opts, model) {
+    mut inputs := {}
+    inputs[path_absolute(opts["manifest"])] := true
+    cards := model["cards"]
+    mut i := 0
+    while i < len(cards) {
+        raw := cards[i]
+        keys := ["file", "background_image", "font_file"]
+        mut j := 0
+        while j < len(keys) {
+            key := keys[j]
+            if has_key(raw, key) == 1 && is_blank(raw[key]) == false {
+                inputs[path_absolute(resolve_file(model["base"], raw[key]))] := true
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    i = 0
+    while i < len(cards) {
+        id := cards[i]["id"]
+        if wants(opts["format"], "markdown") {
+            protect_target(join_path(opts["out"], id + ".md"), inputs)
+        }
+        if wants(opts["format"], "html") {
+            protect_target(join_path(opts["out"], id + ".html"), inputs)
+        }
+        if wants(opts["format"], "svg") {
+            protect_target(join_path(opts["out"], id + ".svg"), inputs)
+        }
+        i = i + 1
+    }
+    if wants(opts["format"], "html") {
+        protect_target(join_path(opts["out"], "index.html"), inputs)
+    }
+}
+
+func protect_target(path, inputs) {
+    if file_exists(path) {
+        if path_is_symlink(path) || path_is_file(path) == false {
+            die("output must be a regular non-symlink file: " + path)
+        }
+        if has_key(inputs, path_absolute(path)) == 1 {
+            die("output would overwrite an input file: " + path)
+        }
+    }
+}
+
 func cmd_render(opts) {
     model := load_model(opts)
     cards := model["cards"]
@@ -321,15 +395,27 @@ func cmd_render(opts) {
     out := opts["out"]
     format := opts["format"]
     ensure_dir(out)
+    protect_render_inputs(opts, model)
     n := len(cards)
     mut i := 0
     mut written := 0
+    mut gallery_cards := []
     while i < n {
-        written = written + write_card_outputs(out, format, cards[i], project)
+        raw := cards[i]
+        mut card := {}
+        if wants(format, "svg") {
+            card = build_card(raw, model["base"], limits_from_opts(opts))
+        } else {
+            card = build_card_preview(raw, model["base"], limits_from_opts(opts))
+        }
+        if wants(format, "html") {
+            gallery_cards = push(gallery_cards, card_metadata(raw))
+        }
+        written = written + write_card_outputs(out, format, card, project)
         i = i + 1
     }
     if wants(format, "html") {
-        write_out(join_path(out, "index.html"), render_gallery(cards, project, format))
+        write_out(join_path(out, "index.html"), render_gallery(gallery_cards, project, format))
         written = written + 1
     }
     print("rendered " + to_string(n) + " card(s) -> " + ensure_trailing_slash(out) + " (" + to_string(written) + " files)")
@@ -366,14 +452,14 @@ func cmd_init(opts) {
     if file_exists(example_path) && force == false {
         print("skip (exists): " + example_path)
     } else {
-        write_out(example_path, starter_example())
+        write_output(example_path, starter_example(), force)
         made = made + 1
     }
 
     if file_exists(manifest_path) && force == false {
         print("skip (exists): " + manifest_path + " (use --force to overwrite)")
     } else {
-        write_out(manifest_path, starter_manifest())
+        write_output(manifest_path, starter_manifest(), force)
         made = made + 1
     }
 
@@ -426,6 +512,21 @@ func help_text() {
 }
 
 export func main(argv) {
+    try {
+        # The launcher imports from Howl's own directory, then restores the
+        # caller's directory before interpreting any manifest/output paths.
+        if len(argv) >= 2 && argv[0] == "--howl-caller-dir" {
+            os_chdir(argv[1])
+            return dispatch(slice(argv, 2, len(argv)))
+        }
+        return dispatch(argv)
+    } except e {
+        die(to_string(e))
+    }
+    return 1
+}
+
+func dispatch(argv) {
     if len(argv) == 0 {
         print(help_text())
         return 0

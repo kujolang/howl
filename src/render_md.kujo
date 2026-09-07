@@ -48,7 +48,7 @@ func fence_language(language) {
     if is_blank(language) {
         return ""
     }
-    if truthy(contains(language, "\n")) {
+    if truthy(contains(language, "\n") || contains(language, "\r")) {
         return ""
     }
     if truthy(contains(language, "`")) {
@@ -62,10 +62,21 @@ func fence(language, body) {
     return marker + fence_language(language) + "\n" + body + "\n" + marker
 }
 
+func escape_prose(text) {
+    mut out := escape_html(text)
+    out = replace(out, "\\", "&#92;")
+    out = replace(out, "[", "&#91;")
+    out = replace(out, "]", "&#93;")
+    out = replace(out, "`", "&#96;")
+    out = replace(out, "*", "&#42;")
+    out = replace(out, "_", "&#95;")
+    return out
+}
+
 export func render_markdown(card, project) {
-    mut out := "# " + escape_html(card["title"]) + "\n"
+    mut out := "# " + escape_prose(card["title"]) + "\n"
     if is_blank(card["tagline"]) == false {
-        out = out + "\n" + escape_html(card["tagline"]) + "\n"
+        out = out + "\n" + escape_prose(card["tagline"]) + "\n"
     }
     out = out + "\n" + fence(card["language"], card["code"]) + "\n"
     if card["code_truncated"] == true {
@@ -79,11 +90,11 @@ export func render_markdown(card, project) {
     }
     concepts := card["concepts"]
     if len(concepts) > 0 {
-        out = out + "\n**Concepts:** " + escape_html(comma_list(concepts)) + "\n"
+        out = out + "\n**Concepts:** " + escape_prose(comma_list(concepts)) + "\n"
     }
     if is_blank(card["notes"]) == false {
-        out = out + "\n" + escape_html(card["notes"]) + "\n"
+        out = out + "\n" + escape_prose(card["notes"]) + "\n"
     }
-    out = out + "\n---\n\n" + escape_html(build_caption(card, project)) + "\n"
+    out = out + "\n---\n\n" + escape_prose(build_caption(card, project)) + "\n"
     return out
 }

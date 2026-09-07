@@ -23,6 +23,9 @@ export func load_manifest(path) {
         die("manifest not found: " + path + " (run `howl init` to create one)")
     }
     content := read_file(path)
+    if type(content) == "Error" {
+        die("cannot read manifest: " + path)
+    }
     data := parse_json(content)
     if type(data) == "Error" {
         die("manifest is not valid JSON: " + path)
@@ -86,9 +89,9 @@ export func validate_manifest(data, base_dir) {
             problems = push(problems, cp[j])
             j = j + 1
         }
-        if has_key(card, "id") == 1 {
+        if type(card) == "dict" && has_key(card, "id") == 1 {
             id := card["id"]
-            if is_safe_id(id) {
+            if type(id) == "string" && is_safe_id(id) {
                 if has_key(seen, id) == 1 {
                     problems = push(problems, where + ": duplicate id \"" + id + "\"")
                 }
@@ -204,11 +207,11 @@ func optional_file_problem(problems, card, where, key, base_dir) {
     if is_blank(value) {
         return out
     }
-    resolved := resolve_contained_path(base_dir, value)
+    resolved := checked_file_path(base_dir, value)
     if resolved["ok"] == false {
         return push(out, where + ": referenced " + key + " escapes manifest directory: " + value)
     }
-    if file_exists(resolved["path"]) == false {
+    if path_is_file(resolved["path"]) == false {
         return push(out, where + ": referenced " + key + " not found: " + value)
     }
     return out
@@ -229,6 +232,8 @@ export func card_problems(card, where, base_dir) {
         id := card["id"]
         if type(id) != "string" {
             problems = push(problems, where + ": \"id\" must be a string")
+        } else if id == "index" {
+            problems = push(problems, where + ": id \"index\" is reserved for the gallery")
         } else if is_safe_id(id) == false {
             problems = push(problems, where + ": id \"" + to_string(id) + "\" is not filesystem-safe (use a-z 0-9 - _)")
         }
@@ -252,10 +257,10 @@ export func card_problems(card, where, base_dir) {
         } else if is_blank(file) {
             problems = push(problems, where + ": \"file\" must not be empty")
         } else {
-            resolved := resolve_contained_path(base_dir, file)
+            resolved := checked_file_path(base_dir, file)
             if resolved["ok"] == false {
                 problems = push(problems, where + ": referenced file escapes manifest directory: " + file)
-            } else if file_exists(resolved["path"]) == false {
+            } else if path_is_file(resolved["path"]) == false {
                 problems = push(problems, where + ": referenced file not found: " + file)
             }
         }
@@ -281,13 +286,61 @@ export func card_problems(card, where, base_dir) {
     return problems
 }
 
+# Canonicalize existing targets to include symlinks in the containment check.
+# Missing paths keep their lexical result so validation can report not found.
+func checked_file_path(base_dir, rel) {
+    lexical := resolve_contained_path(base_dir, rel)
+    if lexical["ok"] == false || file_exists(lexical["path"]) == false {
+        return lexical
+    }
+    mut root := base_dir
+    if root == "" {
+        root = "."
+    }
+    absolute_root := path_absolute(root)
+    absolute_file := path_absolute(lexical["path"])
+    if type(absolute_root) == "Error" || type(absolute_file) == "Error" {
+        return {"ok": false, "path": ""}
+    }
+    return resolve_contained_path(absolute_root, absolute_file)
+}
+
 # Manifest file paths are relative to the manifest's directory.
 export func resolve_file(base_dir, rel) {
-    resolved := resolve_contained_path(base_dir, rel)
+    resolved := checked_file_path(base_dir, rel)
     if resolved["ok"] == false {
         return ""
     }
-    return resolved["path"]
+    return resolve_contained_path(base_dir, rel)["path"]
+}
+
+# Resolve in-tree symlinks, then use descriptor-relative no-follow reads so a
+# replaced path component cannot redirect the actual read outside the root.
+# Match Kujo 1.3.1's existing 8 MiB file-I/O ceiling, without silent truncation.
+func read_contained(base_dir, rel, binary) {
+    resolved := checked_file_path(base_dir, rel)
+    if resolved["ok"] == false {
+        die("referenced file escapes manifest directory: " + rel)
+    }
+    mut root := base_dir
+    if root == "" {
+        root = "."
+    }
+    absolute_root := path_absolute(root)
+    full := path_absolute(resolved["path"])
+    verified := resolve_contained_path(absolute_root, full)
+    if verified["ok"] == false {
+        die("referenced file escapes manifest directory: " + rel)
+    }
+    mut prefix_length := len(absolute_root) + 1
+    if absolute_root == "/" {
+        prefix_length = 1
+    }
+    relative := substring(full, prefix_length, len(full))
+    if binary {
+        return read_binary_file_beneath(absolute_root, relative, 8388608)
+    }
+    return read_file_beneath(absolute_root, relative, 8388608)
 }
 
 # ---- card model --------------------------------------------------------
@@ -366,11 +419,11 @@ func embedded_asset(raw, key, base_dir) {
     }
     full := resolve_file(base_dir, rel)
     if is_blank(full) || file_exists(full) == false {
-        return ""
+        die("cannot read " + key + ": " + rel)
     }
-    bytes := read_binary_file(full)
+    bytes := read_contained(base_dir, rel, true)
     if type(bytes) == "Error" {
-        return ""
+        die("cannot read " + key + ": " + rel)
     }
     return "data:" + asset_mime(rel) + ";base64," + encode_base64(bytes)
 }
@@ -406,17 +459,8 @@ func truncate_output(out, limits) {
     return {"shown": shown, "truncated": truncated}
 }
 
-# Resolve one raw manifest entry into a render-ready card dict: read the example
-# file, apply truncation, and normalize optional fields so renderers stay dumb.
-export func build_card(raw, base_dir, limits) {
-    full := resolve_file(base_dir, raw["file"])
-    mut code := ""
-    if file_exists(full) {
-        code = read_file(full)
-    }
-    ct := truncate_code(code, limits)
-    ot := truncate_output(opt_str(raw, "expected_output"), limits)
-
+# Normalize metadata without reading example or asset contents.
+export func card_metadata(raw) {
     mut card := {}
     card["id"] := raw["id"]
     card["title"] := raw["title"]
@@ -435,15 +479,44 @@ export func build_card(raw, base_dir, limits) {
     card["show_url"] := opt_bool(raw, "show_url", true)
     card["transparent"] := opt_bool(raw, "transparent", false)
     card["background_image"] := opt_str(raw, "background_image")
-    card["background_data"] := embedded_asset(raw, "background_image", base_dir)
     card["font_file"] := opt_str(raw, "font_file")
-    card["font_data"] := embedded_asset(raw, "font_file", base_dir)
+    return card
+}
+
+# Preview commands need example text but no binary assets.
+export func build_card_preview(raw, base_dir, limits) {
+    full := resolve_file(base_dir, raw["file"])
+    # Direct model callers historically receive empty code for rejected paths.
+    # CLI validation rejects those paths before this function is reached.
+    mut code := ""
+    if full != "" {
+        if path_is_file(full) == false {
+            die("cannot read example: " + raw["file"])
+        }
+        code = read_contained(base_dir, raw["file"], false)
+        if type(code) == "Error" {
+            die("cannot read example: " + raw["file"])
+        }
+    }
+    ct := truncate_code(code, limits)
+    ot := truncate_output(opt_str(raw, "expected_output"), limits)
+    mut card := card_metadata(raw)
+    card["background_data"] := ""
+    card["font_data"] := ""
     card["code"] := ct["shown"]
     card["code_truncated"] := ct["truncated"]
     card["code_total_lines"] := ct["total"]
     card["code_shown_lines"] := ct["shown_lines"]
     card["expected_output"] := ot["shown"]
     card["expected_truncated"] := ot["truncated"]
+    return card
+}
+
+# Preserve the full exported model contract for direct consumers.
+export func build_card(raw, base_dir, limits) {
+    mut card := build_card_preview(raw, base_dir, limits)
+    card["background_data"] := embedded_asset(raw, "background_image", base_dir)
+    card["font_data"] := embedded_asset(raw, "font_file", base_dir)
     return card
 }
 

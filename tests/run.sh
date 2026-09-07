@@ -81,6 +81,10 @@ check_failure() {
 run_cli_contracts() {
     local cli_status=0
 
+    check_output "clear intent example" 'Ready, agent' "$KUJO" run "$PROJECT_DIR/examples/clear-intent.kujo" || cli_status=1
+    check_output "safe refactor example" '10' "$KUJO" run "$PROJECT_DIR/examples/safe-refactor.kujo" || cli_status=1
+    check_output "agent handoff example" 'review' "$KUJO" run "$PROJECT_DIR/examples/agent-handoff.kujo" || cli_status=1
+
     local expected_validate='ok: howl.json is valid (3 card(s))'
     check_output "validate exact output" "$expected_validate" "$PROJECT_DIR/bin/howl" validate || cli_status=1
 
@@ -135,18 +139,20 @@ Ready, agent'
 
 cd "$PROJECT_DIR"
 set +e
-"$KUJO" run "$PROJECT_DIR/tests/howl_test.kujo" -- "$PROJECT_DIR"
+"$KUJO" run "$PROJECT_DIR/tests/howl_test.kujo" -- "$TMP_DIR/unit"
 status=$?
 set -e
 
-# Clean up throwaway fixture dirs the test created under the project root.
-find "$PROJECT_DIR" -maxdepth 1 -name 'tmp_test_*' -exec rm -rf {} + 2>/dev/null || true
 
 if [ "$status" -eq 0 ]; then
     set +e
     KUJO="$KUJO" run_cli_contracts
     status=$?
     set -e
+fi
+
+if [ "$status" -eq 0 ]; then
+    python3 "$PROJECT_DIR/tests/hardening_regression.py" || status=$?
 fi
 
 if [ "$status" -eq 0 ]; then

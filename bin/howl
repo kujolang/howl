@@ -10,7 +10,16 @@
 #   KUJO=/path/to/kujo/target/release/kujo howl render
 set -euo pipefail
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  SOURCE_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  case "$SOURCE" in
+    /*) ;;
+    *) SOURCE="$SOURCE_DIR/$SOURCE" ;;
+  esac
+done
+PROJECT_DIR="$(cd "$(dirname "$SOURCE")/.." && pwd)"
 KUJO="${KUJO:-kujo}"
 
 if ! command -v "$KUJO" >/dev/null 2>&1 && [ ! -x "$KUJO" ]; then
@@ -19,4 +28,12 @@ if ! command -v "$KUJO" >/dev/null 2>&1 && [ ! -x "$KUJO" ]; then
   exit 127
 fi
 
-exec "$KUJO" run "$PROJECT_DIR/howl.kujo" -- "$@"
+# Resolve a relative KUJO executable before changing the module-search cwd.
+KUJO="$(command -v "$KUJO")"
+case "$KUJO" in
+  /*) ;;
+  *) KUJO="$PWD/$KUJO" ;;
+esac
+CALLER_DIR="$PWD"
+cd "$PROJECT_DIR"
+exec "$KUJO" run "$PROJECT_DIR/howl.kujo" -- --howl-caller-dir "$CALLER_DIR" "$@"

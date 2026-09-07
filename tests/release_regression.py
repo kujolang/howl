@@ -133,8 +133,9 @@ def fuzz_manifests(binary: str, count: int) -> None:
             manifest = root / f"case-{index}.json"
             manifest.write_text(payload, encoding="utf-8")
             result = run([binary, "validate", "--manifest", str(manifest)], check=False)
-            assert result.returncode != 0, f"invalid fuzz case {index} unexpectedly validated"
+            assert result.returncode == 1, f"invalid fuzz case {index} returned {result.returncode}"
             combined = result.stdout + result.stderr
+            assert "howl:" in combined, f"fuzz case {index} lacked a CLI diagnostic"
             assert "panic" not in combined.lower() and "index out of bounds" not in combined.lower(), f"fuzz case {index} crashed"
 
 
