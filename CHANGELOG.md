@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Reject dangling output symlinks before rendering; create absent outputs with
+  atomic no-overwrite semantics, including forced initialization.
+- Skip unused standard SVG assets and transparent social backgrounds while
+  preserving validation and complete public card models.
+
 - Contain symlinked inputs, require regular files, and reserve the gallery id.
 - Write artifacts atomically and preserve existing output when a write fails.
 - Isolate launcher imports and support the documented PATH symlink installation.
@@ -9,11 +14,6 @@
 - Defer content loading to commands and render one card at a time.
 - Add filesystem/failure regression tests and a pinned-runtime CI gate.
 - Require Kujo 1.3.1 filesystem primitives; valid artifact layouts stay unchanged.
-
-
-All notable changes to Howl are documented here.
-
-## Unreleased
 
 ## [1.1.0] - 2026-08-11
 

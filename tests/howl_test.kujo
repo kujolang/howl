@@ -15,7 +15,7 @@
 # Run with: kujo run tests/howl_test.kujo -- <project_dir>
 
 from src.util import escape_html, is_safe_id, is_safe_link_url, take_lines, split_lines, is_blank, is_safe_output_dir
-from src.manifest import validate_manifest, build_cards, find_card, manifest_project, default_limits
+from src.manifest import validate_manifest, build_cards, build_card_for_render, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
 from src.render_html import render_html
@@ -228,6 +228,23 @@ func test_card_model(base) {
     check("find_card miss", type(find_card(cards, "nope")) == "null")
 }
 
+# Full library models remain complete even when CLI rendering skips assets.
+func test_asset_projection(base) {
+    mut raw := card_ok()
+    raw["background_image"] := "assets/background.svg"
+    raw["font_file"] := "assets/mono.woff2"
+    complete := build_cards(wrap_manifest([raw]), base, default_limits())[0]
+    projected := build_card_for_render(raw, base, default_limits())
+    check("standard full model retains assets", has_sub(complete["background_data"], "base64,") && has_sub(complete["font_data"], "base64,"))
+    check("standard render omits unused assets", projected["background_data"] == "" && projected["font_data"] == "")
+    raw["variant"] := "social"
+    raw["transparent"] := true
+    full_overlay := build_cards(wrap_manifest([raw]), base, default_limits())[0]
+    overlay := build_card_for_render(raw, base, default_limits())
+    check("transparent full model retains background", has_sub(full_overlay["background_data"], "base64,"))
+    check("transparent render keeps font only", overlay["background_data"] == "" && overlay["font_data"] == full_overlay["font_data"])
+}
+
 # ---- captions ----------------------------------------------------------
 
 func test_captions(base) {
@@ -396,6 +413,7 @@ func run_all(base) {
     test_validation(base)
     test_path_containment(base)
     test_card_model(base)
+    test_asset_projection(base)
     test_captions(base)
     test_markdown(base)
     test_html(base)

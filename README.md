@@ -24,7 +24,7 @@ imitate.
 | **Status** | v1.1.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
-| **Tests** | 102 assertions plus deterministic release regression, `./tests/run.sh` |
+| **Tests** | 106 assertions plus deterministic release regression, `./tests/run.sh` |
 | **License** | MIT |
 
 ---
@@ -345,7 +345,7 @@ git diff --exit-code dist/howl
   directory, traversal, and ambiguous paths before writing.
 - **Writes preserve old files on failure.** Changed artifacts use atomic file
   replacement; identical files keep their mtimes. Existing artifact symlinks
-  and non-files are rejected. `init` uses atomic no-overwrite creation unless
+  (including dangling links) and non-files are rejected before rendering. `init` uses atomic no-overwrite creation unless
   `--force` is supplied. The output directory and its ancestors must be trusted;
   a render is atomic per file, not a transaction across the whole gallery.
 - **Launcher imports are isolated.** `bin/howl` loads Howl modules from its own
@@ -381,7 +381,10 @@ the example's (already-truncated) code. The three renderers are pure functions
 testable. `cli.kujo` owns argv, stdout, and artifact writes; `manifest.kujo` owns input
 reads. List/caption commands validate every reference without loading example
 or asset contents; show loads only the selected example. Render processes one
-full card at a time and retains only metadata for the gallery.
+full card at a time and retains only metadata for the gallery. SVG rendering
+loads fonts only for social cards, and backgrounds only for opaque social
+cards. Unused asset references still undergo path/existence validation.
+Direct `build_card`/`build_cards` callers continue to receive all embedded assets.
 
 ## Kujo ethos
 
@@ -418,14 +421,15 @@ To update the runtime pin, verify the replacement locally before editing
 artifact diffs before updating `tests/golden/` with `--update-golden`.
 
 `python3 tests/benchmark.py` is an opt-in eight-card workload with five samples
-per command. It reports raw times, medians, and stdout bytes; it has no flaky
+per command; add `--workload unused-svg` to measure standard and transparent
+SVG cards with unused assets. It reports raw times, medians, and stdout bytes; it has no flaky
 wall-clock CI threshold. See [the hardening audit](docs/audits/repository-hardening.md)
 for measured results and compatibility details.
 
 
 ```bash
 # Run the test suite (filesystem-isolated, no network):
-./tests/run.sh      # 102 assertions
+./tests/run.sh      # 106 assertions
 
 # Verify golden snapshots, escaping, fuzz cases, contrast, and no-op rebuilds:
 python3 tests/release_regression.py

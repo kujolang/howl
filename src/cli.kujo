@@ -5,7 +5,7 @@
 # model, the three renderers, and the gallery.
 
 from src.util import die, is_blank, comma_list, join_path, ensure_trailing_slash, truthy, is_safe_output_dir, resolve_contained_path
-from src.manifest import load_manifest, validate_manifest, build_card, build_card_preview, card_metadata, find_card, manifest_project, default_limits
+from src.manifest import load_manifest, validate_manifest, build_card_for_render, build_card_preview, card_metadata, find_card, manifest_project, default_limits
 from src.caption import build_caption, build_caption_x
 from src.render_md import render_markdown
 from src.render_html import render_html
@@ -159,7 +159,9 @@ func write_output(path, content, overwrite) {
             return false
         }
     }
-    result := write_file_atomic(path, content, overwrite)
+    # A missing target may be a dangling symlink, or appear after this check.
+    # Atomic no-overwrite creation refuses both instead of replacing them.
+    result := write_file_atomic(path, content, overwrite && file_exists(path))
     if type(result) == "Error" {
         die("cannot write output: " + path + ": " + to_string(result))
     }
@@ -358,27 +360,36 @@ func protect_render_inputs(opts, model) {
         }
         i = i + 1
     }
+    # Directory entries include dangling links, unlike file_exists. Read once
+    # for the whole preflight so cold renders do not scan the directory per file.
+    mut entries := {}
+    names := list_dir(opts["out"])
+    mut entry_index := 0
+    while entry_index < len(names) {
+        entries[names[entry_index]] := true
+        entry_index = entry_index + 1
+    }
     i = 0
     while i < len(cards) {
         id := cards[i]["id"]
         if wants(opts["format"], "markdown") {
-            protect_target(join_path(opts["out"], id + ".md"), inputs)
+            protect_target(join_path(opts["out"], id + ".md"), inputs, entries)
         }
         if wants(opts["format"], "html") {
-            protect_target(join_path(opts["out"], id + ".html"), inputs)
+            protect_target(join_path(opts["out"], id + ".html"), inputs, entries)
         }
         if wants(opts["format"], "svg") {
-            protect_target(join_path(opts["out"], id + ".svg"), inputs)
+            protect_target(join_path(opts["out"], id + ".svg"), inputs, entries)
         }
         i = i + 1
     }
     if wants(opts["format"], "html") {
-        protect_target(join_path(opts["out"], "index.html"), inputs)
+        protect_target(join_path(opts["out"], "index.html"), inputs, entries)
     }
 }
 
-func protect_target(path, inputs) {
-    if file_exists(path) {
+func protect_target(path, inputs, entries) {
+    if has_key(entries, basename(path)) == 1 || file_exists(path) {
         if path_is_symlink(path) || path_is_file(path) == false {
             die("output must be a regular non-symlink file: " + path)
         }
@@ -404,7 +415,7 @@ func cmd_render(opts) {
         raw := cards[i]
         mut card := {}
         if wants(format, "svg") {
-            card = build_card(raw, model["base"], limits_from_opts(opts))
+            card = build_card_for_render(raw, model["base"], limits_from_opts(opts))
         } else {
             card = build_card_preview(raw, model["base"], limits_from_opts(opts))
         }

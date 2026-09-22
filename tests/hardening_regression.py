@@ -72,6 +72,29 @@ def verify():
         reject('render')
         assert (root / 'outside.txt').read_text() == 'private sentinel'
         (out / 'example.md').unlink()
+        # Dangling symlinks are still symlinks, even when file_exists is false.
+        # Preflight the last target before any earlier artifact can be changed.
+        save(card)
+        assert run(project, 'render').returncode == 0
+        old_md = (out / 'example.md').read_bytes()
+        (out / 'example.svg').unlink()
+        missing = root / 'missing-target'
+        (out / 'example.svg').symlink_to(missing)
+        save(dict(card, title='Must not be written'))
+        reject('render')
+        assert (out / 'example.svg').is_symlink()
+        assert not missing.exists()
+        assert (out / 'example.md').read_bytes() == old_md
+        (out / 'example.svg').unlink()
+        # Forced init shares the output helper and must reject dangling links too.
+        (project / 'examples').mkdir()
+        starter = project / 'examples/clear-intent.kujo'
+        starter.symlink_to(missing)
+        before_manifest = manifest.read_bytes()
+        reject('init', '--force')
+        assert starter.is_symlink() and not missing.exists()
+        assert manifest.read_bytes() == before_manifest
+        starter.unlink()
         # Atomic failures preserve the prior artifact; no success receipt leaks.
         save(card)
         assert run(project, 'render').returncode == 0
@@ -113,6 +136,18 @@ def verify():
         for args in [('list',), ('caption', 'example'), ('show', 'example'), ('render', '--format', 'html')]:
             result = run(project, *args)
             assert result.returncode == 0, (args, result.stdout, result.stderr)
+        reject('render', '--format', 'svg')
+        # Standard SVG ignores both assets; transparent social SVG ignores only
+        # its background. Every reference must still validate, even when unused.
+        for extra in ({'font_file': 'large.png'}, {'variant': 'social', 'transparent': True}):
+            save(dict(card, background_image='large.png', **extra))
+            result = run(project, 'render', '--format', 'svg')
+            assert result.returncode == 0, (result.stdout, result.stderr)
+            body = (out / 'example.svg').read_text()
+            assert 'data:image/' not in body and 'data:font/' not in body
+        save(dict(card, variant='social', transparent=True, font_file='large.png'))
+        reject('render', '--format', 'svg')
+        save(dict(card, background_image='missing.png'))
         reject('render', '--format', 'svg')
         (project / 'invalid.txt').write_bytes(b'\xff')
         manifest.write_text(json.dumps({'cards': [card, dict(card, id='invalid', file='invalid.txt')]}))

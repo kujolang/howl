@@ -505,6 +505,19 @@ export func build_card_preview(raw, base_dir, limits) {
     return card
 }
 
+# CLI SVG rendering loads only assets that its selected layout consumes.
+# Validation still checks every declared reference before this projection.
+export func build_card_for_render(raw, base_dir, limits) {
+    mut card := build_card_preview(raw, base_dir, limits)
+    if card["variant"] == "social" {
+        if card["transparent"] == false {
+            card["background_data"] := embedded_asset(raw, "background_image", base_dir)
+        }
+        card["font_data"] := embedded_asset(raw, "font_file", base_dir)
+    }
+    return card
+}
+
 # Preserve the full exported model contract for direct consumers.
 export func build_card(raw, base_dir, limits) {
     mut card := build_card_preview(raw, base_dir, limits)
