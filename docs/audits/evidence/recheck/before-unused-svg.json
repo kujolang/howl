@@ -1,0 +1,132 @@
+{
+  "workload": "unused-svg",
+  "cards": 8,
+  "asset_bytes": 65536,
+  "samples": 5,
+  "commands": {
+    "render --format svg": {
+      "median_seconds": 0.425531,
+      "stdout_bytes": 43,
+      "seconds": [
+        0.5402137630153447,
+        0.383185830025468,
+        0.4926478610141203,
+        0.38963309198152274,
+        0.4255314730107784
+      ]
+    },
+    "render --format all": {
+      "median_seconds": 0.736181,
+      "stdout_bytes": 44,
+      "seconds": [
+        1.1269314959645271,
+        0.6373673959751613,
+        0.7361814610194415,
+        1.010549867991358,
+        0.699458886985667
+      ]
+    }
+  },
+  "artifacts": {
+    "card-0.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-0.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-0.svg": {
+      "bytes": 1579,
+      "sha256": "5b69f67e28d67b053ada90cc8a1303e22fb59b33ed78a547a289849f963e7d9e"
+    },
+    "card-1.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-1.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-1.svg": {
+      "bytes": 1202,
+      "sha256": "94df90a2e8cc92a2d54e2cd292c7217255b112cdac8fadc187b207696f5ec78c"
+    },
+    "card-2.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-2.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-2.svg": {
+      "bytes": 1579,
+      "sha256": "5b69f67e28d67b053ada90cc8a1303e22fb59b33ed78a547a289849f963e7d9e"
+    },
+    "card-3.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-3.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-3.svg": {
+      "bytes": 1202,
+      "sha256": "94df90a2e8cc92a2d54e2cd292c7217255b112cdac8fadc187b207696f5ec78c"
+    },
+    "card-4.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-4.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-4.svg": {
+      "bytes": 1579,
+      "sha256": "5b69f67e28d67b053ada90cc8a1303e22fb59b33ed78a547a289849f963e7d9e"
+    },
+    "card-5.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-5.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-5.svg": {
+      "bytes": 1202,
+      "sha256": "94df90a2e8cc92a2d54e2cd292c7217255b112cdac8fadc187b207696f5ec78c"
+    },
+    "card-6.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-6.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-6.svg": {
+      "bytes": 1579,
+      "sha256": "5b69f67e28d67b053ada90cc8a1303e22fb59b33ed78a547a289849f963e7d9e"
+    },
+    "card-7.html": {
+      "bytes": 2874,
+      "sha256": "826d5b6fc6b8813c22b44b1f58b8603076f02c651867dbc97e5839a31b9f17a4"
+    },
+    "card-7.md": {
+      "bytes": 718,
+      "sha256": "9b5ec8e06296755d411e15ae1b7b1db9dc32d4c862ae8481aaeb71d2bd55c294"
+    },
+    "card-7.svg": {
+      "bytes": 1202,
+      "sha256": "94df90a2e8cc92a2d54e2cd292c7217255b112cdac8fadc187b207696f5ec78c"
+    },
+    "index.html": {
+      "bytes": 2515,
+      "sha256": "6fc34a82d38ca4584c3df43b5246ec3f9fe784789d9f2bc12e80bed962b453cf"
+    }
+  }
+}

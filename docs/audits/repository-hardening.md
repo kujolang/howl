@@ -1,3 +1,183 @@
+# Howl repository hardening — 2026-09-22 recheck
+
+## Repository and baseline
+
+- Repository: `kujolang/howl`; branch: `main`; purpose: offline deterministic
+  showcase renderer for project maintainers and publishing/engineering agents.
+- Starting SHA: `2a489084b8ebe5e1192eb7fdbaa3b3e19a52600e` (clean).
+- Ending implementation SHA: `a786702bba717c224fb1fad37f89738afc4bb444`.
+  The enclosing evidence-only commit is available with
+  `git log -1 --format=%H -- docs/audits/repository-hardening.md`.
+- Local runtime: `kujo 1.4.0`; sibling checkout inspected at
+  `7f4a288587710003c60869c016c8f4d97ca3b8af`. The binary reports its version,
+  not a source SHA; this does not assert build provenance for that binary.
+  CI retains the qualified Kujo 1.3.1 source pin
+  `9cedbf2f5ae5a0a9b126b055f4c9a6a58a2c23eb` and locked Cargo build.
+- Runtime package dependencies remain zero. Bash launches Kujo; verification
+  uses Python's standard library. Existing release Spec/Eval and site manifest
+  contracts were inspected. No network/model/MCP, credential, persistent cache,
+  database, worker, retry, or telemetry path exists in Howl.
+- Read all eight implementation modules, entrypoint, launcher, unit and Python
+  tests, shell gates, fixtures, root examples/manifest, release/configuration,
+  CI and contributor/agent documentation. Searches excluded `.git/`, `dist/`,
+  `tmp_test_*/`, and generated Python caches. Sibling source/sites were read-only.
+- Baseline complete gate passed: 102 unit assertions, CLI/filesystem contracts,
+  example execution, 13 golden artifacts, 64 malformed manifests, deterministic
+  rerenders and no-op mtimes. No pre-existing suite failures.
+  [Baseline receipt](evidence/recheck/baseline.txt).
+
+This is an incremental audit of the already hardened repository. The earlier
+report and its original evidence remain below; its dates and measurements are
+historical, not results newly produced in this session.
+
+## Findings and changes implemented
+
+| ID | Priority | Area | Finding / evidence | Action | Status |
+|---|---|---|---|---|---|
+| H12 | P1 | Output integrity | `file_exists` follows links: dangling artifact links escaped preflight and were replaced with exit 0 | Inspect output directory entries once; reject named symlinks before any render writes; atomically create absent outputs without overwrite | Fixed |
+| H13 | P2 | Resources / failure semantics | Standard SVG loaded both unused assets; transparent social SVG loaded its unused background; a 9 MiB unused asset failed rendering | Add a render-specific card projection; keep all reference validation and full public model construction | Fixed |
+| H14 | P2 | Regression evidence | Neither dangling output links nor layout-specific unused assets had coverage | Add CLI failure/no-partial-write checks, forced-init checks, oversized asset checks and four public-model assertions; extend opt-in benchmark | Fixed |
+
+Original reproductions are in [reproductions.json](evidence/recheck/reproductions.json).
+The new dangling-link regression failed against the original source, with
+exit 0 instead of expected exit 1: [red regression](evidence/recheck/red-regression.txt).
+Both oversized-unused-asset cases originally failed with the runtime's 8 MiB
+read limit. No assertions were relaxed or golden hashes updated.
+
+**H12:** `src/cli.kujo` now takes one directory-entry snapshot for render
+preflight. Unlike `file_exists`, this includes dangling links. Each planned
+artifact, including the gallery, is checked before writes. The shared
+`write_output` helper uses atomic no-overwrite creation when the target does
+not exist; a dangling link or newly created target cannot be replaced by that
+creation. Existing regular artifacts still use atomic replacement and retain
+mtimes for identical bytes. The missing-target path also protects forced init.
+The regression changes a title and places a dangling link at the later SVG
+target, proving the earlier Markdown stays unchanged and the link survives.
+This closes the documented policy gap; baseline atomic replacement did not
+follow the dangling link or write its external target.
+
+**H13:** `src/manifest.kujo::build_card_for_render` loads example/metadata once,
+loads fonts only for social layouts, and backgrounds only for opaque social
+layouts. `cli.cmd_render` selects this projection when SVG is requested.
+`build_card` and `build_cards` retain their full embedded-asset contract.
+All declared references remain validated for containment, existence and regular
+file type. Needed oversized fonts/backgrounds still fail; unused contents
+are not read. No cache, global state or persistent resource was introduced.
+
+**H14:** `tests/hardening_regression.py` covers the actual launcher and files;
+`tests/howl_test.kujo` now has 106 assertions, including complete versus
+projected models for standard and transparent cards. The existing CI gate
+already executes both suites. `tests/benchmark.py --workload unused-svg`
+adds an eight-card fixture plus output hashes/sizes, with no timing threshold.
+README, AGENTS, release Spec assertion count and CHANGELOG reflect the changes;
+the duplicate empty Unreleased heading was removed while editing the changelog.
+
+## Performance and efficiency
+
+Five samples per command, same local binary and fixture; medians in seconds.
+The workload uses eight cards with one 65,536-byte shared asset: four standard
+cards reference it as both background and font, four transparent social cards
+reference it as background only. Each render series includes one cold and four
+no-op invocations. Raw samples and hashes are preserved in
+[before](evidence/recheck/before-unused-svg.json) and
+[after](evidence/recheck/after-unused-svg.json).
+
+| Workload | Before median | After median | Stdout bytes before / after |
+|---|---:|---:|---:|
+| Unused assets, SVG | 0.425531 | 0.277182 | 43 / 43 |
+| Unused assets, all formats | 0.736181 | 0.396638 | 44 / 44 |
+| Existing metadata workload, list | 0.247956 | 0.154734 | 360 / 360 |
+| Existing metadata workload, caption | 0.209618 | 0.152854 | 11 / 11 |
+| Existing metadata workload, show | 0.218478 | 0.171841 | 712 / 712 |
+| Existing metadata workload, HTML | 0.297079 | 0.315561 | 43 / 43 |
+
+The metadata timings demonstrate host variation: those command loading paths
+were not optimized in this pass. These are observations, not general speedup
+percentages or stable budgets. Source-supported work reduction in the SVG
+fixture is 12 unused asset reads/base64 encodings to zero (786,432 input bytes
+per invocation). Output is byte-identical: 25 artifacts, 42,375 bytes. No new
+RSS/allocation/build-time or model-token claim is made. Manifest metadata is
+still buffered; gallery metadata scales with cards; the new preflight snapshot
+scales with output directory entries. No dependency was added. Token/context
+and command-output review found no model payloads; exact normal CLI receipts
+stay unchanged and detailed evidence remains in files.
+
+Existing-workload measurements:
+[before](evidence/recheck/before-benchmark.json),
+[after](evidence/recheck/after-benchmark.json).
+
+## Security, errors, concurrency and compatibility
+
+Reviewed manifest shapes, path normalization/canonical containment, bounded
+no-follow reads, markup escaping, active URL rejection, base64 asset embedding,
+launcher import isolation, argument quoting, atomic writes, source collisions,
+permission failures, temporary ownership and concurrent-reader behavior.
+Existing defenses passed the baseline and final suites. New tests cover the
+dangling-output gap. No new network/dependency capability or untrusted
+subprocess execution was introduced. Asset contents remain embedded without
+semantic decoding; roots/ancestors must remain trusted.
+
+Output publication remains atomic per file, not a gallery transaction or a
+multi-writer synchronization protocol. A directory snapshot is a preflight,
+not a race-proof sandbox; an absent target's atomic creation fails if another
+writer wins. Existing artifact replacement and all ancestor trust assumptions
+remain unchanged. Runtime errors retain a nonzero `howl:` diagnostic.
+
+| Contract | Result |
+|---|---|
+| Public APIs | Existing signatures/full models preserved; additive `build_card_for_render` helper |
+| CLI | No commands/options/normal receipts changed; dangling targets fail with exit 1; unused oversized SVG assets can now succeed |
+| File formats / schemas | Unchanged; no renderer layout or escaping changes |
+| Config / environment | Unchanged, including `KUJO`; same minimum runtime primitives |
+| Downstream consumers | Full-model tests and byte comparisons qualify compatibility; no consumer source or published artifact modified |
+| Migration | Replace dangling output links with actual files or remove them before rendering |
+
+## Cross-repository follow-ups and remaining work
+
+- P0/P1 local: no unresolved defect identified within the supported local-root
+  boundary after these fixes.
+- P1 cross-repo: the earlier Kujo module-resolution review remains separately
+  recorded under H02 below (existing SignalBox Capture/Signal IDs retained).
+  Current runtime source still adds entry search paths to its loader; a full
+  runtime-policy re-audit is outside this pass. Howl's launcher isolation test
+  passes; this change does not require a runtime or sibling-repository change.
+  Preserve compatibility with deliberate module overrides in any runtime fix.
+- P2: no additional high-confidence local implementation change left open.
+- Needs more evidence: large-gallery/directory profiling, shared-asset caching,
+  text wrapping and stable-host RSS/latency budgets. Current measurements do not
+  justify speculative caches, new limits or renderer rewrites.
+- Not worth changing / P3: style churn, removing exported helpers without
+  consumer evidence, or adding model/token machinery to an offline renderer.
+- SignalBox: no captures warranted. Both new findings are resolved; the known
+  runtime follow-up is already tracked. No new unresolved finding was admitted.
+
+## Verification receipt
+
+All commands below run from Howl with
+`KUJO="$PWD/../kujo/target/release/kujo"` exported to subprocesses.
+
+| Exact command | Result |
+|---|---|
+| `./tests/verify.sh` | Baseline PASS; final PASS: 106 unit assertions, CLI/filesystem/concurrency, examples, source/shell checks, 13 goldens, 64 fuzz cases, deterministic/no-op root renders |
+| `python3 tests/hardening_regression.py` before source fixes | Expected RED: dangling link erroneously succeeded; retained receipt |
+| `python3 tests/benchmark.py` | Before/after PASS; five samples per command |
+| `python3 tests/benchmark.py --workload unused-svg` | Before/after PASS; all artifact hashes identical |
+| `python3 docs/audits/evidence/recheck/compare.py` | Archived starting-SHA versus final source; read-only corpora; receipt alongside script |
+| `python3 -m py_compile tests/benchmark.py tests/hardening_regression.py tests/release_regression.py docs/audits/evidence/recheck/compare.py` | PASS |
+| `git diff --check` | PASS |
+| `bash .github/scripts/check-kujo-tool-artifacts.sh 2a489084b8ebe5e1192eb7fdbaa3b3e19a52600e HEAD` | PASS |
+
+Final local gate: [after.txt](evidence/recheck/after.txt).
+Compatibility receipts: [compatibility.jsonl](evidence/recheck/compatibility.jsonl).
+All four downstream corpora matched byte-for-byte: 531 cards / 1,597 artifacts
+(robertdevore.com 169/508; python.robertdevore.com 27/82; kujolang.ai 241/724;
+agents.kujolang.ai 94/283). Root and release fixtures add 7 cards / 23 identical
+artifacts. The root corpus remains 10 files / 17,360 bytes.
+The comparison driver uses system `tar` on a trusted local Git archive so it
+works with this host's Python 3.10 as well as newer CI Python versions.
+
+---
+
 # Howl repository hardening — 2026-09-07
 
 ## Repository and scope

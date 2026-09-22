@@ -1,0 +1,21 @@
+[
+  {
+    "case": "standard",
+    "exit": 1,
+    "stdout": "howl: Error { line: 0, message: read_file_beneath[size_limit_exceeded]: target 'large.png' exceeds maximum read size (9437184 bytes > 8388608 bytes), stack: [] }\n",
+    "stderr": ""
+  },
+  {
+    "case": "transparent",
+    "exit": 1,
+    "stdout": "howl: Error { line: 0, message: read_file_beneath[size_limit_exceeded]: target 'large.png' exceeds maximum read size (9437184 bytes > 8388608 bytes), stack: [] }\n",
+    "stderr": ""
+  },
+  {
+    "case": "dangling output symlink",
+    "exit": 0,
+    "stdout": "rendered 1 card(s) -> dist/howl/ (4 files)\n",
+    "stderr": "",
+    "partial_markdown": true
+  }
+]

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 166, in <module>
+    verify()
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 84, in verify
+    reject('render')
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 31, in reject
+    assert result.returncode == 1, (args, result.returncode, result.stdout, result.stderr)
+AssertionError: (('render',), 0, 'rendered 1 card(s) -> dist/howl/ (4 files)\n', '')

@@ -1,0 +1,6 @@
+{"manifest": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/howl.json", "cards": 3, "artifacts": 10, "bytes": 17360, "byte_identical": true}
+{"manifest": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/fixtures/release/howl.json", "cards": 4, "artifacts": 13, "bytes": 20643, "byte_identical": true}
+{"manifest": "/Users/robertdevore/2026/robertdevore.com/howl.json", "cards": 169, "artifacts": 508, "bytes": 31552409, "byte_identical": true}
+{"manifest": "/Users/robertdevore/2026/python.robertdevore.com/howl.json", "cards": 27, "artifacts": 82, "bytes": 7357221, "byte_identical": true}
+{"manifest": "/Users/robertdevore/2026/Kujolang/kujo-repos/kujolang.ai-work/howl-social.json", "cards": 241, "artifacts": 724, "bytes": 28622534, "byte_identical": true}
+{"manifest": "/Users/robertdevore/2026/Kujolang/kujo-repos/agents.kujolang.ai/howl.json", "cards": 94, "artifacts": 283, "bytes": 7102353, "byte_identical": true}
