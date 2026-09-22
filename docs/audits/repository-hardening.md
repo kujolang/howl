@@ -36,6 +36,7 @@ historical, not results newly produced in this session.
 |---|---|---|---|---|---|
 | H12 | P1 | Output integrity | `file_exists` follows links: dangling artifact links escaped preflight and were replaced with exit 0 | Inspect output directory entries once; reject named symlinks before any render writes; atomically create absent outputs without overwrite | Fixed |
 | H13 | P2 | Resources / failure semantics | Standard SVG loaded both unused assets; transparent social SVG loaded its unused background; a 9 MiB unused asset failed rendering | Add a render-specific card projection; keep all reference validation and full public model construction | Fixed |
+| H15 | P2 | Documentation | README claimed X captions collapsed line breaks, but `build_caption_x` preserves them | Correct README and function comment; retain established CLI behavior | Fixed |
 | H14 | P2 | Regression evidence | Neither dangling output links nor layout-specific unused assets had coverage | Add CLI failure/no-partial-write checks, forced-init checks, oversized asset checks and four public-model assertions; extend opt-in benchmark | Fixed |
 
 Original reproductions are in [reproductions.json](evidence/recheck/reproductions.json).

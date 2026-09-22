@@ -279,8 +279,8 @@ no randomness, no invented claims.
 3. A call-to-action is appended from the card's `cta`, falling back to the
    project name + tagline.
 
-`--platform x` collapses the caption into a single block trimmed to 280
-characters on a word boundary. **Howl only formats text; it never posts.**
+`--platform x` trims captions longer than 280 characters on a word boundary.
+Existing line breaks are preserved. **Howl only formats text; it never posts.**
 
 ```text
 Clear intent over boilerplate.

@@ -79,8 +79,8 @@ func last_index_of(s, needle) {
     return found
 }
 
-# X.com-friendly variant: a single compact block trimmed to a common post
-# length budget on a word boundary. We do NOT post anything; this only formats.
+# X.com-friendly variant: trim to a common post length budget on a word
+# boundary, preserving existing line breaks. We do NOT post anything; this only formats.
 export func build_caption_x(card, project) {
     full := build_caption(card, project)
     budget := 280
