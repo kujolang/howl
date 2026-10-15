@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 222, in <module>
+    verify()
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 45, in verify
+    verify_manifest_file_types(root)
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 26, in verify_manifest_file_types
+    result = run(root, command, '--manifest', name, timeout=10)
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 14, in run
+    return subprocess.run([str(cli), *args], cwd=root, text=True, capture_output=True, timeout=timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 503, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 1152, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 2004, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 1196, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/Users/robertdevore/2026/Kujolang/kujo-repos/howl/bin/howl', 'validate', '--manifest', 'pipe.json']' timed out after 10 seconds

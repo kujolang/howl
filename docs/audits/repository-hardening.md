@@ -1,3 +1,101 @@
+# Howl repository hardening — 2026-10-15 third pass
+
+## Repository and baseline
+
+- Repository: `kujolang/howl`; branch: `main`; offline deterministic renderer.
+- Starting SHA: `e626a96a2963e42825e990bf90cd2181a3b4eaa2` (clean).
+- Ending implementation SHA: `288e5aaaf3be905639df0003e9644b9c653004fd`.
+  The subsequent evidence commit is discoverable through the file's Git history.
+- Runtime: installed Kujo 1.5.0; existing Bash/Python standard-library gates.
+  Dependencies, CI action/runtime pins and locked build configuration unchanged.
+- A fresh complete offline baseline passed before changes. This incremental pass
+  concentrates on input file types, blocking reads, diagnostic contracts and
+  preservation of symlink behavior, building on the source audit sections below.
+  Searches excluded generated `.git/`, `dist/`, `tmp_test_*/` and golden bulk data.
+
+## Findings
+
+| ID | Priority | Area | Finding | Evidence | Action | Status |
+|---|---|---|---|---|---|---|
+| H21 | P1 | Reliability/resources | A manifest FIFO without a writer blocks in read_file | Initial CLI probe timed out after 3 seconds; new regression timed out after 10 seconds | Require a regular manifest target before reading | Fixed |
+| H22 | P2 | Failure diagnostics/tests | Manifest directories reach runtime I/O errors; non-regular manifest types lack coverage | Initial directory probe emitted the internal Error structure | Concise type diagnostic and filesystem regression cases | Fixed |
+
+## Changes implemented
+
+`src/manifest.kujo::load_manifest` previously checked only existence before
+`read_file`. Referenced examples/assets and output files already had regular-file
+checks, but the manifest itself did not. The new `path_is_file` check rejects
+non-regular targets with `howl: manifest must be a regular file: PATH` and exit 1.
+It follows symlinks for type checking, preserving legitimate manifest symlinks.
+The existing missing-file message remains unchanged.
+
+`tests/hardening_regression.py` now exercises validate and render with a FIFO,
+directory and symlinks to each. It checks exact diagnostics, empty stderr and no
+output directory creation. Regular-file and regular-symlink manifests still
+validate, and missing manifests still produce their established diagnostic.
+A 10-second subprocess watchdog kills a regressed blocking read; it is a test
+failure bound, not a production timeout or speed benchmark. No sleep or retry
+was introduced. README and CHANGELOG document the supported input type.
+
+## Security, resources and other review dimensions
+
+- Reviewed all production read sites: manifest read, descriptor-relative example
+  and binary asset reads, and existing-output comparison. This patch closes the
+  manifest type-check gap without relaxing existing containment/output checks.
+- The guard handles stable input paths. Trusted local roots remain required;
+  it does not promise race-free behavior against an attacker swapping the
+  manifest between type checking and opening. No broader sandbox claim is made.
+- No network, credentials, subprocess-per-card, worker, cache, persisted state or
+  package dependency was introduced. Existing atomic output and no-op contracts
+  remain intact. No speculative dead-code removal or allocation rewrite.
+- Model/token/schema work remains inapplicable to this offline renderer. Normal
+  receipts stay concise; invalid non-regular inputs now have a concise diagnostic.
+- Prior init preflight, literal-ID selection and bounded SVG wrapping remain
+  covered by the full gate. No new rendering or concurrency behavior was changed.
+
+## Measured impact and compatibility
+
+The initial FIFO probe did not finish within 3 seconds and the regression test
+failed after its 10-second watchdog. After the fix, one local probe returned exit
+1 in 0.172 seconds. This demonstrates termination for a stable FIFO input; it is
+not a throughput claim or CI timing threshold. The directory probe also returns
+exit 1 with the new concise message. Raw results are preserved in
+[before.json](evidence/2026-10-15-third/before.json) and
+[after.json](evidence/2026-10-15-third/after.json).
+
+Regular manifests, symlinked regular manifests, library signatures, CLI options,
+JSON schemas, config, environment and rendered formats are unchanged. Non-regular
+manifest inputs now fail early; streaming manifests were never a documented
+interface. No new runtime primitive is required. No RSS, CPU, token or artifact-size
+reduction is claimed. Golden output hashes remain unchanged.
+
+## Verification receipt
+
+| Command / check | Result |
+|---|---|
+| `./tests/verify.sh` before edits | PASS |
+| Temporary FIFO/directory CLI probe | FIFO timeout at 3 seconds; directory returned runtime read error |
+| `python3 tests/hardening_regression.py` with new test before fix | Expected FAIL: FIFO timeout after 10 seconds |
+| Same temporary CLI probe after fix | Both reject with exact regular-file diagnostic, exit 1 |
+| `./tests/verify.sh` after edits | PASS: 106 units, CLI/filesystem, 48 wrapping cases, goldens, 64 fuzz cases, corpus/no-op |
+| `python3 -m py_compile tests/hardening_regression.py` | PASS |
+| `git diff --check` | PASS |
+| `bash .github/scripts/check-kujo-tool-artifacts.sh e626a96a2963e42825e990bf90cd2181a3b4eaa2 HEAD` | PASS |
+
+Baseline, expected failing test and final receipts are in
+[evidence/2026-10-15-third/](evidence/2026-10-15-third/).
+
+## Remaining work and cross-repository scope
+
+No new unresolved local P0/P1/P2 finding or required sibling change from this
+pass. The historical upstream module-resolution follow-up remains below; this
+pass does not revalidate its current status. Hostile concurrent manifest swapping
+is outside the documented trusted-root boundary and is not represented as fixed.
+Further optimization requires measurement. SignalBox: no captures warranted;
+resolved changes and the handoff are consolidated in Strata.
+
+---
+
 # Howl repository hardening — 2026-10-15 second pass
 
 ## Repository and baseline

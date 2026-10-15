@@ -1,0 +1,16 @@
+[
+  {
+    "input": "pipe.json",
+    "exit": 1,
+    "stdout": "howl: manifest must be a regular file: pipe.json\n",
+    "stderr": "",
+    "elapsed_seconds": 0.17170584400446387
+  },
+  {
+    "input": "directory.json",
+    "exit": 1,
+    "stdout": "howl: manifest must be a regular file: directory.json\n",
+    "stderr": "",
+    "elapsed_seconds": 0.15554287000122713
+  }
+]

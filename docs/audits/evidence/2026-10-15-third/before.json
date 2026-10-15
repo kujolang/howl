@@ -1,0 +1,12 @@
+[
+  {
+    "input": "pipe.json",
+    "timeout_seconds": 3
+  },
+  {
+    "input": "directory.json",
+    "exit": 1,
+    "stdout": "howl: Error { line: 0, message: Cannot read file 'directory.json': Is a directory (os error 21), stack: [] }\n",
+    "stderr": ""
+  }
+]
