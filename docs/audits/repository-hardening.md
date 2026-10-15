@@ -1,3 +1,156 @@
+# Howl repository hardening — 2026-10-15
+
+## Repository
+
+- Repository: `kujolang/howl`; branch: `main`; clean starting SHA:
+  `800c90fc12c114648e215e91bc946c50f1cd61b1`.
+- Ending implementation SHA: `33f7a930f7b2b91d9c9986c267a8a18a6357b633`.
+  The subsequent report/evidence commit is discoverable with
+  `git log -1 --format=%H -- docs/audits/repository-hardening.md`.
+- Purpose: offline, deterministic example-to-showcase CLI. Runtime dependencies:
+  Kujo and Bash; zero package dependencies; Python standard library for gates.
+- Verified with installed `/Users/robertdevore/.local/bin/kujo`, version 1.5.0.
+  The documented optional sibling release binary was absent. The initial attempt
+  using that path failed before running tests; the installed-runtime baseline
+  then passed. No binary source provenance is inferred from its version.
+- CI remains pinned to Kujo commit `9cedbf2f5ae5a0a9b126b055f4c9a6a58a2c23eb`
+  with locked Cargo inputs and no default optional capabilities. The CI runtime
+  was not rebuilt locally; this pass introduces no new runtime primitive.
+
+## Baseline and inspection coverage
+
+The complete existing gate passed before source edits: all source/example checks,
+106 unit assertions, exact CLI receipts, filesystem regressions, 13 golden
+artifacts, 64 invalid-manifest fuzz cases, root corpus determinism and no-op
+mtimes. See [baseline](evidence/2026-10-15/baseline.txt).
+
+Read every implementation module, entrypoint, launcher, test driver, release
+fixture/golden contracts, examples, manifest, package/release Spec/Eval, CI,
+ignore guard and contributor guidance. Broad searches excluded `.git/`, `dist/`
+and `tmp_test_*/`; existing audit evidence was consulted as history, not new proof.
+
+| Review area | Evidence / disposition |
+|---|---|
+| Complexity and dead weight | Small pure renderers; shared output preflight reused for init. Public model/helpers retained; no speculative removals. |
+| Runtime and resources | SVG wrap loop processed discarded lines; measured and bounded below. Existing content projection and one-card rendering retained. Manifest, word split and metadata still buffered. |
+| Agent/token/output efficiency | No prompts, model calls or MCP schemas. Exact CLI output preserved; one verification command and concise 48-case receipt. No token savings claimed. |
+| Errors and filesystem state | Found and reproduced init write ordering bug. Existing containment, source collision, symlink, invalid UTF-8, oversized asset and permission tests pass. |
+| Security boundaries | Reviewed manifest types/paths, descriptor-relative reads, output escaping, active URL schemes, shell quoting, module imports, temporary ownership and atomic writes. No network, credentials, subprocess-per-card, background workers or persistent cache in production paths. |
+| Concurrency/determinism | Existing atomic-reader and no-op tests retained; no shared state/caches added. Writes remain per-file atomic rather than multi-file transactions. |
+| APIs and dependencies | Commands, options, exported model, manifest schema and environment preserved. No added dependencies; pinned CI actions/runtime and locked build retained. |
+| Docs and examples | Three canonical examples execute as documented. README and changelog updated only for changed behavior and benchmark use. Historical audit evidence retained below. |
+
+## Findings
+
+| ID | Priority | Area | Finding | Evidence | Action | Status |
+|---|---|---|---|---|---|---|
+| H16 | P1 | Data integrity | Forced init replaced a custom example before rejecting an invalid manifest destination | New CLI test fails on original source with `AssertionError: directory` | Preflight both destinations before file writes | Fixed |
+| H17 | P2 | Runtime/resources | SVG wrapping continued building lines after the visible prefix and overflow were determined | Eight-card long-text workload; original greedy algorithm and source loop | Return once one extra completed line proves overflow | Fixed |
+| H18 | P2 | Regression gates | Missing init ordering and detailed wrapping equivalence coverage | Existing suites lacked these cases | Add three destination failure cases and 48 deterministic layout cases to offline CI gate | Fixed |
+
+## Changes implemented
+
+**H16 — init preflight** (`013b3bb`). `src/cli.kujo` previously wrote the example
+before checking the manifest. Extracted the existing directory-entry lookup into
+`output_entries`, and reused `protect_target` for both init destinations before
+writing either. Directory entries include dangling symlinks. Existing skip
+behavior without force is retained. `tests/hardening_regression.py` proves a
+custom example survives a directory, live symlink or dangling symlink at the
+manifest destination; external targets and links remain intact; no success
+receipt is emitted. [Red regression](evidence/2026-10-15/red-init.txt) and
+[passing regression](evidence/2026-10-15/after-init.txt) preserve the evidence.
+This does not promise rollback for later I/O failures or concurrent mutations.
+
+**H17/H18 — bounded wrapping** (`33f7a93`). `src/render_svg.kujo` now stops after
+completing `max_lines + 1` lines. The extra line proves the original final-line
+ellipsis is necessary; later words cannot change visible output. Waiting for
+that extra line preserves trailing-space edge cases. The word split remains
+linear in input size, but discarded line construction and loop work are avoided.
+`tests/wrapping_regression.py` uses the original complete greedy contract as an
+independent reference for standard/social title/tagline output: exact widths,
+long words, repeated/trailing spaces, Unicode, markup and seeded mixed cases.
+All 48 SVG files also match the frozen starting SHA byte-for-byte:
+[before](evidence/2026-10-15/before-wrapping.json),
+[after](evidence/2026-10-15/after-wrapping.json).
+`tests/verify.sh` runs this stable behavior gate; no timing threshold was added.
+
+## Performance and efficiency
+
+Five samples per command, eight cards, same installed runtime; medians in seconds.
+The long-text stress workload repeats a three-word title and tagline 1,000 times
+per card. It isolates discarded wrapping work; it is not typical short-copy
+latency. Raw samples, byte sizes and hashes are in the before/after JSON evidence.
+
+| Workload / command | Before | After | stdout bytes before / after |
+|---|---:|---:|---:|
+| Metadata / list | 0.293517 | 0.295724 | 360 / 360 |
+| Metadata / caption | 0.314112 | 0.244428 | 11 / 11 |
+| Metadata / show | 0.279739 | 0.250255 | 712 / 712 |
+| Metadata / HTML render | 0.414765 | 0.613267 | 43 / 43 |
+| Long text / SVG render | 6.172232 | 0.509207 | 43 / 43 |
+
+Metadata artifact bytes remain 25,027; long-text SVG bytes remain 13,784; hashes
+match in both workloads. Host timing varies, including the unchanged HTML path;
+no general startup/HTML improvement or regression is inferred from these samples.
+No RSS, CPU, allocation, build-size or token reduction is claimed. Source-level
+wrapped-line storage is bounded by the visible limit plus one; input splitting
+and manifest buffering are unchanged. Runtime dependency count stays zero.
+
+## Security and compatibility
+
+Reviewed input containment, regular-file requirements, canonical/descriptor reads,
+output/link escaping, source/output collisions, symlink refusal and atomic writes.
+The init fix addresses avoidable partial modification after a known invalid
+output; it does not add a sandbox or transaction. Trusted local roots and their
+ancestors remain required. Asset bytes are embedded without semantic decoding.
+
+Public APIs, options, file formats, schemas, config and environment variables are
+unchanged. Valid generated artifacts and CLI success receipts are unchanged.
+Invalid forced-init destinations fail earlier with the existing preflight-style
+`howl:` diagnostic and exit 1, preserving the custom example. Downstream consumers
+need no migration. Existing goldens were not regenerated. This pass compares the
+local corpus and 48 stress artifacts; historical four-site corpus/raster results
+below were not rerun and are not asserted as current evidence.
+
+## Cross-repository follow-ups and remaining work
+
+- P0/P1/P2: no new unresolved local finding from this pass.
+- Historical Kujo import-resolution follow-up remains documented below with its
+  existing SignalBox IDs. Current upstream status was not revalidated. Howl's
+  launcher mitigation remains covered; this work requires no sibling changes.
+- Needs more evidence: controlled-host profiling before changing other hot paths
+  or introducing performance budgets; multi-file transaction requirements would
+  require a separate product decision.
+- Not worth changing: cosmetic consolidation of small renderers, public helper
+  removal without consumer evidence, arbitrary caps or caches, new model tooling.
+- SignalBox: no captures warranted. Resolved fixes belong in Strata; no duplicate
+  capture of the previously recorded runtime issue was created.
+
+## Verification receipt
+
+Commands ran from this repository with the installed Kujo on PATH unless noted.
+
+| Command | Result |
+|---|---|
+| `kujo --version` | 1.5.0 |
+| `./tests/verify.sh` before edits | PASS; baseline above |
+| `python3 tests/hardening_regression.py` with new test, old implementation | Expected FAIL demonstrating H16 |
+| `python3 tests/hardening_regression.py` after fix | PASS |
+| `python3 tests/wrapping_regression.py --json --howl <frozen-start>/bin/howl` | PASS; 48 original hashes |
+| `python3 tests/wrapping_regression.py --json` | PASS; 48 identical final hashes |
+| `python3 tests/benchmark.py` before/after | PASS; raw metadata timing/hash receipts |
+| `python3 tests/benchmark.py --workload long-svg` before/after | PASS; identical bytes/hashes |
+| `./tests/verify.sh` after source changes | PASS; 106 units, CLI/filesystem, 48 layouts, goldens, 64 fuzz cases, corpus/no-op |
+| `python3 -m py_compile tests/*.py` | PASS |
+| `git diff --check` | PASS |
+| `bash .github/scripts/check-kujo-tool-artifacts.sh 800c90fc12c114648e215e91bc946c50f1cd61b1 HEAD` | PASS |
+
+Final complete receipt: [final.txt](evidence/2026-10-15/final.txt).
+The frozen comparison was created using `git archive` of the starting SHA into
+an owned temporary directory. No sibling code or downstream artifacts changed.
+
+---
+
 # Howl repository hardening — 2026-09-22 recheck
 
 ## Repository and baseline

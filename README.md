@@ -346,7 +346,9 @@ git diff --exit-code dist/howl
 - **Writes preserve old files on failure.** Changed artifacts use atomic file
   replacement; identical files keep their mtimes. Existing artifact symlinks
   (including dangling links) and non-files are rejected before rendering. `init` uses atomic no-overwrite creation unless
-  `--force` is supplied. The output directory and its ancestors must be trusted;
+  `--force` is supplied. Both init destinations are checked before either file
+  is replaced, so an invalid manifest destination preserves the existing example.
+  The output directory and its ancestors must be trusted;
   a render is atomic per file, not a transaction across the whole gallery.
 - **Launcher imports are isolated.** `bin/howl` loads Howl modules from its own
   repository before restoring the caller's working directory. Prefer the
@@ -422,7 +424,8 @@ artifact diffs before updating `tests/golden/` with `--update-golden`.
 
 `python3 tests/benchmark.py` is an opt-in eight-card workload with five samples
 per command; add `--workload unused-svg` to measure standard and transparent
-SVG cards with unused assets. It reports raw times, medians, and stdout bytes; it has no flaky
+SVG cards with unused assets, or `--workload long-svg` for long title/tagline
+wrapping. It reports raw times, medians, and stdout bytes; it has no flaky
 wall-clock CI threshold. See [the hardening audit](docs/audits/repository-hardening.md)
 for measured results and compatibility details.
 

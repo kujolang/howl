@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Preflight both init destinations before replacing an example with `--force`.
+- Stop SVG word wrapping after overflow is proven; preserve visible layout and
+  verify whitespace, Unicode, clipping, and truncation against the greedy contract.
+
 - Reject dangling output symlinks before rendering; create absent outputs with
   atomic no-overwrite semantics, including forced initialization.
 - Skip unused standard SVG assets and transparent social backgrounds while

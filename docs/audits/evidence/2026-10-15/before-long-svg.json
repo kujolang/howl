@@ -1,0 +1,53 @@
+{
+  "workload": "long-svg",
+  "cards": 8,
+  "asset_bytes": 65536,
+  "samples": 5,
+  "commands": {
+    "render --format svg": {
+      "median_seconds": 6.172232,
+      "stdout_bytes": 43,
+      "seconds": [
+        8.207649404001131,
+        6.0795523959968705,
+        5.323268378000648,
+        6.172231968994311,
+        8.683588674997736
+      ]
+    }
+  },
+  "artifacts": {
+    "card-0.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-1.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-2.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-3.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-4.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-5.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-6.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    },
+    "card-7.svg": {
+      "bytes": 1723,
+      "sha256": "4aaa7fd751e1f766fbea809db3a4aeb064a9f7deac04601b94f0c8187e178047"
+    }
+  }
+}

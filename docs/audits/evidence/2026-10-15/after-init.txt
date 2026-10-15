@@ -1,0 +1,1 @@
+hardening: containment, regular files, collisions, write failures, Markdown, launcher: OK

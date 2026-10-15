@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 184, in <module>
+    verify()
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 107, in verify
+    assert starter.read_text() == 'custom example must survive', kind
+AssertionError: directory
