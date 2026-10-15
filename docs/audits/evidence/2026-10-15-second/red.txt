@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 196, in <module>
+    verify()
+  File "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/tests/hardening_regression.py", line 185, in verify
+    assert shown.returncode == 0, (card_id, shown.stdout, shown.stderr)
+AssertionError: ('--format', 'howl: unknown option "--"\n', '')

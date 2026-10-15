@@ -1,3 +1,95 @@
+# Howl repository hardening — 2026-10-15 second pass
+
+## Repository and baseline
+
+- Repository: `kujolang/howl`, branch `main`, offline showcase renderer.
+- Starting SHA: `5be96523a2023ac4b8c89f0ea72f7339b3ad1101`, clean tree.
+- Ending implementation SHA: `d8b57245dca1cc8c42647510a8c574a890cb4a38`.
+  The following evidence-only commit is identified by
+  `git log -1 --format=%H -- docs/audits/repository-hardening.md`.
+- Installed Kujo 1.5.0; Bash launcher; Python standard-library verification.
+  Package dependencies and pinned CI build inputs remain unchanged.
+- Fresh `./tests/verify.sh` baseline passed. This pass builds on the complete
+  source review recorded below and specifically rechecks the parser/manifest
+  contract, source/output handling, text shaping, launcher and test gaps.
+  Broad searches exclude `.git/`, `dist/`, `tmp_test_*/`, and golden bulk data.
+
+## Findings and changes
+
+| ID | Priority | Area | Finding | Evidence | Action | Status |
+|---|---|---|---|---|---|---|
+| H19 | P2 | CLI/API consistency | Manifest accepts IDs beginning with `--`, but show/caption interpret them as options, leaving no way to select them | `validate` succeeds for `--format`; `show -- --format` fails with unknown option | Add standard `--` end-of-options marker | Fixed |
+| H20 | P2 | Regression protection | Tests did not connect accepted ID syntax to CLI selection | New test fails on original parser | Exercise five ID shapes through validate/show/caption, plus malformed-option failures | Fixed |
+
+`src/cli.kujo::parse_opts` now tracks whether it has seen the separator. Every
+subsequent token is a literal positional, including a second `--`. Options before
+the separator retain their current parsing and validation. No ID restriction was
+added, so valid existing manifests remain valid. Help and README document
+`howl show -- --format` and `howl caption --platform x -- --format`.
+
+`tests/hardening_regression.py` covers `--format`, `--manifest`, `--force`, `--`
+and `-plain`. It also confirms that a missing card, an unknown option before the
+separator and a missing option value still fail. The existing offline CI gate
+already executes this suite. No test or golden assertion was weakened.
+
+## Review disposition
+
+- Complexity/resources: parser change adds one boolean and keeps linear argument
+  traversal. Revisited duplicate line splitting in manifest truncation; no
+  representative performance evidence justified expanding this patch. Existing
+  bounded SVG wrapping and command-specific content loading remain intact.
+- Security/failures: literal selection still uses manifest validation and exact
+  ID lookup. It cannot bypass path/type validation, output preflight, or content
+  escaping. Existing symlink, collision, atomic-write, invalid-input and prior
+  init failure regressions pass. No network, credential or shell capability added.
+- State/concurrency: no persistent state, cache, worker or retry introduced;
+  per-file atomicity and trusted-root limits remain as documented.
+- Dead weight/dependencies: no new dependency or unproven public-helper removal.
+  Launcher quoting, runtime override and pinned CI configuration remain unchanged.
+- Agent/token/output: one additional help line explains the required syntax.
+  No token/performance savings claimed; normal command receipts remain unchanged.
+
+## Compatibility and measured impact
+
+An archived starting checkout was compared against the changed launcher using
+one temporary initialized project. Ten command results (exit code, stdout,
+stderr) are identical: validate, list, show, caption, X caption, version, missing
+ID, unknown ID, invalid render format and one-line preview. The all-format render
+receipt and all four starter artifact SHA-256 hashes are also identical.
+The intentional help change adds the separator description. See the compact
+[compatibility receipt](evidence/2026-10-15-second/compatibility.json).
+
+No public library API, manifest schema, file format, config or environment variable
+changed. CLI syntax expands additively; `--` was previously an error. Options must
+precede the separator. No downstream migration is required. No new timing, RSS,
+allocation or token claim is made; earlier benchmark results below remain scoped
+to their original changes.
+
+## Verification receipt
+
+| Command / check | Result |
+|---|---|
+| `./tests/verify.sh` before edits | PASS |
+| `python3 tests/hardening_regression.py` with new tests before parser fix | Expected FAIL: unknown option `--` |
+| `./tests/verify.sh` after edits | PASS: 106 units, CLI/filesystem, 48 wrapping cases, unchanged goldens, 64 fuzz cases, deterministic/no-op corpus |
+| Frozen-start vs final subprocess comparison | PASS: ten command results, render receipt, four artifact hashes |
+| `python3 -m py_compile tests/hardening_regression.py` | PASS |
+| `git diff --check` | PASS |
+| `bash .github/scripts/check-kujo-tool-artifacts.sh 5be96523a2023ac4b8c89f0ea72f7339b3ad1101 HEAD` | PASS |
+
+Baseline, expected red regression and final logs live in
+[evidence/2026-10-15-second/](evidence/2026-10-15-second/).
+
+## Remaining work and cross-repository scope
+
+No new unresolved P0/P1/P2 issue or cross-repository requirement was identified.
+The historical upstream import-resolution item remains recorded below; its current
+status was not revalidated and no sibling files were changed. Further resource
+optimizations need measurement; speculative cleanup is not justified. SignalBox:
+no captures warranted. The completed audit delta and handoff belong in Strata.
+
+---
+
 # Howl repository hardening — 2026-10-15
 
 ## Repository

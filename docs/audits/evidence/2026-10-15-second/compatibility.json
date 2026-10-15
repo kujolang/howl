@@ -1,0 +1,94 @@
+{
+  "starting_sha": "5be96523a2023ac4b8c89f0ea72f7339b3ad1101",
+  "unchanged_commands": [
+    {
+      "command": [
+        "validate"
+      ],
+      "identical": true,
+      "exit": 0
+    },
+    {
+      "command": [
+        "list"
+      ],
+      "identical": true,
+      "exit": 0
+    },
+    {
+      "command": [
+        "show",
+        "clear-intent"
+      ],
+      "identical": true,
+      "exit": 0
+    },
+    {
+      "command": [
+        "caption",
+        "clear-intent"
+      ],
+      "identical": true,
+      "exit": 0
+    },
+    {
+      "command": [
+        "caption",
+        "clear-intent",
+        "--platform",
+        "x"
+      ],
+      "identical": true,
+      "exit": 0
+    },
+    {
+      "command": [
+        "version"
+      ],
+      "identical": true,
+      "exit": 0
+    },
+    {
+      "command": [
+        "show"
+      ],
+      "identical": true,
+      "exit": 1
+    },
+    {
+      "command": [
+        "show",
+        "missing"
+      ],
+      "identical": true,
+      "exit": 1
+    },
+    {
+      "command": [
+        "render",
+        "--format",
+        "bad"
+      ],
+      "identical": true,
+      "exit": 1
+    },
+    {
+      "command": [
+        "show",
+        "clear-intent",
+        "--max-code-lines",
+        "1"
+      ],
+      "identical": true,
+      "exit": 0
+    }
+  ],
+  "render_receipt_identical": true,
+  "artifacts": {
+    "clear-intent.html": "f9ef7b19b9839096bcce191bba3e66a646244500c3202e3074e286c4ecc50022",
+    "clear-intent.md": "b7069ff16ca27d154f4855e5b16d0e011a39f53a4a962ebf532aff45a0f9c1b5",
+    "clear-intent.svg": "70e5abcc752c70d11baec82c8cbe54dff5daffc35befae8c69cd8056a35348e7",
+    "index.html": "973497830e3386718cf04174e672019672599342df03d4a80a96194af50199c7"
+  },
+  "intentional_help_change": "documents -- separator"
+}
