@@ -95,6 +95,24 @@ def verify():
         assert starter.is_symlink() and not missing.exists()
         assert manifest.read_bytes() == before_manifest
         starter.unlink()
+        # Init must preflight its manifest before replacing a valid example.
+        starter.write_text('custom example must survive')
+        for kind in ('directory', 'symlink', 'dangling'):
+            bad_manifest = project / 'blocked.json'
+            if kind == 'directory':
+                bad_manifest.mkdir()
+            else:
+                bad_manifest.symlink_to(root / ('outside.txt' if kind == 'symlink' else 'absent.json'))
+            result = reject('init', '--force', '--manifest', 'blocked.json')
+            assert starter.read_text() == 'custom example must survive', kind
+            assert 'created ' not in result.stdout
+            if kind == 'directory':
+                bad_manifest.rmdir()
+            else:
+                assert bad_manifest.is_symlink()
+                bad_manifest.unlink()
+        assert (root / 'outside.txt').read_text() == 'private sentinel'
+        assert not (root / 'absent.json').exists()
         # Atomic failures preserve the prior artifact; no success receipt leaks.
         save(card)
         assert run(project, 'render').returncode == 0

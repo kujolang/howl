@@ -362,13 +362,7 @@ func protect_render_inputs(opts, model) {
     }
     # Directory entries include dangling links, unlike file_exists. Read once
     # for the whole preflight so cold renders do not scan the directory per file.
-    mut entries := {}
-    names := list_dir(opts["out"])
-    mut entry_index := 0
-    while entry_index < len(names) {
-        entries[names[entry_index]] := true
-        entry_index = entry_index + 1
-    }
+    entries := output_entries(opts["out"])
     i = 0
     while i < len(cards) {
         id := cards[i]["id"]
@@ -386,6 +380,21 @@ func protect_render_inputs(opts, model) {
     if wants(opts["format"], "html") {
         protect_target(join_path(opts["out"], "index.html"), inputs, entries)
     }
+}
+
+func output_entries(dir) {
+    mut entries := {}
+    mut directory := dir
+    if directory == "" {
+        directory = "."
+    }
+    names := list_dir(directory)
+    mut i := 0
+    while i < len(names) {
+        entries[names[i]] := true
+        i = i + 1
+    }
+    return entries
 }
 
 func protect_target(path, inputs, entries) {
@@ -460,6 +469,14 @@ func cmd_init(opts) {
     }
     ensure_dir(examples_dir)
     example_path := join_path(examples_dir, "clear-intent.kujo")
+    # Check both destinations before changing either file. Preserve the existing
+    # skip contract without force, including existing non-file destinations.
+    if force || file_exists(example_path) == false {
+        protect_target(example_path, {}, output_entries(examples_dir))
+    }
+    if force || file_exists(manifest_path) == false {
+        protect_target(manifest_path, {}, output_entries(manifest_dir))
+    }
     if file_exists(example_path) && force == false {
         print("skip (exists): " + example_path)
     } else {
