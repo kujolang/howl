@@ -177,6 +177,18 @@ def verify():
         save(card)
         result = run(project, 'validate', cli=link)
         assert result.returncode == 0, result.stderr
+        # Every accepted id must be addressable, including flag-shaped ids.
+        for card_id in ('--format', '--manifest', '--force', '--', '-plain'):
+            save(dict(card, id=card_id, caption='Selected literal id'))
+            assert run(project, 'validate').returncode == 0
+            shown = run(project, 'show', '--manifest', 'howl.json', '--', card_id)
+            assert shown.returncode == 0, (card_id, shown.stdout, shown.stderr)
+            assert f'id:       {card_id}\n' in shown.stdout
+            caption = run(project, 'caption', '--platform', 'x', '--', card_id)
+            assert caption.returncode == 0 and caption.stdout == 'Selected literal id\n'
+        reject('show', '--')
+        reject('show', '--unknown')
+        reject('show', '--manifest', '--')
         print('hardening: containment, regular files, collisions, write failures, Markdown, launcher: OK')
 
 

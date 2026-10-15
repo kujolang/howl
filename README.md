@@ -156,6 +156,10 @@ by `howl.json`. Their expected outputs are:
 | `howl help` | Show usage. |
 | `howl version` | Show the version. |
 
+Use `--` before a card ID beginning with `--`, for example
+`howl show -- --format` or `howl caption --platform x -- --format`.
+Put options before the separator; tokens after it are literal arguments.
+
 ### Options
 
 | Option | Applies to | Default | Meaning |

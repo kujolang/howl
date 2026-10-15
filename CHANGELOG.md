@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Support `--` to select valid card IDs that begin with option-like prefixes.
+
 - Preflight both init destinations before replacing an example with `--force`.
 - Stop SVG word wrapping after overflow is proven; preserve visible layout and
   verify whitespace, Unicode, clipping, and truncation against the greedy contract.
