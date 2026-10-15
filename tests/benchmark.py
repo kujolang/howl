@@ -12,7 +12,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--howl', type=Path, default=ROOT / 'bin/howl')
-parser.add_argument('--workload', choices=['metadata', 'unused-svg'], default='metadata')
+parser.add_argument('--workload', choices=['metadata', 'unused-svg', 'long-svg'], default='metadata')
 args = parser.parse_args()
 cli = args.howl.resolve()
 with tempfile.TemporaryDirectory(prefix='howl-benchmark-') as tmp:
@@ -29,6 +29,12 @@ with tempfile.TemporaryDirectory(prefix='howl-benchmark-') as tmp:
                 card.pop('variant')
                 card['font_file'] = 'background.png'
         commands = (['render', '--format', 'svg'], ['render', '--format', 'all'])
+    if args.workload == 'long-svg':
+        for card in cards:
+            card.pop('background_image')
+            card['title'] = 'measured wrapping workload ' * 1000
+            card['tagline'] = 'long explanatory text ' * 1000
+        commands = (['render', '--format', 'svg'],)
     (base / 'howl.json').write_text(json.dumps({'cards': cards}))
     report = {'workload': args.workload, 'cards': 8, 'asset_bytes': 65536, 'samples': 5, 'commands': {}}
     for args in commands:

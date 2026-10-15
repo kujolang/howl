@@ -59,6 +59,11 @@ func wrap_words(text, max_chars, max_lines) {
         } else {
             if current != "" {
                 lines = push(lines, current)
+                # One confirmed extra line proves truncation. Later words cannot
+                # change the visible prefix or its existing overflow marker.
+                if len(lines) > max_lines {
+                    return cap_lines(lines, max_lines)
+                }
             }
             current = fitted
         }

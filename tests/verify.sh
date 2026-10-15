@@ -8,4 +8,5 @@ for source in src/*.kujo howl.kujo tests/howl_test.kujo examples/*.kujo; do
 done
 bash -n bin/howl tests/run.sh tests/verify.sh .github/scripts/check-kujo-tool-artifacts.sh
 ./tests/run.sh
+python3 tests/wrapping_regression.py
 python3 tests/release_regression.py --site howl=howl.json
