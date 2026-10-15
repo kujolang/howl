@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reject non-regular manifests before reading so named pipes cannot stall commands.
+
 - Support `--` to select valid card IDs that begin with option-like prefixes.
 
 - Preflight both init destinations before replacing an example with `--force`.

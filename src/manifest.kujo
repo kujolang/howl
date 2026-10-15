@@ -22,6 +22,11 @@ export func load_manifest(path) {
     if file_exists(path) == false {
         die("manifest not found: " + path + " (run `howl init` to create one)")
     }
+    # Existence alone admits FIFOs and devices whose read may never finish.
+    # Follow ordinary manifest symlinks, but require a regular target.
+    if path_is_file(path) == false {
+        die("manifest must be a regular file: " + path)
+    }
     content := read_file(path)
     if type(content) == "Error" {
         die("cannot read manifest: " + path)

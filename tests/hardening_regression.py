@@ -10,13 +10,38 @@ ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / 'bin/howl'
 
 
-def run(root, *args, cli=CLI):
-    return subprocess.run([str(cli), *args], cwd=root, text=True, capture_output=True)
+def run(root, *args, cli=CLI, timeout=None):
+    return subprocess.run([str(cli), *args], cwd=root, text=True, capture_output=True, timeout=timeout)
+
+
+def verify_manifest_file_types(root):
+    # A timeout is a watchdog for a blocking FIFO open, not a latency budget.
+    os.mkfifo(root / 'pipe.json')
+    (root / 'directory.json').mkdir()
+    (root / 'pipe-link.json').symlink_to(root / 'pipe.json')
+    (root / 'directory-link.json').symlink_to(root / 'directory.json')
+    for name in ('pipe.json', 'pipe-link.json', 'directory.json', 'directory-link.json'):
+        for command in ('validate', 'render'):
+            result = run(root, command, '--manifest', name, timeout=10)
+            assert result.returncode == 1, (name, result.stdout, result.stderr)
+            assert result.stdout == f'howl: manifest must be a regular file: {name}\n'
+            assert result.stderr == ''
+        assert not (root / 'dist').exists()
+    (root / 'example.txt').write_text('example\n')
+    manifest = {'cards': [{'id': 'example', 'title': 'Example', 'file': 'example.txt'}]}
+    (root / 'regular.json').write_text(json.dumps(manifest))
+    (root / 'regular-link.json').symlink_to(root / 'regular.json')
+    for name in ('regular.json', 'regular-link.json'):
+        result = run(root, 'validate', '--manifest', name, timeout=10)
+        assert result.returncode == 0, (name, result.stdout, result.stderr)
+    missing = run(root, 'validate', '--manifest', 'missing.json', timeout=10)
+    assert missing.returncode == 1 and 'manifest not found:' in missing.stdout
 
 
 def verify():
     with tempfile.TemporaryDirectory(prefix='howl-hardening-') as tmp:
         root = Path(tmp)
+        verify_manifest_file_types(root)
         project = root / 'project'
         project.mkdir()
         (project / 'example.txt').write_text('example\n')

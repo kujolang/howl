@@ -211,7 +211,9 @@ howl render --manifest ./showcase/howl.json --out ./public/cards --format svg
 
 **Validation rules:**
 
-- The manifest must be a JSON object and `cards` must be an array.
+- The manifest must be a regular file containing a JSON object, and `cards`
+  must be an array. Symlinks to regular manifest files are supported; directories,
+  named pipes and devices are rejected before reading.
 - `id` must be filesystem-safe (`a-z`, `0-9`, `-`, `_`) and unique across cards.
   `index` is reserved because `index.html` is the gallery.
 - Required fields must be strings; `title` must not be empty.
