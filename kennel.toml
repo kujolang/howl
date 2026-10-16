@@ -1,0 +1,19 @@
+[package]
+name = "howl"
+version = "1.2.0"
+description = "Offline deterministic showcase cards, captions, and galleries from real examples."
+license = "MIT"
+repository = "https://github.com/kujolang/howl"
+readme = "README.md"
+
+[kujo]
+minimum_version = "1.3.1"
+entry = "howl.kujo"
+sources = ["src", "howl.kujo"]
+includes = ["README.md", "LICENSE", "VERSION", "CHANGELOG.md", "kujo.toml", "bin", "examples", "howl.json", "docs/release-1.2.0.md"]
+excludes = [".git", "dist", "tmp_test_*", "kennel_packages"]
+
+[bin]
+howl = "howl.kujo"
+
+[dependencies]

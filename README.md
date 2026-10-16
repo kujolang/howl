@@ -1,6 +1,6 @@
 # Howl
 
-[![Version](https://img.shields.io/badge/version-1.1.0-black)](https://github.com/kujolang/howl)
+[![Version](https://img.shields.io/badge/version-1.2.0-black)](https://github.com/kujolang/howl)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
 
@@ -21,7 +21,7 @@ imitate.
 
 | | |
 | --- | --- |
-| **Status** | v1.1.0 — stable |
+| **Status** | v1.2.0 — stable |
 | **Runtime** | The [Kujo](https://github.com/kujolang/kujo) interpreter (Howl is written in Kujo) |
 | **Dependencies** | None. No network, no package registry, no external services |
 | **Tests** | 106 assertions plus deterministic release regression, `./tests/run.sh` |
@@ -96,8 +96,17 @@ These are deliberate, permanent boundaries:
 Howl requires Kujo 1.3.1 or newer with `write_file_atomic`, `read_file_beneath`,
 and `read_binary_file_beneath`. Set `KUJO` to the qualified binary.
 
+For a global command with Kennel 1.1.0 or newer and its supported runtime:
+
 ```bash
-git clone <this-repo> howl
+kennel tool install howl@1.2.0
+howl version
+```
+
+Use `kennel add howl@1.2.0` for a project dependency. To run from source:
+
+```bash
+git clone https://github.com/kujolang/howl.git howl
 cd howl
 
 # Run via the bundled launcher:

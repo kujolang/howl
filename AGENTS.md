@@ -13,7 +13,7 @@ full product description and non-goals.
 
 ## Current status
 
-v1.1.0, complete and working. All commands implemented (`init validate list
+v1.2.0, complete and working. All commands implemented (`init validate list
 show caption render help version`). The unit suite has 106 assertions plus CLI/filesystem and release gates. All `.kujo`
 files pass `kujo check`. End-to-end render verified, including HTML/SVG
 escaping of hostile input.

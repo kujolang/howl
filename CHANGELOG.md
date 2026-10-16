@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## [1.2.0] - 2026-10-16
 
+- Add a native Kennel package manifest and global `howl` command.
 - Reject non-regular manifests before reading so named pipes cannot stall commands.
 
 - Support `--` to select valid card IDs that begin with option-like prefixes.

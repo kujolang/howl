@@ -1,7 +1,7 @@
-name: "Howl 1.1.0 release readiness"
-goal: "Qualify Howl 1.1.0 as a deterministic showcase artifact renderer against real downstream sites and pathological manifests."
-version: "1.1.0"
-background: "Howl 1.1.0 adds social-card rendering, optional transparent and accessible overlays, cache-friendly no-op rebuilds, and release regression coverage."
+name: "Howl 1.2.0 release readiness"
+goal: "Qualify Howl 1.2.0 as a deterministic showcase artifact renderer against real downstream sites and pathological manifests."
+version: "1.2.0"
+background: "Howl 1.2.0 hardens input and output handling, preserves CLI and rendered artifact contracts, adds literal-ID selection, and avoids unused asset and wrapping work."
 scope: "Repository-local CLI behavior, manifest validation and fuzzing, deterministic Markdown/HTML/SVG/gallery rendering, downstream raster reproducibility, output escaping, accessibility metadata, snapshots, and performance evidence."
 non_goals:
   - "Posting to social media or scheduling content"
