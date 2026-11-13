@@ -3,36 +3,22 @@
 Keep a run receipt after the chat ends.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-ledger="$OUTPUT/ledger"
-"$RELEASES/runledger-source/bin/runledger" start \
-  --provider local --model scripted-example \
-  --task "Record a showcase run" --repo "$CAMPAIGN/.." \
-  --ledger "$ledger"
-id=$(basename "$ledger"/runs/*.json .json)
-"$RELEASES/runledger-source/bin/runledger" finish "$id" \
-  --status pass --verdict "Receipt lifecycle exercised" --ledger "$ledger"
-"$RELEASES/runledger-source/bin/runledger" report \
-  --ledger "$ledger" --output "$OUTPUT/report.md"
-"$RELEASES/runledger-source/bin/runledger" verify --ledger "$ledger" --json
+runledger finish "$id" \
+  --status pass --verdict "Ready for review"
+
+runledger report --output run-report.md
+runledger verify --json
 
 ```
 
 **Expected output:**
 
 ```text
-Started run: 2026-11-13-scripted-example-record-a-showcase-run-001
-  storage:      /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json
-  repo:         /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/..
-  start commit: 769af8827ab7f32e3b5f009d50f7643a45144fea
-
-Next: runledger finish 2026-11-13-scripted-example-record-a-showcase-run-001 --status <pass|partial|fail|abandoned> --verdict "..."
-Finished run: 2026-11-13-scripted-example-record-a-showcase-run-001
+Finished run: 2026-11-13-demo-showcase-receipt-001
   status:       pass
-  end commit:   769af8827ab7f32e3b5f009d50f7643a45144fea
-  changed files: 88
-Wrote report to /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/report.md
+  end commit:   -
+  changed files: 0
+Wrote report to run-report.md
 {
   "errors": [],
   "valid": 1
@@ -41,7 +27,7 @@ Wrote report to /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evide
 
 **Concepts:** Verified with Kujo
 
-An agent session ends, and its run context disappears into chat history. Executed a scripted receipt lifecycle using provider local and model scripted-example. Pass is a supplied demonstration verdict. No token usage, costs, model invocation, or automated quality judgment is claimed. Output shown here, when present, was observed in evidence/verified/runledger/stdout.txt. Full commands and artifacts are in the verification report.
+An agent session ends, and its run context disappears into chat history. Executed a scripted receipt lifecycle using provider local and model scripted-example. Pass is a supplied demonstration verdict. No token usage, costs, model invocation, or automated quality judgment is claimed. Set id to the run ID printed by runledger start, then run from the directory containing its ledger. Output shown here, when present, was observed in evidence/tool-commands/runledger/stdout.txt. Full commands and artifacts are in the verification report.
 
 ---
 

@@ -3,12 +3,10 @@
 Check desktop and mobile; keep evidence.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-cd "$RELEASES/lens-source"
-./lens check "$LENS_URL/dashboard/" \
-  --spec "$CAMPAIGN/inputs/dashboard.json" \
-  --html --accessibility --check-links --out "$OUTPUT"
+./lens check http://127.0.0.1:3000/dashboard/ \
+  --spec dashboard.json \
+  --html --accessibility --check-links \
+  --out lens-results
 
 ```
 
@@ -16,12 +14,12 @@ cd "$RELEASES/lens-source"
 
 ```text
 Lens completed: PASS
-Report: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/lens/artifacts/lens-report.md
+Report: lens-results/lens-report.md
 ```
 
 **Concepts:** Verified with Kujo
 
-A page can look fine at one size and still have console or layout problems. Executed a local dashboard fixture with desktop/mobile screenshots, accessibility and link checks. Adapted the canonical spec by removing unsupported not&#95;exists. No accessibility certification or production-site coverage is claimed. Output shown here, when present, was observed in evidence/verified/lens/stdout.txt. Full commands and artifacts are in the verification report.
+A page can look fine at one size and still have console or layout problems. Executed a local dashboard fixture with desktop/mobile screenshots, accessibility and link checks. Adapted the canonical spec by removing unsupported not&#95;exists. No accessibility certification or production-site coverage is claimed. Run from a Lens checkout with dashboard.json present and the dashboard served locally on port 3000. Output shown here, when present, was observed in evidence/tool-commands/lens/stdout.txt. Full commands and artifacts are in the verification report.
 
 ---
 

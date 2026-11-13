@@ -48,6 +48,30 @@
     "sha256": "2321b4f4825c382b962ec703e048f46cb4ecceb032babc2164275a3ecd53bfac"
   },
   {
+    "path": "commands/eval.sh",
+    "sha256": "b3d0a79636309b62a88ebbcf6a2e21ffdaad0194a93e08e8a3b28b981d278a59"
+  },
+  {
+    "path": "commands/lens.sh",
+    "sha256": "d358feed0ba8a2003872564cb8fbf7c57d2b9d4f93d6566e60c952cecb6b485b"
+  },
+  {
+    "path": "commands/packwrite.sh",
+    "sha256": "35922520ae6dfe55be7cad2dc843db0aaf6af66204c4118c01b529ede907a5f9"
+  },
+  {
+    "path": "commands/runledger.sh",
+    "sha256": "f167136798b73aff1ef99239d1c175cf740aeadc84ca1587e95506f3084968fd"
+  },
+  {
+    "path": "commands/shipcheck.sh",
+    "sha256": "44e7fe515e11fd031713db845176c791ed4795715f6bcfd8c4497d725216da28"
+  },
+  {
+    "path": "commands/workcell.sh",
+    "sha256": "75972c89fb8852fa9877b8f9eb86dfc042a3a7b92dc0c3a499c26b5b95655398"
+  },
+  {
     "path": "inputs/agent/CODEX_REVIEW_PROMPT.md",
     "sha256": "595ebe17194464ebacb11201a9e1283098145ff755a32f745a15064cc531ceb2"
   },
@@ -145,7 +169,7 @@
   },
   {
     "path": "assets/eval-code.png",
-    "sha256": "c6ffdc4e4583ea21a69819091379b8a43e54427cc83675dc831c8e9e0b1fbf2f"
+    "sha256": "e0d3128023b94600178bba720d04f73df3038a35a808e890b7d5d4b43e127e77"
   },
   {
     "path": "assets/kujo-logomark-black.svg",
@@ -153,11 +177,11 @@
   },
   {
     "path": "assets/lens-code.png",
-    "sha256": "dc252fd25eb4dd3fc34188b714a72bf12bba4d46bf4e9ddb26f72c2f4292e4a8"
+    "sha256": "c2661d2485ee0931a001bc376a4a7b8efbce8d330808d5793218494ed36c68e7"
   },
   {
     "path": "assets/packwrite-code.png",
-    "sha256": "f6ac32b46e0e2dd5e393e86e9d64488d3faf2c1aced3889c0fe2087801b4e2c8"
+    "sha256": "86d1a2205198279e12309283402d5635a5d8fc2dd22962130d5fd0cad23d69be"
   },
   {
     "path": "assets/process-result-code.png",
@@ -169,7 +193,7 @@
   },
   {
     "path": "assets/runledger-code.png",
-    "sha256": "3f12f547eb65a547bdae72195cf1cd371196011ee2729cfdf801b6f55030ec0d"
+    "sha256": "d229518014570fa0e94480834517dc6883591649cc1c1aa6df21470510b60b69"
   },
   {
     "path": "assets/secret-output-code.png",
@@ -177,11 +201,11 @@
   },
   {
     "path": "assets/shipcheck-code.png",
-    "sha256": "34789cc60c47c535cc4968b67864d3618d9fe7efe3a9836a1b326a4212d0b21b"
+    "sha256": "61d9901033b4d37e95104eb4e0a24c2b360f510a4cb4b4f8c37b44d4ce8c8f6b"
   },
   {
     "path": "assets/workcell-code.png",
-    "sha256": "7e830b60f3baeccc6a403c4e5f70c1ff40f57cc8f94f45a60fcbcd1a498c95c9"
+    "sha256": "4aa863736a5b54380b521a6fd961ee6c708ed9c965e9f875294ba76ec32b6f3b"
   },
   {
     "path": "licenses/eval-LICENSE.txt",

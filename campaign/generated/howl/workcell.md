@@ -3,27 +3,23 @@
 Review execution policy before work starts.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-"$RELEASES/workcell-source/bin/workcell" validate \
-  --file "$CAMPAIGN/inputs/workcell.json"
-"$RELEASES/workcell-source/bin/workcell" inspect \
-  --file "$CAMPAIGN/inputs/workcell.json" \
-  --repo "$CAMPAIGN/.." --summary
+workcell validate --file workcell.json
+
+workcell inspect --file workcell.json --summary
 
 ```
 
 **Expected output:**
 
 ```text
-Valid Workcell definition: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/inputs/workcell.json
+Valid Workcell definition: workcell.json
 Name: hello-workcell  Backend: docker  Network: none
 {"backend":{"adapter_id":"docker","provider_id":"docker","substrate":"oci"},"definition":{"name":"hello-workcell","schema":"workcell-definition/v1"},"error":"","ok":true,"policy":{"cpus":1,"memory":"256m","network":"none","pids":64,"read_only_root":true,"timeout_ms":60000},"schema_version":"workcell-inspect-summary/v1"}
 ```
 
 **Concepts:** Verified with Kujo
 
-Execution settings are hard to review when they are buried in launch commands. Executed validate and inspect --summary on the unchanged hello definition. No container was launched; Docker was unavailable. Network none and resource limits are resolved policy, not observed enforcement. Output shown here, when present, was observed in evidence/verified/workcell/stdout.txt. Full commands and artifacts are in the verification report.
+Execution settings are hard to review when they are buried in launch commands. Executed validate and inspect --summary on the unchanged hello definition. No container was launched; Docker was unavailable. Network none and resource limits are resolved policy, not observed enforcement. Install the Workcell launcher on PATH and keep workcell.json in the current Git project. Output shown here, when present, was observed in evidence/tool-commands/workcell/stdout.txt. Full commands and artifacts are in the verification report.
 
 ---
 

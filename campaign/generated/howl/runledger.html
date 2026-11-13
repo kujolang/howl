@@ -11,38 +11,24 @@
 <p class="eyebrow">Kujo</p>
 <h1>RunLedger</h1>
 <p class="tagline">Keep a run receipt after the chat ends.</p>
-<pre><code>#!/usr/bin/env bash
-set -euo pipefail
-ledger=&quot;$OUTPUT/ledger&quot;
-&quot;$RELEASES/runledger-source/bin/runledger&quot; start \
-  --provider local --model scripted-example \
-  --task &quot;Record a showcase run&quot; --repo &quot;$CAMPAIGN/..&quot; \
-  --ledger &quot;$ledger&quot;
-id=$(basename &quot;$ledger&quot;/runs/*.json .json)
-&quot;$RELEASES/runledger-source/bin/runledger&quot; finish &quot;$id&quot; \
-  --status pass --verdict &quot;Receipt lifecycle exercised&quot; --ledger &quot;$ledger&quot;
-&quot;$RELEASES/runledger-source/bin/runledger&quot; report \
-  --ledger &quot;$ledger&quot; --output &quot;$OUTPUT/report.md&quot;
-&quot;$RELEASES/runledger-source/bin/runledger&quot; verify --ledger &quot;$ledger&quot; --json
+<pre><code>runledger finish &quot;$id&quot; \
+  --status pass --verdict &quot;Ready for review&quot;
+
+runledger report --output run-report.md
+runledger verify --json
 </code></pre>
 <p class="label">Expected output</p>
-<pre class="out"><code>Started run: 2026-11-13-scripted-example-record-a-showcase-run-001
-  storage:      /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json
-  repo:         /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/..
-  start commit: 769af8827ab7f32e3b5f009d50f7643a45144fea
-
-Next: runledger finish 2026-11-13-scripted-example-record-a-showcase-run-001 --status &lt;pass|partial|fail|abandoned&gt; --verdict &quot;...&quot;
-Finished run: 2026-11-13-scripted-example-record-a-showcase-run-001
+<pre class="out"><code>Finished run: 2026-11-13-demo-showcase-receipt-001
   status:       pass
-  end commit:   769af8827ab7f32e3b5f009d50f7643a45144fea
-  changed files: 88
-Wrote report to /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/report.md
+  end commit:   -
+  changed files: 0
+Wrote report to run-report.md
 {
   &quot;errors&quot;: [],
   &quot;valid&quot;: 1
 }</code></pre>
 <div class="concepts"><span class="chip">Verified with Kujo</span></div>
-<p class="note">An agent session ends, and its run context disappears into chat history. Executed a scripted receipt lifecycle using provider local and model scripted-example. Pass is a supplied demonstration verdict. No token usage, costs, model invocation, or automated quality judgment is claimed. Output shown here, when present, was observed in evidence/verified/runledger/stdout.txt. Full commands and artifacts are in the verification report.</p>
+<p class="note">An agent session ends, and its run context disappears into chat history. Executed a scripted receipt lifecycle using provider local and model scripted-example. Pass is a supplied demonstration verdict. No token usage, costs, model invocation, or automated quality judgment is claimed. Set id to the run ID printed by runledger start, then run from the directory containing its ledger. Output shown here, when present, was observed in evidence/tool-commands/runledger/stdout.txt. Full commands and artifacts are in the verification report.</p>
 <div class="caption">Agent work should leave something useful after the chat closes. With RunLedger I can start a run, record how it finished, and write a report. The receipt stays in the repo workflow, ready for the next person picking up the work.
 
 https://github.com/kujolang/runledger/blob/ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13/README.md#quick-start

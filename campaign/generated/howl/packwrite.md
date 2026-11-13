@@ -3,12 +3,9 @@
 Check the handoff before the next agent.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-"$RELEASES/packwrite-source/bin/packwrite" validate \
-  --output agent --config packwrite.toml --json
-"$RELEASES/packwrite-source/bin/packwrite" summary \
-  --output agent --config packwrite.toml --json
+packwrite validate --output agent --json
+
+packwrite summary --output agent --json
 
 ```
 
@@ -21,7 +18,7 @@ set -euo pipefail
 
 **Concepts:** Verified with Kujo
 
-An incomplete agent pack can send the next session into guesswork. Executed validate and summary on the released golden-agent fixture with six phases. The fixture is a test input, not newly generated model output. No provider was called. Output shown here, when present, was observed in evidence/verified/packwrite/stdout.txt. Full commands and artifacts are in the verification report.
+An incomplete agent pack can send the next session into guesswork. Executed validate and summary on the released golden-agent fixture with six phases. The fixture is a test input, not newly generated model output. No provider was called. Install the PackWrite launcher on PATH; the current project contains agent/ and packwrite.toml. Output shown here, when present, was observed in evidence/tool-commands/packwrite/stdout.txt. Full commands and artifacts are in the verification report.
 
 ---
 

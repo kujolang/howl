@@ -3,16 +3,14 @@
 Turn workflow expectations into checks.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-"$KUJO" run "$RELEASES/eval-source/main.kujo" run \
-  "$CAMPAIGN/inputs/eval.json" --output-dir "$OUTPUT" --json
+kujo run main.kujo run eval.json \
+  --output-dir eval-results --json
 
 ```
 
 **Concepts:** Verified with Kujo
 
-A successful command alone is not a complete release smoke check. Executed the unchanged canonical three-check release suite against its copied kennel.toml fixture. This checks a command, file existence, and file size; it does not evaluate model quality. Output shown here, when present, was observed in evidence/verified/eval/stdout.txt. Full commands and artifacts are in the verification report.
+A successful command alone is not a complete release smoke check. Executed the unchanged canonical three-check release suite against its copied kennel.toml fixture. This checks a command, file existence, and file size; it does not evaluate model quality. Run from an Eval checkout with eval.json and kennel.toml in the current directory. Output shown here, when present, was observed in evidence/tool-commands/eval/stdout.txt. Full commands and artifacts are in the verification report.
 
 ---
 

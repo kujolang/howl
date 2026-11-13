@@ -3,16 +3,14 @@
 Gate on explicit release-readiness checks.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-"$KUJO" run "$RELEASES/shipcheck-source/shipcheck.kujo" \
-  gate --dir "$RELEASES/shipcheck-source" --format json
+kujo run shipcheck.kujo gate \
+  --dir . --format json
 
 ```
 
 **Concepts:** Verified with Kujo
 
-A release checklist is easy to forget when shipping gets busy. Executed gate --format json against the pinned ShipCheck release checkout. This checks repository readiness signals, not test execution, artifact integrity, or release certification. Output shown here, when present, was observed in evidence/verified/shipcheck/stdout.txt. Full commands and artifacts are in the verification report.
+A release checklist is easy to forget when shipping gets busy. Executed gate --format json against the pinned ShipCheck release checkout. This checks repository readiness signals, not test execution, artifact integrity, or release certification. Run from a ShipCheck checkout. The dot passed to --dir selects that checkout. Output shown here, when present, was observed in evidence/tool-commands/shipcheck/stdout.txt. Full commands and artifacts are in the verification report.
 
 ---
 

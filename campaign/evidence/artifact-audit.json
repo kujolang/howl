@@ -15,6 +15,8 @@
   },
   "code_contrast": "IDE syntax colors on #111111; no wash or grain overlay",
   "bottom_left_accent": false,
+  "short_tool_commands_executed": 6,
+  "internal_paths_on_tool_cards": false,
   "examples": 12,
   "executed": 12,
   "manifests": 3,
