@@ -1,0 +1,73 @@
+{
+  "id": "lens",
+  "recorded_at_utc": "2026-11-13T02:33:34.993893+00:00",
+  "source": "commands/lens.sh",
+  "source_sha256": "d358feed0ba8a2003872564cb8fbf7c57d2b9d4f93d6566e60c952cecb6b485b",
+  "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+  "release": {
+    "tag": "v1.1.1",
+    "commit": "85778065ca329c93293b387a0e7011437b6d0c60",
+    "release_url": "https://github.com/kujolang/lens/releases/tag/v1.1.1"
+  },
+  "command": [
+    "bash",
+    "-eux",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/lens.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-kgyql4hr/lens",
+  "setup": [],
+  "environment": {
+    "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-kgyql4hr/lens/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+  },
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "artifacts": [
+    {
+      "path": "artifacts/lens-results/accessibility.json",
+      "sha256": "adeb907dc15db08cacb2738aa39e8930746db3cf34d3a82fa1e8cbf125d3f0e7"
+    },
+    {
+      "path": "artifacts/lens-results/console.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/lens-results/dom-summary.json",
+      "sha256": "d46bc568d860c548177b8b6baacd8077de50cfef0653d1659403793ca83b3bcf"
+    },
+    {
+      "path": "artifacts/lens-results/lens-report.html",
+      "sha256": "b3a5038f00c3d1477ae7bec9487317aa2b707f36e0b7f67086a265356de2db36"
+    },
+    {
+      "path": "artifacts/lens-results/lens-report.json",
+      "sha256": "2766c47699a8cc34b393dd0e9d385ba8877c9e4183852f258237e98f0647315f"
+    },
+    {
+      "path": "artifacts/lens-results/lens-report.md",
+      "sha256": "919a0f1bae1b772b3380bd0879f7d58a98a085aa074151c940aa74817adc8d04"
+    },
+    {
+      "path": "artifacts/lens-results/links.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/lens-results/metadata.json",
+      "sha256": "aeea4371cf59d0049f92ab1940c1edbea82f54dad9270d2d92b0202a5c3c41b4"
+    },
+    {
+      "path": "artifacts/lens-results/network.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/lens-results/screenshots/desktop.png",
+      "sha256": "5f5b027490a577dff0f4660ac0ef3bc0a4c25732b8007b68e1860c644817fbec"
+    },
+    {
+      "path": "artifacts/lens-results/screenshots/mobile.png",
+      "sha256": "590a037f870c5c01f0888c1e5f1bcf02d10a43139f90cca3fc90143d1b1055a3"
+    }
+  ]
+}

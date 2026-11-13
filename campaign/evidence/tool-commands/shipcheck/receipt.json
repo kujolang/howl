@@ -1,0 +1,33 @@
+{
+  "id": "shipcheck",
+  "recorded_at_utc": "2026-11-13T02:33:35.414550+00:00",
+  "source": "commands/shipcheck.sh",
+  "source_sha256": "44e7fe515e11fd031713db845176c791ed4795715f6bcfd8c4497d725216da28",
+  "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+  "release": {
+    "tag": "v1.0.2",
+    "commit": "7eedd9e02d8730d65e06e16f4984d909d23539bc",
+    "release_url": "https://github.com/kujolang/shipcheck/releases/tag/v1.0.2"
+  },
+  "command": [
+    "bash",
+    "-eux",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/shipcheck.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-sbgelvgc/shipcheck",
+  "setup": [],
+  "environment": {
+    "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-sbgelvgc/shipcheck/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+  },
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "artifacts": [
+    {
+      "path": "artifacts/gate.json",
+      "sha256": "637d28cac4b0b8d6070f8ca5ae2cda4c00527223299eaa9f221fbde4bc0c2cc7"
+    }
+  ]
+}

@@ -1,0 +1,328 @@
+[
+  {
+    "id": "eval",
+    "recorded_at_utc": "2026-11-13T02:32:44.347316+00:00",
+    "source": "commands/eval.sh",
+    "source_sha256": "b3d0a79636309b62a88ebbcf6a2e21ffdaad0194a93e08e8a3b28b981d278a59",
+    "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+    "release": {
+      "tag": "v1.1.0",
+      "commit": "71e66dff780d6930bcbe093c046bf31aa26411df",
+      "release_url": "https://github.com/kujolang/eval/releases/tag/v1.1.0"
+    },
+    "command": [
+      "bash",
+      "-eux",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/eval.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-03vrlaa3/eval",
+    "setup": [],
+    "environment": {
+      "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-03vrlaa3/eval/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+    },
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "artifacts": [
+      {
+        "path": "artifacts/eval-results/artifact-manifest.json",
+        "sha256": "346317cec5de00a66f7027ce5772e987c2ed8f73be791b3bf8332cf782107a1a"
+      },
+      {
+        "path": "artifacts/eval-results/badge.json",
+        "sha256": "2aa3373046f88b55b3bfa82133237b39ede7e84a993a24c06ded41a1626a62c7"
+      },
+      {
+        "path": "artifacts/eval-results/cli-summary.json",
+        "sha256": "0e0c7e6413deab07c33a2f80764320ef51f381ed83423163216da00cd650bc96"
+      },
+      {
+        "path": "artifacts/eval-results/eval-report.md",
+        "sha256": "da62a8e70b478a22702a4e3e48ae92da7e99b41e005430ef1076985260076443"
+      },
+      {
+        "path": "artifacts/eval-results/eval-report.md.cache.json",
+        "sha256": "9b7160f4110a2716b60fd0842fdcaa6cbca31a36bf99ad4efa21dffbe596db68"
+      },
+      {
+        "path": "artifacts/eval-results/evaluation-result.json",
+        "sha256": "3d7e1ca16a510623a3412a87859854d62cf4a0fe32191433b20c350f21a81379"
+      },
+      {
+        "path": "artifacts/eval-results/history.json",
+        "sha256": "3a17c54f3c21db57cf93db85708f0f39d816781936f7f4685530c9a9e46efeb3"
+      },
+      {
+        "path": "artifacts/eval-results/last_failures.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/eval-results/last_run.json",
+        "sha256": "db5241a5e4f53516a02424e3ac4b122dc719b4df081c1472be7b6500e7cd6e18"
+      },
+      {
+        "path": "artifacts/eval-results/summary.json",
+        "sha256": "801ed639922beb71734fb6432645d9864c59b66b482834547eb51f65f54a3f00"
+      }
+    ]
+  },
+  {
+    "id": "workcell",
+    "recorded_at_utc": "2026-11-13T02:32:47.715876+00:00",
+    "source": "commands/workcell.sh",
+    "source_sha256": "75972c89fb8852fa9877b8f9eb86dfc042a3a7b92dc0c3a499c26b5b95655398",
+    "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+    "release": {
+      "tag": "v1.3.0",
+      "commit": "189d7ab6e975301a0e5100b65e8ad3fe4a584573",
+      "release_url": "https://github.com/kujolang/workcell/releases/tag/v1.3.0"
+    },
+    "command": [
+      "bash",
+      "-eux",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/workcell.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-4mxlfl7x/workcell",
+    "setup": [
+      {
+        "command": [
+          "git",
+          "init",
+          "--quiet"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "add",
+          "workcell.json"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "-c",
+          "user.name=Showcase Fixture",
+          "-c",
+          "user.email=fixture@example.test",
+          "-c",
+          "commit.gpgsign=false",
+          "commit",
+          "--quiet",
+          "-m",
+          "Workcell preflight fixture"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "environment": {
+      "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-4mxlfl7x/workcell/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+    },
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "artifacts": []
+  },
+  {
+    "id": "packwrite",
+    "recorded_at_utc": "2026-11-13T02:32:49.274533+00:00",
+    "source": "commands/packwrite.sh",
+    "source_sha256": "35922520ae6dfe55be7cad2dc843db0aaf6af66204c4118c01b529ede907a5f9",
+    "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+    "release": {
+      "tag": "v1.1.1",
+      "commit": "721dcc0ad41eaedc159d84f34a06396f92ede79f",
+      "release_url": "https://github.com/kujolang/packwrite/releases/tag/v1.1.1"
+    },
+    "command": [
+      "bash",
+      "-eux",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/packwrite.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-0dt78iyh/packwrite",
+    "setup": [],
+    "environment": {
+      "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-0dt78iyh/packwrite/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+    },
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "artifacts": []
+  },
+  {
+    "id": "runledger",
+    "recorded_at_utc": "2026-11-13T02:32:50.410912+00:00",
+    "source": "commands/runledger.sh",
+    "source_sha256": "f167136798b73aff1ef99239d1c175cf740aeadc84ca1587e95506f3084968fd",
+    "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+    "release": {
+      "tag": "v1.2.1",
+      "commit": "ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13",
+      "release_url": "https://github.com/kujolang/runledger/releases/tag/v1.2.1"
+    },
+    "command": [
+      "bash",
+      "-eux",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/runledger.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-4pbupywj/runledger",
+    "setup": [
+      {
+        "command": [
+          "runledger",
+          "start",
+          "--provider",
+          "local",
+          "--model",
+          "demo",
+          "--task",
+          "Showcase receipt",
+          "--repo",
+          "."
+        ],
+        "exit_code": 0,
+        "stdout": "Started run: 2026-11-13-demo-showcase-receipt-001\n  storage:      .runledger/runs/2026-11-13-demo-showcase-receipt-001.json\n  repo:         .\n  start commit: (no git)\n\nNext: runledger finish 2026-11-13-demo-showcase-receipt-001 --status <pass|partial|fail|abandoned> --verdict \"...\"\n",
+        "stderr": ""
+      }
+    ],
+    "environment": {
+      "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-4pbupywj/runledger/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "id": "2026-11-13-demo-showcase-receipt-001"
+    },
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "artifacts": [
+      {
+        "path": "artifacts/ledger/runs/2026-11-13-demo-showcase-receipt-001.json",
+        "sha256": "7ac2f166e3e36971d7e1700a44e048f5307c1a8cfeb1f70fc94002dc6774d589"
+      },
+      {
+        "path": "artifacts/run-report.md",
+        "sha256": "7e95d23966b18cb04fc0ac41bcc575f74333504dd1d2902a49058b187e6d8854"
+      }
+    ]
+  },
+  {
+    "id": "lens",
+    "recorded_at_utc": "2026-11-13T02:33:34.993893+00:00",
+    "source": "commands/lens.sh",
+    "source_sha256": "d358feed0ba8a2003872564cb8fbf7c57d2b9d4f93d6566e60c952cecb6b485b",
+    "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+    "release": {
+      "tag": "v1.1.1",
+      "commit": "85778065ca329c93293b387a0e7011437b6d0c60",
+      "release_url": "https://github.com/kujolang/lens/releases/tag/v1.1.1"
+    },
+    "command": [
+      "bash",
+      "-eux",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/lens.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-kgyql4hr/lens",
+    "setup": [],
+    "environment": {
+      "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-kgyql4hr/lens/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+    },
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "artifacts": [
+      {
+        "path": "artifacts/lens-results/accessibility.json",
+        "sha256": "adeb907dc15db08cacb2738aa39e8930746db3cf34d3a82fa1e8cbf125d3f0e7"
+      },
+      {
+        "path": "artifacts/lens-results/console.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/lens-results/dom-summary.json",
+        "sha256": "d46bc568d860c548177b8b6baacd8077de50cfef0653d1659403793ca83b3bcf"
+      },
+      {
+        "path": "artifacts/lens-results/lens-report.html",
+        "sha256": "b3a5038f00c3d1477ae7bec9487317aa2b707f36e0b7f67086a265356de2db36"
+      },
+      {
+        "path": "artifacts/lens-results/lens-report.json",
+        "sha256": "2766c47699a8cc34b393dd0e9d385ba8877c9e4183852f258237e98f0647315f"
+      },
+      {
+        "path": "artifacts/lens-results/lens-report.md",
+        "sha256": "919a0f1bae1b772b3380bd0879f7d58a98a085aa074151c940aa74817adc8d04"
+      },
+      {
+        "path": "artifacts/lens-results/links.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/lens-results/metadata.json",
+        "sha256": "aeea4371cf59d0049f92ab1940c1edbea82f54dad9270d2d92b0202a5c3c41b4"
+      },
+      {
+        "path": "artifacts/lens-results/network.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/lens-results/screenshots/desktop.png",
+        "sha256": "5f5b027490a577dff0f4660ac0ef3bc0a4c25732b8007b68e1860c644817fbec"
+      },
+      {
+        "path": "artifacts/lens-results/screenshots/mobile.png",
+        "sha256": "590a037f870c5c01f0888c1e5f1bcf02d10a43139f90cca3fc90143d1b1055a3"
+      }
+    ]
+  },
+  {
+    "id": "shipcheck",
+    "recorded_at_utc": "2026-11-13T02:33:35.414550+00:00",
+    "source": "commands/shipcheck.sh",
+    "source_sha256": "44e7fe515e11fd031713db845176c791ed4795715f6bcfd8c4497d725216da28",
+    "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+    "release": {
+      "tag": "v1.0.2",
+      "commit": "7eedd9e02d8730d65e06e16f4984d909d23539bc",
+      "release_url": "https://github.com/kujolang/shipcheck/releases/tag/v1.0.2"
+    },
+    "command": [
+      "bash",
+      "-eux",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/shipcheck.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-sbgelvgc/shipcheck",
+    "setup": [],
+    "environment": {
+      "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-sbgelvgc/shipcheck/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo"
+    },
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "artifacts": [
+      {
+        "path": "artifacts/gate.json",
+        "sha256": "637d28cac4b0b8d6070f8ca5ae2cda4c00527223299eaa9f221fbde4bc0c2cc7"
+      }
+    ]
+  }
+]

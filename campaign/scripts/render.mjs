@@ -15,6 +15,8 @@ const {chromium}=require('playwright-core');
 const catalog=JSON.parse(fs.readFileSync(path.join(C,'catalog.json'),'utf8'));
 const results=JSON.parse(fs.readFileSync(path.join(C,'evidence/verified/results.json'),'utf8'));
 if(results.length!==12 || results.some(r=>r.status!=='executed-successfully')) throw Error('Twelve verified examples required');
+const commandResults=JSON.parse(fs.readFileSync(path.join(C,'evidence/tool-commands/results.json'),'utf8'));
+if(commandResults.length!==6||commandResults.some(r=>r.status!=='executed-successfully'))throw Error('Six verified short-command examples required');
 const esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const font=fs.readFileSync(path.join(C,'assets/DepartureMono-Regular.woff2')).toString('base64');
 const logo=fs.readFileSync(path.join(C,'assets/kujo-logomark-black.svg')).toString('base64');
@@ -31,26 +33,15 @@ function howl(args){
 }
 const all=[];
 for(const card of catalog){
- let previewFile=card.file, from=0, to=11;
- if(card.id==='eval'){previewFile='inputs/eval.json';from=4;to=11;}
- if(card.id==='workcell'){previewFile='inputs/workcell.json';from=8;to=12;}
- if(card.id==='lens'){previewFile='inputs/dashboard.json';from=18;to=27;}
- if(card.id==='runledger'){from=8;to=14;}
- if(card.id==='packwrite'){from=2;to=6;}
- if(card.id==='shipcheck'){from=2;to=4;}
- const sourceCode=fs.readFileSync(path.join(C,previewFile),'utf8').split('\n').slice(from,to).join('\n').trimEnd();
- let code=sourceCode;
- // Reflow this long CLI invocation at argument boundaries, preserving every word.
- if(card.id==='shipcheck'){
-   code=code.replace(' run ', ' run \\\n  ').replace('gate --dir ', 'gate \\\n  --dir ').replace(' --format ', ' \\\n  --format ');
- }
- const shellWords=s=>s.replace(/\\\r?\n/g,' ').match(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s]+/g);
- const sourcePreserved=code===sourceCode||(card.id==='shipcheck'&&JSON.stringify(shellWords(code))===JSON.stringify(shellWords(sourceCode)));
- if(!sourcePreserved)throw Error('Preview changed source tokens');
+ const previewFile=card.display_file||card.file;
+ const sourceLines=fs.readFileSync(path.join(C,previewFile),'utf8').trimEnd().split('\n');
+ const from=0, to=sourceLines.length;
+ const sourceCode=sourceLines.join('\n');
+ const code=sourceCode, sourcePreserved=true;
  const language=previewFile.endsWith('.json')?'json':previewFile.endsWith('.kujo')?'kujo':'bash';
  const colored=highlight(code,language);
  // Source tokens are preserved; only presentation and verified CLI line continuations change.
- await page.setContent(`<!doctype html><html lang="en"><head><style>${style}</style></head><body><img class="mark" alt="Kujo" src="data:image/svg+xml;base64,${logo}"><div class="label">SOURCE EXCERPT</div><div class="panel"></div><pre>${colored.html}</pre></body></html>`);
+ await page.setContent(`<!doctype html><html lang="en"><head><style>${style}</style></head><body><img class="mark" alt="Kujo" src="data:image/svg+xml;base64,${logo}"><div class="label">${card.display_file?'COMMANDS':'SOURCE EXCERPT'}</div><div class="panel"></div><pre>${colored.html}</pre></body></html>`);
  await page.evaluate(()=>document.fonts.ready);
  const layout=await page.locator('pre').evaluate((e,expected)=>{
    if(e.textContent!==expected)throw Error('Highlighted DOM differs from source');
@@ -78,13 +69,14 @@ for(const card of catalog){
  if(layout.bottom>558||layout.top<240)throw Error('Code preview overflows: '+card.id);
  codeLayouts.push({id:card.id,language,previewFile,fromLine:from+1,toLine:to,tokenKinds:colored.kinds,sourcePreserved,...layout});
  await page.screenshot({path:path.join(C,'assets',card.id+'-code.png')});
- const raw=fs.readFileSync(path.join(C,'evidence/verified',card.id,'stdout.txt'),'utf8').trimEnd();
+ const evidenceDir=card.display_file?'evidence/tool-commands':'evidence/verified';
+ const raw=fs.readFileSync(path.join(C,evidenceDir,card.id,'stdout.txt'),'utf8').trimEnd();
  // Large JSON reports remain in evidence; no fabricated shortened output is substituted.
  const output=raw.length<=850 ? raw : '';
  const post=card.post+'\n\n'+card.upstream;
  if(card.post.length+2+23>280)throw Error('X post too long: '+card.id);
  fs.writeFileSync(path.join(C,'posts',card.id+'.txt'),post+'\n');
- all.push({id:card.id,title:card.title,tagline:card.tagline,file:card.file,language:card.repo==='kujo'?'kujo':'bash',variant:'social',label:card.collection,url:card.upstream,show_url:false,font_file:'assets/DepartureMono-Regular.woff2',background_image:'assets/'+card.id+'-code.png',alt:card.collection+': '+card.title+'. '+card.tagline,concepts:[card.collection],expected_output:output,caption:post,cta:'',notes:card.problem+' '+card.notes+' Output shown here, when present, was observed in evidence/verified/'+card.id+'/stdout.txt. Full commands and artifacts are in the verification report.'});
+ all.push({id:card.id,title:card.title,tagline:card.tagline,file:card.display_file||card.file,language:card.repo==='kujo'?'kujo':'bash',variant:'social',label:card.collection,url:card.upstream,show_url:false,font_file:'assets/DepartureMono-Regular.woff2',background_image:'assets/'+card.id+'-code.png',alt:card.collection+': '+card.title+'. '+card.tagline,concepts:[card.collection],expected_output:output,caption:post,cta:'',notes:card.problem+' '+card.notes+(card.command_setup?' '+card.command_setup:'')+' Output shown here, when present, was observed in '+evidenceDir+'/'+card.id+'/stdout.txt. Full commands and artifacts are in the verification report.'});
 }
 for(const [name,cards] of [['built-with-kujo',all.slice(0,6)],['verified-with-kujo',all.slice(6)],['howl',all]]){
  const manifest={project:{name:name==='howl'?'Kujo':cards[0].label,tagline:'Real examples. Recorded execution. Clear limits.',url:'https://kujolang.ai'},cards};
@@ -106,11 +98,12 @@ for(const filename of fs.readdirSync(rawDir)){
      const card=catalog[i];const needle='<article class="item">\n<h2>'+esc(card.title)+'</h2>';
      const heading=i===0||i===6?'<h2 class="collection">'+card.collection+'</h2>':'';
      html=html.replace(needle,heading+'<article class="item">\n<a href="'+card.id+'.html"><img loading="lazy" class="preview" src="'+card.id+'.svg" alt="'+esc(card.title+' — '+card.tagline)+'"></a><h2>'+esc(card.title)+'</h2>');
-     html=html.replace('<a href="'+card.id+'.md">Markdown</a>','<a href="'+card.id+'.md">Markdown</a><a href="'+card.id+'.png">PNG</a><a href="../evidence/verified/'+card.id+'/receipt.json">Execution receipt</a><a href="../posts/'+card.id+'.txt">X draft</a>');
+     html=html.replace('<a href="'+card.id+'.md">Markdown</a>','<a href="'+card.id+'.md">Markdown</a><a href="'+card.id+'.png">PNG</a><a href="../'+(card.display_file?'evidence/tool-commands':'evidence/verified')+'/'+card.id+'/receipt.json">Execution receipt</a><a href="../posts/'+card.id+'.txt">X draft</a>');
    }
  } else {
    const id=filename.slice(0,-5);
-   html=html.replace('<main class="card">','<main class="card"><nav><a href="index.html">All examples</a> · <a href="../evidence/verified/'+id+'/receipt.json">Execution receipt</a></nav>');
+   const receiptDir=catalog.find(c=>c.id===id).display_file?'tool-commands':'verified';
+   html=html.replace('<main class="card">','<main class="card"><nav><a href="index.html">All examples</a> · <a href="../evidence/'+receiptDir+'/'+id+'/receipt.json">Execution receipt</a></nav>');
  }
  fs.writeFileSync(target,html);
 }

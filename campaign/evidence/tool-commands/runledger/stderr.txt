@@ -1,0 +1,3 @@
++ runledger finish 2026-11-13-demo-showcase-receipt-001 --status pass --verdict 'Ready for review'
++ runledger report --output run-report.md
++ runledger verify --json

@@ -169,3 +169,18 @@ The user requested larger, darker code, less empty space, removal of the bottom-
 ## Syntax-color and spacing revision
 
 At the user's request, code panels now have IDE-style syntax colors, overriding the original grayscale-only requirement for code. Typography adapts within 26–44px with per-excerpt leading and vertical centering. Original line structure is preserved where it fits; long command excerpts soft-wrap without splitting highlighted strings. The presentation lexer and rendered DOM are checked for text preservation. The ShipCheck preview adds shell continuations at argument boundaries and verifies that its lexical words equal the executed command; other preview text remains exact. All palette colors must exceed 7:1 contrast on #111. The source snippets, execution receipts, and tweets are unchanged. Updated layout metrics and contrast ratios are captured in render.json and artifact-audit.json.
+
+## Short CLI command revision
+
+All six tool cards now display the exact short command files in `commands/`, instead of internal `$RELEASES` paths or JSON excerpts. The same files are rendered in HTML/Markdown and executed against the pinned releases. The original harness evidence above is retained; current card execution receipts are linked below. Colors, spacing, square layout, and the six language cards remain intact.
+
+| Tool | Result | Command and receipt |
+| --- | --- | --- |
+| eval | executed-successfully; exit 0 | [Commands](commands/eval.sh), [receipt](evidence/tool-commands/eval/receipt.json), [stdout](evidence/tool-commands/eval/stdout.txt), [expanded commands](evidence/tool-commands/eval/stderr.txt) |
+| workcell | executed-successfully; exit 0 | [Commands](commands/workcell.sh), [receipt](evidence/tool-commands/workcell/receipt.json), [stdout](evidence/tool-commands/workcell/stdout.txt), [expanded commands](evidence/tool-commands/workcell/stderr.txt) |
+| packwrite | executed-successfully; exit 0 | [Commands](commands/packwrite.sh), [receipt](evidence/tool-commands/packwrite/receipt.json), [stdout](evidence/tool-commands/packwrite/stdout.txt), [expanded commands](evidence/tool-commands/packwrite/stderr.txt) |
+| runledger | executed-successfully; exit 0 | [Commands](commands/runledger.sh), [receipt](evidence/tool-commands/runledger/receipt.json), [stdout](evidence/tool-commands/runledger/stdout.txt), [expanded commands](evidence/tool-commands/runledger/stderr.txt) |
+| lens | executed-successfully; exit 0 | [Commands](commands/lens.sh), [receipt](evidence/tool-commands/lens/receipt.json), [stdout](evidence/tool-commands/lens/stdout.txt), [expanded commands](evidence/tool-commands/lens/stderr.txt) |
+| shipcheck | executed-successfully; exit 0 | [Commands](commands/shipcheck.sh), [receipt](evidence/tool-commands/shipcheck/receipt.json), [stdout](evidence/tool-commands/shipcheck/stdout.txt), [expanded commands](evidence/tool-commands/shipcheck/stderr.txt) |
+
+Setup and artifacts are recorded per receipt. Workcell validates/inspects a Git fixture without launching a container. PackWrite validates the existing six-phase fixture. RunLedger is seeded by an explicitly recorded start command, with the actual ID supplied to the card snippet. Lens uses the exact displayed localhost port 3000 and both viewports. ShipCheck gates a copy of its pinned Git checkout. See README for working-directory and PATH requirements.

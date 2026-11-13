@@ -1,0 +1,3 @@
+packwrite validate --output agent --json
+
+packwrite summary --output agent --json

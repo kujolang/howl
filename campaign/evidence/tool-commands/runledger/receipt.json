@@ -1,0 +1,56 @@
+{
+  "id": "runledger",
+  "recorded_at_utc": "2026-11-13T02:32:50.410912+00:00",
+  "source": "commands/runledger.sh",
+  "source_sha256": "f167136798b73aff1ef99239d1c175cf740aeadc84ca1587e95506f3084968fd",
+  "runtime_binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007",
+  "release": {
+    "tag": "v1.2.1",
+    "commit": "ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13",
+    "release_url": "https://github.com/kujolang/runledger/releases/tag/v1.2.1"
+  },
+  "command": [
+    "bash",
+    "-eux",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/commands/runledger.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-4pbupywj/runledger",
+  "setup": [
+    {
+      "command": [
+        "runledger",
+        "start",
+        "--provider",
+        "local",
+        "--model",
+        "demo",
+        "--task",
+        "Showcase receipt",
+        "--repo",
+        "."
+      ],
+      "exit_code": 0,
+      "stdout": "Started run: 2026-11-13-demo-showcase-receipt-001\n  storage:      .runledger/runs/2026-11-13-demo-showcase-receipt-001.json\n  repo:         .\n  start commit: (no git)\n\nNext: runledger finish 2026-11-13-demo-showcase-receipt-001 --status <pass|partial|fail|abandoned> --verdict \"...\"\n",
+      "stderr": ""
+    }
+  ],
+  "environment": {
+    "PATH": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-short-commands-4pbupywj/runledger/bin:/private/tmp/howl-campaign-releases:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/robertdevore/.codex/tmp/arg0-macos/codex-arg0AeKbaE:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/robertdevore/.opencode/bin:/Users/robertdevore/.bend/bin:/Users/robertdevore/go/bin:/usr/local/Caskroom/miniforge/base/condabin:/Users/robertdevore/Library/Android/sdk/emulator:/Users/robertdevore/Library/Android/sdk/platform-tools:/Users/robertdevore/.nvm/versions/node/v26.12.1/bin:/Users/robertdevore/.local/bin:/Users/robertdevore/Library/Application Support/Herd/bin/:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/robertdevore/.cargo/bin:/Users/robertdevore/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "id": "2026-11-13-demo-showcase-receipt-001"
+  },
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "artifacts": [
+    {
+      "path": "artifacts/ledger/runs/2026-11-13-demo-showcase-receipt-001.json",
+      "sha256": "7ac2f166e3e36971d7e1700a44e048f5307c1a8cfeb1f70fc94002dc6774d589"
+    },
+    {
+      "path": "artifacts/run-report.md",
+      "sha256": "7e95d23966b18cb04fc0ac41bcc575f74333504dd1d2902a49058b187e6d8854"
+    }
+  ]
+}

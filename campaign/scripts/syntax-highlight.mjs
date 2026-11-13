@@ -8,6 +8,7 @@ export const palette = {
 export const escapeCode = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const keywords = new Set(['func','return','await','async','while','loop','try','except','if','else','for','in','mut','let','spawn','from','import','export']);
 const constants = new Set(['true','false','null']);
+const cliWords = new Set(['kujo','workcell','packwrite','runledger','lens','run','check','validate','summary','inspect','gate','finish','report','verify']);
 export function highlight(code, language) {
   const pattern = /"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*'|#[^\n]*|\/\/[^\n]*|\$\{[^}]*\}|\$[A-Za-z_]\w*|--[a-z][a-z-]*|\b\d+(?:\.\d+)?\b|[A-Za-z_]\w*|:=|==|!=|<=|>=|&&|\|\||[+*=<>!]|\s+|[\s\S]/g;
   const tokens=[];
@@ -21,6 +22,7 @@ export function highlight(code, language) {
     else if(language==='kujo'&&keywords.has(value))kind='keyword';
     else if(/^[A-Za-z_]\w*$/.test(value)&&next.startsWith('('))kind='function';
     else if(language==='bash'&&value.startsWith('--'))kind='property';
+    else if(language==='bash'&&cliWords.has(value)&&code[match.index-1]!=='.')kind='function';
     else if(/^(?::=|==|!=|<=|>=|&&|\|\||[+*=<>!])$/.test(value))kind='operator';
     tokens.push({kind,value});
   }

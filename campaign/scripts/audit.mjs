@@ -14,6 +14,8 @@ const {chromium}=require('playwright-core');
 const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const rows=JSON.parse(fs.readFileSync(path.join(C,'catalog.json')));
 const receipts=JSON.parse(fs.readFileSync(path.join(C,'evidence/verified/results.json')));
+const commandReceipts=JSON.parse(fs.readFileSync(path.join(C,'evidence/tool-commands/results.json')));
+assert.equal(commandReceipts.length,6);assert(commandReceipts.every(r=>r.status==='executed-successfully'&&r.exit_code===0));
 assert.equal(rows.length,12);assert.equal(new Set(rows.map(r=>r.id)).size,12);
 for(const name of ['howl','built-with-kujo','verified-with-kujo']){
  const m=JSON.parse(fs.readFileSync(path.join(C,name+'.json')));
@@ -26,6 +28,12 @@ const page=await browser.newPage({viewport:{width:1200,height:630},deviceScaleFa
 const failures=[];page.on('pageerror',e=>failures.push(e.message));
 for(const card of rows){
  const receipt=receipts.find(r=>r.id===card.id);
+ if(card.display_file){
+   const commandReceipt=commandReceipts.find(r=>r.id===card.id);
+   assert.equal(hash(path.join(C,card.display_file)),commandReceipt.source_sha256);
+   assert(!/\$(?:RELEASES|CAMPAIGN|OUTPUT|KUJO)\b/.test(fs.readFileSync(path.join(C,card.display_file),'utf8')));
+   for(const artifact of commandReceipt.artifacts)assert.equal(hash(path.join(C,'evidence/tool-commands',card.id,artifact.path)),artifact.sha256);
+ }
  assert.equal(receipt.status,'executed-successfully');assert.equal(receipt.exit_code,0);
  assert.equal(hash(path.join(C,card.file)),receipt.source_sha256);
  for(const artifact of receipt.artifacts)assert.equal(hash(path.join(C,'evidence/verified',card.id,artifact.path)),artifact.sha256);
@@ -71,6 +79,6 @@ const colors=JSON.parse(fs.readFileSync(path.join(C,'evidence/render.json'))).sy
 const luminance=hex=>{const v=hex.slice(1).match(/../g).map(c=>parseInt(c,16)/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4);return v[0]*0.2126+v[1]*0.7152+v[2]*0.0722;};
 const contrasts=Object.fromEntries(Object.entries(colors).map(([k,v])=>[k,(luminance(v)+0.05)/(luminance('#111111')+0.05)]));
 assert(Object.values(contrasts).every(v=>v>=7),'Syntax palette must retain strong contrast');
-const result={code_font_min_px:26,code_font_max_px:44,code_spacing:'adaptive leading and vertical centering',syntax_contrast_ratios:contrasts,code_contrast:'IDE syntax colors on #111111; no wash or grain overlay',bottom_left_accent:false,examples:12,executed:12,manifests:3,collection_counts:[6,6],social_svg:12,png:12,png_size:[1200,630],posts:12,post_length_rule:'<=280 with URLs weighted as 23',publication_html:htmlCount,checked_local_links:linkCount,source_and_artifact_hashes:'pass',publication_markdown_identical_to_howl:true,publication_svg_matches_documented_transform:true,svg_text_bounds_and_code_separation:'pass',gallery_checks:galleryChecks,browser_errors:failures};
+const result={code_font_min_px:26,code_font_max_px:44,code_spacing:'adaptive leading and vertical centering',syntax_contrast_ratios:contrasts,code_contrast:'IDE syntax colors on #111111; no wash or grain overlay',bottom_left_accent:false,short_tool_commands_executed:6,internal_paths_on_tool_cards:false,examples:12,executed:12,manifests:3,collection_counts:[6,6],social_svg:12,png:12,png_size:[1200,630],posts:12,post_length_rule:'<=280 with URLs weighted as 23',publication_html:htmlCount,checked_local_links:linkCount,source_and_artifact_hashes:'pass',publication_markdown_identical_to_howl:true,publication_svg_matches_documented_transform:true,svg_text_bounds_and_code_separation:'pass',gallery_checks:galleryChecks,browser_errors:failures};
 fs.writeFileSync(path.join(C,'evidence/artifact-audit.json'),JSON.stringify(result,null,2)+'\n');
 await browser.close();console.log(JSON.stringify(result));

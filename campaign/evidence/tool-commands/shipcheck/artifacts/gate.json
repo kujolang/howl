@@ -1,0 +1,127 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "message": "Git repository detected",
+      "name": "git-repo",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "README found: README.md",
+      "name": "readme",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "LICENSE found: LICENSE",
+      "name": "license",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "Ignore files found: .gitignore",
+      "name": "ignore-files",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "Test directory found: tests/",
+      "name": "tests-exist",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "kujo.toml found (Kujo lint/format available)",
+      "name": "lint-command",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "kujo.toml found (Kujo lint/format available)",
+      "name": "format-command",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "CI configuration found: .github/workflows/",
+      "name": "ci-config",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "README has install/quickstart instructions",
+      "name": "readme-install",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "README has usage/examples",
+      "name": "readme-usage",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "Examples directory found with 2 entries",
+      "name": "examples",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "Documentation directory found with 7 entries",
+      "name": "docs",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "kennel.toml found with version field",
+      "name": "version-metadata",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "Changelog found: CHANGELOG.md",
+      "name": "changelog",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "name, version, description, license present",
+      "message": "kennel.toml found with all expected fields",
+      "name": "kennel-manifest",
+      "passed": 1,
+      "severity": "info"
+    },
+    {
+      "detail": "",
+      "message": "kennel.toml has entry point defined",
+      "name": "entry-point",
+      "passed": 1,
+      "severity": "info"
+    }
+  ],
+  "dir": ".",
+  "project_type": "kujo",
+  "summary": {
+    "failed_errors": 0,
+    "gate_passed": 1,
+    "passed": 16,
+    "total_checks": 16,
+    "warnings": 0
+  },
+  "tool": "shipcheck",
+  "version": "1.0.2"
+}

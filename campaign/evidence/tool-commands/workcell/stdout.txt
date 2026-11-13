@@ -1,0 +1,3 @@
+Valid Workcell definition: workcell.json
+Name: hello-workcell  Backend: docker  Network: none
+{"backend":{"adapter_id":"docker","provider_id":"docker","substrate":"oci"},"definition":{"name":"hello-workcell","schema":"workcell-definition/v1"},"error":"","ok":true,"policy":{"cpus":1,"memory":"256m","network":"none","pids":64,"read_only_root":true,"timeout_ms":60000},"schema_version":"workcell-inspect-summary/v1"}

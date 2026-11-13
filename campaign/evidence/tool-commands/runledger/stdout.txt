@@ -1,0 +1,9 @@
+Finished run: 2026-11-13-demo-showcase-receipt-001
+  status:       pass
+  end commit:   -
+  changed files: 0
+Wrote report to run-report.md
+{
+  "errors": [],
+  "valid": 1
+}

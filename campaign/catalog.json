@@ -81,7 +81,9 @@
     "notes": "Executed the unchanged canonical three-check release suite against its copied kennel.toml fixture. This checks a command, file existence, and file size; it does not evaluate model quality.",
     "post": "Here is a small Eval suite you can actually run: check that a command succeeds, that a manifest exists, and that the file clears a size check. Three explicit checks, with JSON results ready for the next step in your workflow.",
     "collection": "Verified with Kujo",
-    "file": "examples/eval.sh"
+    "file": "examples/eval.sh",
+    "display_file": "commands/eval.sh",
+    "command_setup": "Run from an Eval checkout with eval.json and kennel.toml in the current directory."
   },
   {
     "id": "workcell",
@@ -93,7 +95,9 @@
     "notes": "Executed validate and inspect --summary on the unchanged hello definition. No container was launched; Docker was unavailable. Network none and resource limits are resolved policy, not observed enforcement.",
     "post": "I want to review the settings before agent work starts. Workcell can show the resolved network policy, filesystem settings, and resource limits from one definition. This example uses inspect to make that preflight easy to read.",
     "collection": "Verified with Kujo",
-    "file": "examples/workcell.sh"
+    "file": "examples/workcell.sh",
+    "display_file": "commands/workcell.sh",
+    "command_setup": "Install the Workcell launcher on PATH and keep workcell.json in the current Git project."
   },
   {
     "id": "packwrite",
@@ -105,7 +109,9 @@
     "notes": "Executed validate and summary on the released golden-agent fixture with six phases. The fixture is a test input, not newly generated model output. No provider was called.",
     "post": "Before handing a pack to the next agent, check that it is complete. PackWrite validates the files and reports the phase count and anything missing. This six-phase sample is a quick way to try the workflow locally.",
     "collection": "Verified with Kujo",
-    "file": "examples/packwrite.sh"
+    "file": "examples/packwrite.sh",
+    "display_file": "commands/packwrite.sh",
+    "command_setup": "Install the PackWrite launcher on PATH; the current project contains agent/ and packwrite.toml."
   },
   {
     "id": "runledger",
@@ -117,7 +123,9 @@
     "notes": "Executed a scripted receipt lifecycle using provider local and model scripted-example. Pass is a supplied demonstration verdict. No token usage, costs, model invocation, or automated quality judgment is claimed.",
     "post": "Agent work should leave something useful after the chat closes. With RunLedger I can start a run, record how it finished, and write a report. The receipt stays in the repo workflow, ready for the next person picking up the work.",
     "collection": "Verified with Kujo",
-    "file": "examples/runledger.sh"
+    "file": "examples/runledger.sh",
+    "display_file": "commands/runledger.sh",
+    "command_setup": "Set id to the run ID printed by runledger start, then run from the directory containing its ledger."
   },
   {
     "id": "lens",
@@ -129,7 +137,9 @@
     "notes": "Executed a local dashboard fixture with desktop/mobile screenshots, accessibility and link checks. Adapted the canonical spec by removing unsupported not_exists. No accessibility certification or production-site coverage is claimed.",
     "post": "Built a page? Give the next developer more than a screenshot from your laptop. This Lens example checks a local dashboard at desktop and mobile sizes and saves screenshots, browser findings, and a report they can inspect.",
     "collection": "Verified with Kujo",
-    "file": "examples/lens.sh"
+    "file": "examples/lens.sh",
+    "display_file": "commands/lens.sh",
+    "command_setup": "Run from a Lens checkout with dashboard.json present and the dashboard served locally on port 3000."
   },
   {
     "id": "shipcheck",
@@ -141,6 +151,8 @@
     "notes": "Executed gate --format json against the pinned ShipCheck release checkout. This checks repository readiness signals, not test execution, artifact integrity, or release certification.",
     "post": "I would rather put the release checklist in a command than keep it in my head. ShipCheck looks for the repo signals I need before shipping and gives me JSON plus a gate exit code. Here is the small example to try in a local checkout.",
     "collection": "Verified with Kujo",
-    "file": "examples/shipcheck.sh"
+    "file": "examples/shipcheck.sh",
+    "display_file": "commands/shipcheck.sh",
+    "command_setup": "Run from a ShipCheck checkout. The dot passed to --dir selects that checkout."
   }
 ]
