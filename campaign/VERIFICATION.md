@@ -158,6 +158,10 @@ Each receipt records the actual argument vector, working directory, source SHA-2
 
 The [render receipt](evidence/render.json) captures successful validation/render commands for all three Howl manifests. `generated/` preserves unmodified SVG/HTML/Markdown/galleries; `gallery/` contains the branded publication copies and twelve 1200×630 PNG conversions. The final artifact audit is [evidence/artifact-audit.json](evidence/artifact-audit.json).
 
-SVG and Markdown publication copies are identical to released Howl output. HTML changes are campaign CSS, navigation, and previews only. No Howl application, renderer, tests, existing examples, or root manifest was changed.
+Markdown publication copies are identical to released Howl output. SVG copies match the deterministic publication transform in `scripts/social-layout.mjs`: compact header, unobscured full-width code, and no bottom-left accent. HTML changes are campaign CSS, navigation, and previews only. No Howl application, renderer, tests, existing examples, or root manifest was changed.
 
 Howl regression check: `KUJO=/tmp/howl-campaign-releases/kujo ./tests/run.sh` exited 0 with 106 assertions passing, plus containment/filesystem/CLI hardening checks. All six added `.kujo` files pass `kujo check`; see [language-checks.json](evidence/language-checks.json). A second render was compared by SHA-256 for every generated/publication file; see [regeneration.json](evidence/regeneration.json).
+
+## Readability revision
+
+The user requested larger, darker code, less empty space, removal of the bottom-left line, and developer-focused X copy. All twelve publication cards now use a 1024px-wide code area with 26–30px white text on #111, with the upstream wash/grain removed. All twelve posts now emphasize the useful behavior; execution boundaries remain in this report and card notes. Original executed source files and receipts are unchanged. The artifact audit checks the exact publication transform, code size and bounds, missing accent, post length, and desktop/mobile galleries.
