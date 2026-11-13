@@ -1,0 +1,47 @@
+{
+  "examples": 12,
+  "executed": 12,
+  "manifests": 3,
+  "collection_counts": [
+    6,
+    6
+  ],
+  "social_svg": 12,
+  "png": 12,
+  "png_size": [
+    1200,
+    630
+  ],
+  "posts": 12,
+  "post_length_rule": "<=280 with URLs weighted as 23",
+  "publication_html": 13,
+  "checked_local_links": 123,
+  "source_and_artifact_hashes": "pass",
+  "publication_svg_markdown_identical_to_howl": true,
+  "svg_text_bounds_and_code_separation": "pass",
+  "gallery_checks": [
+    {
+      "viewport": "desktop",
+      "width": 1280,
+      "overflow": false,
+      "images": 12,
+      "font": true,
+      "collections": [
+        "Built with Kujo",
+        "Verified with Kujo"
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "overflow": false,
+      "images": 12,
+      "font": true,
+      "collections": [
+        "Built with Kujo",
+        "Verified with Kujo"
+      ]
+    }
+  ],
+  "browser_errors": []
+}

@@ -1,0 +1,135 @@
+{
+  "project": {
+    "name": "Built with Kujo",
+    "tagline": "Real examples. Recorded execution. Clear limits.",
+    "url": "https://kujolang.ai"
+  },
+  "cards": [
+    {
+      "id": "bounded-map",
+      "title": "Bounded work",
+      "tagline": "Limit concurrent batch work to two jobs.",
+      "file": "examples/bounded-map.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "Built with Kujo",
+      "url": "https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/test_parallel_simple.kujo",
+      "show_url": false,
+      "font_file": "assets/DepartureMono-Regular.woff2",
+      "background_image": "assets/bounded-map-code.png",
+      "alt": "Built with Kujo: Bounded work. Limit concurrent batch work to two jobs.",
+      "concepts": [
+        "Built with Kujo"
+      ],
+      "expected_output": "[2,4,6,8]",
+      "caption": "I want batch work to have a ceiling. This Kujo example maps four inputs with a concurrency limit of two, then awaits the results. Small enough to read at a glance. No speedup claim, just an explicit limit.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/test_parallel_simple.kujo",
+      "cta": "",
+      "notes": "A batch of jobs should not turn into an unbounded pile of work. Reduced the canonical parallel_map example to four inputs and a limit of two. This verifies results and ordering, not a speedup. Output shown here, when present, was observed in evidence/verified/bounded-map/stdout.txt. Full commands and artifacts are in the verification report."
+    },
+    {
+      "id": "reusable-task",
+      "title": "Read it twice",
+      "tagline": "Await the same task result more than once.",
+      "file": "examples/reusable-task.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "Built with Kujo",
+      "url": "https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/language_task_contracts.rs",
+      "show_url": false,
+      "font_file": "assets/DepartureMono-Regular.woff2",
+      "background_image": "assets/reusable-task-code.png",
+      "alt": "Built with Kujo: Read it twice. Await the same task result more than once.",
+      "concepts": [
+        "Built with Kujo"
+      ],
+      "expected_output": "42\nfalse",
+      "caption": "A task result should not disappear because something already waited for it. This Kujo example awaits the same task twice and gets the same value. Cancelling it after completion returns false. Useful behavior to make explicit.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/language_task_contracts.rs",
+      "cta": "",
+      "notes": "Reading a completed task once should not consume its result. Extracted the reusable-completion contract into a standalone example. Both waits return 21; cancelling the completed task returns false. Output shown here, when present, was observed in evidence/verified/reusable-task/stdout.txt. Full commands and artifacts are in the verification report."
+    },
+    {
+      "id": "cancel-task",
+      "title": "Stop a task",
+      "tagline": "Stop cooperative work; handle rejection.",
+      "file": "examples/cancel-task.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "Built with Kujo",
+      "url": "https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/concurrency_lifecycle_contracts.rs",
+      "show_url": false,
+      "font_file": "assets/DepartureMono-Regular.woff2",
+      "background_image": "assets/cancel-task-code.png",
+      "alt": "Built with Kujo: Stop a task. Stop cooperative work; handle rejection.",
+      "concepts": [
+        "Built with Kujo"
+      ],
+      "expected_output": "true\ncancelled",
+      "caption": "Background work needs a stop path. This Kujo example waits until a task starts, cancels it, and handles the rejected await. It demonstrates cooperative cancellation, not a magic undo button for side effects.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/concurrency_lifecycle_contracts.rs",
+      "cta": "",
+      "notes": "A background task needs a deliberate stop path. Reduced the lifecycle cancellation contract. The shared started flag prevents a start/cancel race. Cancellation is cooperative; this does not promise interruption of arbitrary blocking native calls. Output shown here, when present, was observed in evidence/verified/cancel-task/stdout.txt. Full commands and artifacts are in the verification report."
+    },
+    {
+      "id": "canonical-json",
+      "title": "Stable JSON",
+      "tagline": "Stable JSON, even when key order changes.",
+      "file": "examples/canonical-json.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "Built with Kujo",
+      "url": "https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_015_canonical_json.kujo",
+      "show_url": false,
+      "font_file": "assets/DepartureMono-Regular.woff2",
+      "background_image": "assets/canonical-json-code.png",
+      "alt": "Built with Kujo: Stable JSON. Stable JSON, even when key order changes.",
+      "concepts": [
+        "Built with Kujo"
+      ],
+      "expected_output": "{\"a\":{\"a\":1,\"b\":2},\"z\":1}\ntrue",
+      "caption": "Noisy JSON diffs waste review time. Kujo serializes these nested dictionaries identically even though the keys were inserted in a different order. Tiny example, useful property for files that people and tools both read.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_015_canonical_json.kujo",
+      "cta": "",
+      "notes": "Dictionary insertion order creates noisy diffs and unstable machine output. Reduced the canonical HLP-015 example to nested key ordering and equality. Output shown here, when present, was observed in evidence/verified/canonical-json/stdout.txt. Full commands and artifacts are in the verification report."
+    },
+    {
+      "id": "process-result",
+      "title": "Read the exit",
+      "tagline": "Read exit status without parsing text.",
+      "file": "examples/process-result.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "Built with Kujo",
+      "url": "https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_013_process_result.kujo",
+      "show_url": false,
+      "font_file": "assets/DepartureMono-Regular.woff2",
+      "background_image": "assets/process-result-code.png",
+      "alt": "Built with Kujo: Read the exit. Read exit status without parsing text.",
+      "concepts": [
+        "Built with Kujo"
+      ],
+      "expected_output": "ready\nfalse\nfalse",
+      "caption": "When an agent runs a command, I want more than a blob of terminal text. This Kujo example checks success and exit status, then reads stdout, timeout, and truncation fields directly. No parsing a status message.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_013_process_result.kujo",
+      "cta": "",
+      "notes": "Shell text alone does not tell an agent whether a process timed out or failed. Adapted HLP-013 from rustc --version to a portable printf command. Checks success and exitcode, then prints structured output, timeout and truncation flags. Output shown here, when present, was observed in evidence/verified/process-result/stdout.txt. Full commands and artifacts are in the verification report."
+    },
+    {
+      "id": "secret-output",
+      "title": "Safer output",
+      "tagline": "Redact secrets in print and JSON output.",
+      "file": "examples/secret-output.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "Built with Kujo",
+      "url": "https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/secrets_redaction.kujo",
+      "show_url": false,
+      "font_file": "assets/DepartureMono-Regular.woff2",
+      "background_image": "assets/secret-output-code.png",
+      "alt": "Built with Kujo: Safer output. Redact secrets in print and JSON output.",
+      "concepts": [
+        "Built with Kujo"
+      ],
+      "expected_output": "***\n{\"api_key\":\"***\"}\ntrue",
+      "caption": "A debug print should not casually dump a secret. Wrapping this dummy value with secret() makes Kujo redact it in both print and JSON output. This example checks those boundaries; it does not claim encryption.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/secrets_redaction.kujo",
+      "cta": "",
+      "notes": "A debug print can accidentally disclose a credential. Reduced the canonical secret example; the dummy value is not a credential. Redaction is not encryption and explicit reveal remains possible. Output shown here, when present, was observed in evidence/verified/secret-output/stdout.txt. Full commands and artifacts are in the verification report."
+    }
+  ]
+}

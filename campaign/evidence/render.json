@@ -1,0 +1,90 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/tmp/howl-campaign-releases/howl-source/bin/howl",
+        "validate",
+        "--manifest",
+        "built-with-kujo.json"
+      ],
+      "exit_code": 0,
+      "stdout": "ok: built-with-kujo.json is valid (6 card(s))\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/tmp/howl-campaign-releases/howl-source/bin/howl",
+        "render",
+        "--manifest",
+        "built-with-kujo.json",
+        "--out",
+        "generated/built-with-kujo",
+        "--max-code-lines",
+        "60",
+        "--max-output-lines",
+        "30"
+      ],
+      "exit_code": 0,
+      "stdout": "rendered 6 card(s) -> generated/built-with-kujo/ (19 files)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/tmp/howl-campaign-releases/howl-source/bin/howl",
+        "validate",
+        "--manifest",
+        "verified-with-kujo.json"
+      ],
+      "exit_code": 0,
+      "stdout": "ok: verified-with-kujo.json is valid (6 card(s))\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/tmp/howl-campaign-releases/howl-source/bin/howl",
+        "render",
+        "--manifest",
+        "verified-with-kujo.json",
+        "--out",
+        "generated/verified-with-kujo",
+        "--max-code-lines",
+        "60",
+        "--max-output-lines",
+        "30"
+      ],
+      "exit_code": 0,
+      "stdout": "rendered 6 card(s) -> generated/verified-with-kujo/ (19 files)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/tmp/howl-campaign-releases/howl-source/bin/howl",
+        "validate",
+        "--manifest",
+        "howl.json"
+      ],
+      "exit_code": 0,
+      "stdout": "ok: howl.json is valid (12 card(s))\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/tmp/howl-campaign-releases/howl-source/bin/howl",
+        "render",
+        "--manifest",
+        "howl.json",
+        "--out",
+        "generated/howl",
+        "--max-code-lines",
+        "60",
+        "--max-output-lines",
+        "30"
+      ],
+      "exit_code": 0,
+      "stdout": "rendered 12 card(s) -> generated/howl/ (37 files)\n",
+      "stderr": ""
+    }
+  ],
+  "browser": "149.0.7827.55",
+  "conversion": "Playwright Chromium screenshot of generated SVG, 1200x630, deviceScaleFactor 1; awaited document.fonts.ready"
+}

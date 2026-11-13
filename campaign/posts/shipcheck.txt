@@ -1,0 +1,3 @@
+Release prep should not depend on remembering every file. ShipCheck gates this pinned repo checkout on its readiness checks and returns JSON plus an exit code. It checks release signals; it does not run the project tests for you.
+
+https://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics

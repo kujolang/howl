@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShipCheck</title>
+<style>:root{--bg:#fff;--fg:#111;--muted:#666;--line:#e5e5e5;--accent:#2563eb;--code-bg:#0f1115;--code-fg:#e6e6e6}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.5}.card{max-width:760px;margin:48px auto;padding:0 24px}.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}h1{font-size:30px;line-height:1.2;margin:0 0 8px}.tagline{font-size:18px;color:var(--muted);margin:0 0 24px}pre{background:var(--code-bg);color:var(--code-fg);padding:18px 20px;border-radius:10px;overflow:auto;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:14px;line-height:1.55}pre.out{background:#f6f7f9;color:#111;border:1px solid var(--line)}code{font-family:'SF Mono',Menlo,Consolas,monospace}.label{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:24px 0 8px}.concepts{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}.chip{border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--fg)}.note{color:var(--muted);font-size:14px;margin:8px 0}.trunc{color:var(--accent);font-size:13px;margin:8px 0 0}.caption{border-top:1px solid var(--line);margin-top:32px;padding-top:20px;color:var(--fg);white-space:pre-wrap;font-size:15px}footer{color:var(--muted);font-size:13px;margin-top:24px}a{color:var(--accent)}</style>
+</head>
+<body>
+<main class="card">
+<p class="eyebrow">Kujo</p>
+<h1>ShipCheck</h1>
+<p class="tagline">Gate on explicit release-readiness checks.</p>
+<pre><code>#!/usr/bin/env bash
+set -euo pipefail
+&quot;$KUJO&quot; run &quot;$RELEASES/shipcheck-source/shipcheck.kujo&quot; \
+  gate --dir &quot;$RELEASES/shipcheck-source&quot; --format json
+</code></pre>
+<div class="concepts"><span class="chip">Verified with Kujo</span></div>
+<p class="note">A release checklist is easy to forget when shipping gets busy. Executed gate --format json against the pinned ShipCheck release checkout. This checks repository readiness signals, not test execution, artifact integrity, or release certification. Output shown here, when present, was observed in evidence/verified/shipcheck/stdout.txt. Full commands and artifacts are in the verification report.</p>
+<div class="caption">Release prep should not depend on remembering every file. ShipCheck gates this pinned repo checkout on its readiness checks and returns JSON plus an exit code. It checks release signals; it does not run the project tests for you.
+
+https://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics
+
+Kujo: Real examples. Recorded execution. Clear limits.</div>
+<footer><a href="https://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics">https://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics</a></footer>
+</main>
+</body>
+</html>
