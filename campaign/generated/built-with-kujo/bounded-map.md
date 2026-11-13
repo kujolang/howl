@@ -23,7 +23,7 @@ A batch of jobs should not turn into an unbounded pile of work. Reduced the cano
 
 ---
 
-I want batch work to have a ceiling. This Kujo example maps four inputs with a concurrency limit of two, then awaits the results. Small enough to read at a glance. No speedup claim, just an explicit limit.
+I like being able to put a limit right next to the work. In Kujo, parallel&#95;map takes the inputs, a function, and a concurrency limit. Here it doubles four values with at most two jobs at a time. Await it and get the results back in order.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/test&#95;parallel&#95;simple.kujo
 

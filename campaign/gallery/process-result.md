@@ -27,7 +27,7 @@ Shell text alone does not tell an agent whether a process timed out or failed. A
 
 ---
 
-When an agent runs a command, I want more than a blob of terminal text. This Kujo example checks success and exit status, then reads stdout, timeout, and truncation fields directly. No parsing a status message.
+Running commands from code gets easier when the result has fields. Kujo gives you stdout, exit status, timeout, and truncation flags. Here I run a command and check the result directly. Small thing, but useful in an agent tool loop.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper&#95;hlp&#95;013&#95;process&#95;result.kujo
 

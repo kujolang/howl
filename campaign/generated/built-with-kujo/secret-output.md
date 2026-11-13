@@ -24,7 +24,7 @@ A debug print can accidentally disclose a credential. Reduced the canonical secr
 
 ---
 
-A debug print should not casually dump a secret. Wrapping this dummy value with secret() makes Kujo redact it in both print and JSON output. This example checks those boundaries; it does not claim encryption.
+I still use print to debug things. Kujo lets me wrap a value with secret() so it shows up as &#42;&#42;&#42; in terminal output and JSON. Here is the whole example. A useful default for values you do not want wandering into logs.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/secrets&#95;redaction.kujo
 

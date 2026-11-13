@@ -1,6 +1,6 @@
 # Eval
 
-Check a command and its manifest fixture.
+Turn workflow expectations into checks.
 
 ```bash
 #!/usr/bin/env bash
@@ -16,7 +16,7 @@ A successful command alone is not a complete release smoke check. Executed the u
 
 ---
 
-“It ran” is a weak handoff. This Eval example runs the canonical release smoke suite: a command succeeds, the manifest exists, and its size clears the check. The JSON results stay available for the next tool or reviewer.
+Here is a small Eval suite you can actually run: check that a command succeeds, that a manifest exists, and that the file clears a size check. Three explicit checks, with JSON results ready for the next step in your workflow.
 
 https://github.com/kujolang/eval/blob/71e66dff780d6930bcbe093c046bf31aa26411df/examples/release&#95;gate&#95;suite.json
 

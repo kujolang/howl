@@ -1,4 +1,8 @@
 {
+  "code_font_min_px": 26,
+  "code_font_max_px": 30,
+  "code_contrast": "white on #111111; no wash or grain overlay",
+  "bottom_left_accent": false,
   "examples": 12,
   "executed": 12,
   "manifests": 3,
@@ -17,7 +21,8 @@
   "publication_html": 13,
   "checked_local_links": 123,
   "source_and_artifact_hashes": "pass",
-  "publication_svg_markdown_identical_to_howl": true,
+  "publication_markdown_identical_to_howl": true,
+  "publication_svg_matches_documented_transform": true,
   "svg_text_bounds_and_code_separation": "pass",
   "gallery_checks": [
     {

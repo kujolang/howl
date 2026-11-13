@@ -10,7 +10,7 @@
 <main class="card">
 <p class="eyebrow">Verified with Kujo</p>
 <h1>Workcell</h1>
-<p class="tagline">Policy preflight. No container launched.</p>
+<p class="tagline">Review execution policy before work starts.</p>
 <pre><code>#!/usr/bin/env bash
 set -euo pipefail
 &quot;$RELEASES/workcell-source/bin/workcell&quot; validate \
@@ -25,7 +25,7 @@ Name: hello-workcell  Backend: docker  Network: none
 {&quot;backend&quot;:{&quot;adapter_id&quot;:&quot;docker&quot;,&quot;provider_id&quot;:&quot;docker&quot;,&quot;substrate&quot;:&quot;oci&quot;},&quot;definition&quot;:{&quot;name&quot;:&quot;hello-workcell&quot;,&quot;schema&quot;:&quot;workcell-definition/v1&quot;},&quot;error&quot;:&quot;&quot;,&quot;ok&quot;:true,&quot;policy&quot;:{&quot;cpus&quot;:1,&quot;memory&quot;:&quot;256m&quot;,&quot;network&quot;:&quot;none&quot;,&quot;pids&quot;:64,&quot;read_only_root&quot;:true,&quot;timeout_ms&quot;:60000},&quot;schema_version&quot;:&quot;workcell-inspect-summary/v1&quot;}</code></pre>
 <div class="concepts"><span class="chip">Verified with Kujo</span></div>
 <p class="note">Execution settings are hard to review when they are buried in launch commands. Executed validate and inspect --summary on the unchanged hello definition. No container was launched; Docker was unavailable. Network none and resource limits are resolved policy, not observed enforcement. Output shown here, when present, was observed in evidence/verified/workcell/stdout.txt. Full commands and artifacts are in the verification report.</p>
-<div class="caption">Before running agent work, I want to see the boundaries. Workcell resolves this hello definition into a compact policy summary: network off, read-only root, explicit limits. This card verifies preflight; it does not claim a container ran.
+<div class="caption">I want to review the settings before agent work starts. Workcell can show the resolved network policy, filesystem settings, and resource limits from one definition. This example uses inspect to make that preflight easy to read.
 
 https://github.com/kujolang/workcell/blob/189d7ab6e975301a0e5100b65e8ad3fe4a584573/examples/hello/workcell.json
 

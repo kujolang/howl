@@ -10,7 +10,7 @@
 <main class="card">
 <p class="eyebrow">Kujo</p>
 <h1>PackWrite</h1>
-<p class="tagline">Offline pack checks. No model call.</p>
+<p class="tagline">Check the handoff before the next agent.</p>
 <pre><code>#!/usr/bin/env bash
 set -euo pipefail
 &quot;$RELEASES/packwrite-source/bin/packwrite&quot; validate \
@@ -23,7 +23,7 @@ set -euo pipefail
 {&quot;errors&quot;:[],&quot;missing_files&quot;:[],&quot;next_command&quot;:&quot;packwrite prompt deepseek&quot;,&quot;ok&quot;:true,&quot;output_dir&quot;:&quot;agent&quot;,&quot;phase_count&quot;:6,&quot;warnings&quot;:[]}</code></pre>
 <div class="concepts"><span class="chip">Verified with Kujo</span></div>
 <p class="note">An incomplete agent pack can send the next session into guesswork. Executed validate and summary on the released golden-agent fixture with six phases. The fixture is a test input, not newly generated model output. No provider was called. Output shown here, when present, was observed in evidence/verified/packwrite/stdout.txt. Full commands and artifacts are in the verification report.</p>
-<div class="caption">An agent handoff is only useful if the pieces are there. Here PackWrite validates an existing six-phase fixture and reports no missing files. This is the offline validation path, not a claim about a freshly generated plan.
+<div class="caption">Before handing a pack to the next agent, check that it is complete. PackWrite validates the files and reports the phase count and anything missing. This six-phase sample is a quick way to try the workflow locally.
 
 https://github.com/kujolang/packwrite/blob/721dcc0ad41eaedc159d84f34a06396f92ede79f/README.md#commands
 

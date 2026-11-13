@@ -25,7 +25,7 @@ false
 false</code></pre>
 <div class="concepts"><span class="chip">Built with Kujo</span></div>
 <p class="note">Shell text alone does not tell an agent whether a process timed out or failed. Adapted HLP-013 from rustc --version to a portable printf command. Checks success and exitcode, then prints structured output, timeout and truncation flags. Output shown here, when present, was observed in evidence/verified/process-result/stdout.txt. Full commands and artifacts are in the verification report.</p>
-<div class="caption">When an agent runs a command, I want more than a blob of terminal text. This Kujo example checks success and exit status, then reads stdout, timeout, and truncation fields directly. No parsing a status message.
+<div class="caption">Running commands from code gets easier when the result has fields. Kujo gives you stdout, exit status, timeout, and truncation flags. Here I run a command and check the result directly. Small thing, but useful in an agent tool loop.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_013_process_result.kujo
 

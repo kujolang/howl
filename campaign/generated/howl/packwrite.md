@@ -1,6 +1,6 @@
 # PackWrite
 
-Offline pack checks. No model call.
+Check the handoff before the next agent.
 
 ```bash
 #!/usr/bin/env bash
@@ -25,7 +25,7 @@ An incomplete agent pack can send the next session into guesswork. Executed vali
 
 ---
 
-An agent handoff is only useful if the pieces are there. Here PackWrite validates an existing six-phase fixture and reports no missing files. This is the offline validation path, not a claim about a freshly generated plan.
+Before handing a pack to the next agent, check that it is complete. PackWrite validates the files and reports the phase count and anything missing. This six-phase sample is a quick way to try the workflow locally.
 
 https://github.com/kujolang/packwrite/blob/721dcc0ad41eaedc159d84f34a06396f92ede79f/README.md#commands
 

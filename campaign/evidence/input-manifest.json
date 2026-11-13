@@ -133,19 +133,19 @@
   },
   {
     "path": "assets/bounded-map-code.png",
-    "sha256": "8c9bffb6257aa9bad7d5d8b13dd73cdde6ec943ad7276b8c2788284d1eb21563"
+    "sha256": "116a8a52b959d90dc05ae0d6bef6099fde4ea0cb88e11abd8c2d98fe2d605d20"
   },
   {
     "path": "assets/cancel-task-code.png",
-    "sha256": "85ebf06a6dad5ad516e8c24aa0d2eccfbc5ef468bacf782f0bea087f08b0b787"
+    "sha256": "3511622a0b2a4f0c8b20c4c2d8e3cc3f3acdf954578c5b7d80127c8ff827927c"
   },
   {
     "path": "assets/canonical-json-code.png",
-    "sha256": "3f05c9534397950810b857ee4b634c94f5e38267b164d37624cb1efffaad9cd8"
+    "sha256": "5d2868b2f0205ab2892710ea11c7255a8f113e99775ba249899dc247bc65e9e5"
   },
   {
     "path": "assets/eval-code.png",
-    "sha256": "a36ffcadde50a848eeb84857325b7b0be9520213ab4759c1189f5532b33823cc"
+    "sha256": "6d1ea439da51fe9cf794b03dc3865c0753f1566fc5a1007800c4d7d59cb53a39"
   },
   {
     "path": "assets/kujo-logomark-black.svg",
@@ -153,35 +153,35 @@
   },
   {
     "path": "assets/lens-code.png",
-    "sha256": "4c15d6203b2c5fcdb6942f7c65a945e90ee3c5414f4ce1bacb920fcc283e77fe"
+    "sha256": "b507edd7340051d87ea71f3d94d1ed547be13e1fccece458c203d8e831a8bfb3"
   },
   {
     "path": "assets/packwrite-code.png",
-    "sha256": "f8e6024317a48baae43b5d18e661686d34ac26f8520cb2ce8b74bb4bc48dfc14"
+    "sha256": "3e5e3e33ab9534f894c5ed49d6d64da610d1f5c8a7ee0b9f981f43dafb7fdc78"
   },
   {
     "path": "assets/process-result-code.png",
-    "sha256": "521cef0472ef4207835449a0d6270bff70ca6af3ff932f78c5521685c4823ad8"
+    "sha256": "ed6a1ad44e8e85037c45afd79447a0cdd384f3eac216d52f31613d775076771e"
   },
   {
     "path": "assets/reusable-task-code.png",
-    "sha256": "265bd14831d2af7fcc95a38475c26d1e505efd86c6398ed5b0cd9ee4b367a8dc"
+    "sha256": "d4797d680e7a60c52821d1e9d278ddb6dc48b984f519c938f4a226b2dae7ad6d"
   },
   {
     "path": "assets/runledger-code.png",
-    "sha256": "88207cc2c2ad74e6723781f56f8385a0895dd933a3c82070b97cff7598437413"
+    "sha256": "fa0549ffab1651b0b4293add380a8bddfd7329520eb7ec146f5e980ce8bff811"
   },
   {
     "path": "assets/secret-output-code.png",
-    "sha256": "3fc6fb2b33d09f65ef8fc22b465423b9f45e06dbe2fe25afc24b33b784484855"
+    "sha256": "080fb95f038aca79ccc7a582978a31552ff3f43605d0bf6b2f9dda26f9e16495"
   },
   {
     "path": "assets/shipcheck-code.png",
-    "sha256": "0f9dc87430c936bb71dafeb1ca2a3acfd9da484fcf8f6abd221212a1c2223cb1"
+    "sha256": "e9e44c2331f6f0e56518bc71faeca92e3a605ebd07df1df1ef867c3c54f1131e"
   },
   {
     "path": "assets/workcell-code.png",
-    "sha256": "86dda1d02503b1ae72d25e1edd266c8b3b5d044eb13221a0f54af08d0e826cd9"
+    "sha256": "633d9587bdd1bac0278c176987ef0b892fdffd73bff3d12c43aeb42cc0a0b774"
   },
   {
     "path": "licenses/eval-LICENSE.txt",

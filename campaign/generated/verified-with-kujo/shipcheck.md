@@ -16,7 +16,7 @@ A release checklist is easy to forget when shipping gets busy. Executed gate --f
 
 ---
 
-Release prep should not depend on remembering every file. ShipCheck gates this pinned repo checkout on its readiness checks and returns JSON plus an exit code. It checks release signals; it does not run the project tests for you.
+I would rather put the release checklist in a command than keep it in my head. ShipCheck looks for the repo signals I need before shipping and gives me JSON plus a gate exit code. Here is the small example to try in a local checkout.
 
 https://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics
 

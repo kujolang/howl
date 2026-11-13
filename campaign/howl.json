@@ -22,7 +22,7 @@
         "Built with Kujo"
       ],
       "expected_output": "[2,4,6,8]",
-      "caption": "I want batch work to have a ceiling. This Kujo example maps four inputs with a concurrency limit of two, then awaits the results. Small enough to read at a glance. No speedup claim, just an explicit limit.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/test_parallel_simple.kujo",
+      "caption": "I like being able to put a limit right next to the work. In Kujo, parallel_map takes the inputs, a function, and a concurrency limit. Here it doubles four values with at most two jobs at a time. Await it and get the results back in order.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/test_parallel_simple.kujo",
       "cta": "",
       "notes": "A batch of jobs should not turn into an unbounded pile of work. Reduced the canonical parallel_map example to four inputs and a limit of two. This verifies results and ordering, not a speedup. Output shown here, when present, was observed in evidence/verified/bounded-map/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -43,7 +43,7 @@
         "Built with Kujo"
       ],
       "expected_output": "42\nfalse",
-      "caption": "A task result should not disappear because something already waited for it. This Kujo example awaits the same task twice and gets the same value. Cancelling it after completion returns false. Useful behavior to make explicit.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/language_task_contracts.rs",
+      "caption": "Run the task once. Read the result wherever you need it. Kujo lets you await the same task handle more than once, so a second reader gets the completed result too. Six lines that make task coordination a little less annoying.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/language_task_contracts.rs",
       "cta": "",
       "notes": "Reading a completed task once should not consume its result. Extracted the reusable-completion contract into a standalone example. Both waits return 21; cancelling the completed task returns false. Output shown here, when present, was observed in evidence/verified/reusable-task/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -64,7 +64,7 @@
         "Built with Kujo"
       ],
       "expected_output": "true\ncancelled",
-      "caption": "Background work needs a stop path. This Kujo example waits until a task starts, cancels it, and handles the rejected await. It demonstrates cooperative cancellation, not a magic undo button for side effects.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/concurrency_lifecycle_contracts.rs",
+      "caption": "Start a task, wait until it is running, cancel it, handle the result. This is what cooperative task cancellation looks like in Kujo. The stop path lives right alongside the work, where the next developer can actually find it.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/concurrency_lifecycle_contracts.rs",
       "cta": "",
       "notes": "A background task needs a deliberate stop path. Reduced the lifecycle cancellation contract. The shared started flag prevents a start/cancel race. Cancellation is cooperative; this does not promise interruption of arbitrary blocking native calls. Output shown here, when present, was observed in evidence/verified/cancel-task/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -85,7 +85,7 @@
         "Built with Kujo"
       ],
       "expected_output": "{\"a\":{\"a\":1,\"b\":2},\"z\":1}\ntrue",
-      "caption": "Noisy JSON diffs waste review time. Kujo serializes these nested dictionaries identically even though the keys were inserted in a different order. Tiny example, useful property for files that people and tools both read.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_015_canonical_json.kujo",
+      "caption": "Same data, different key order, identical JSON. Kujo sorts dictionary keys when it serializes them, including nested dictionaries. Handy when you want generated files to produce useful diffs instead of rearranging themselves every run.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_015_canonical_json.kujo",
       "cta": "",
       "notes": "Dictionary insertion order creates noisy diffs and unstable machine output. Reduced the canonical HLP-015 example to nested key ordering and equality. Output shown here, when present, was observed in evidence/verified/canonical-json/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -106,7 +106,7 @@
         "Built with Kujo"
       ],
       "expected_output": "ready\nfalse\nfalse",
-      "caption": "When an agent runs a command, I want more than a blob of terminal text. This Kujo example checks success and exit status, then reads stdout, timeout, and truncation fields directly. No parsing a status message.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_013_process_result.kujo",
+      "caption": "Running commands from code gets easier when the result has fields. Kujo gives you stdout, exit status, timeout, and truncation flags. Here I run a command and check the result directly. Small thing, but useful in an agent tool loop.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper_hlp_013_process_result.kujo",
       "cta": "",
       "notes": "Shell text alone does not tell an agent whether a process timed out or failed. Adapted HLP-013 from rustc --version to a portable printf command. Checks success and exitcode, then prints structured output, timeout and truncation flags. Output shown here, when present, was observed in evidence/verified/process-result/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -127,14 +127,14 @@
         "Built with Kujo"
       ],
       "expected_output": "***\n{\"api_key\":\"***\"}\ntrue",
-      "caption": "A debug print should not casually dump a secret. Wrapping this dummy value with secret() makes Kujo redact it in both print and JSON output. This example checks those boundaries; it does not claim encryption.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/secrets_redaction.kujo",
+      "caption": "I still use print to debug things. Kujo lets me wrap a value with secret() so it shows up as *** in terminal output and JSON. Here is the whole example. A useful default for values you do not want wandering into logs.\n\nhttps://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/secrets_redaction.kujo",
       "cta": "",
       "notes": "A debug print can accidentally disclose a credential. Reduced the canonical secret example; the dummy value is not a credential. Redaction is not encryption and explicit reveal remains possible. Output shown here, when present, was observed in evidence/verified/secret-output/stdout.txt. Full commands and artifacts are in the verification report."
     },
     {
       "id": "eval",
       "title": "Eval",
-      "tagline": "Check a command and its manifest fixture.",
+      "tagline": "Turn workflow expectations into checks.",
       "file": "examples/eval.sh",
       "language": "bash",
       "variant": "social",
@@ -143,19 +143,19 @@
       "show_url": false,
       "font_file": "assets/DepartureMono-Regular.woff2",
       "background_image": "assets/eval-code.png",
-      "alt": "Verified with Kujo: Eval. Check a command and its manifest fixture.",
+      "alt": "Verified with Kujo: Eval. Turn workflow expectations into checks.",
       "concepts": [
         "Verified with Kujo"
       ],
       "expected_output": "",
-      "caption": "“It ran” is a weak handoff. This Eval example runs the canonical release smoke suite: a command succeeds, the manifest exists, and its size clears the check. The JSON results stay available for the next tool or reviewer.\n\nhttps://github.com/kujolang/eval/blob/71e66dff780d6930bcbe093c046bf31aa26411df/examples/release_gate_suite.json",
+      "caption": "Here is a small Eval suite you can actually run: check that a command succeeds, that a manifest exists, and that the file clears a size check. Three explicit checks, with JSON results ready for the next step in your workflow.\n\nhttps://github.com/kujolang/eval/blob/71e66dff780d6930bcbe093c046bf31aa26411df/examples/release_gate_suite.json",
       "cta": "",
       "notes": "A successful command alone is not a complete release smoke check. Executed the unchanged canonical three-check release suite against its copied kennel.toml fixture. This checks a command, file existence, and file size; it does not evaluate model quality. Output shown here, when present, was observed in evidence/verified/eval/stdout.txt. Full commands and artifacts are in the verification report."
     },
     {
       "id": "workcell",
       "title": "Workcell",
-      "tagline": "Policy preflight. No container launched.",
+      "tagline": "Review execution policy before work starts.",
       "file": "examples/workcell.sh",
       "language": "bash",
       "variant": "social",
@@ -164,19 +164,19 @@
       "show_url": false,
       "font_file": "assets/DepartureMono-Regular.woff2",
       "background_image": "assets/workcell-code.png",
-      "alt": "Verified with Kujo: Workcell. Policy preflight. No container launched.",
+      "alt": "Verified with Kujo: Workcell. Review execution policy before work starts.",
       "concepts": [
         "Verified with Kujo"
       ],
       "expected_output": "Valid Workcell definition: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/inputs/workcell.json\nName: hello-workcell  Backend: docker  Network: none\n{\"backend\":{\"adapter_id\":\"docker\",\"provider_id\":\"docker\",\"substrate\":\"oci\"},\"definition\":{\"name\":\"hello-workcell\",\"schema\":\"workcell-definition/v1\"},\"error\":\"\",\"ok\":true,\"policy\":{\"cpus\":1,\"memory\":\"256m\",\"network\":\"none\",\"pids\":64,\"read_only_root\":true,\"timeout_ms\":60000},\"schema_version\":\"workcell-inspect-summary/v1\"}",
-      "caption": "Before running agent work, I want to see the boundaries. Workcell resolves this hello definition into a compact policy summary: network off, read-only root, explicit limits. This card verifies preflight; it does not claim a container ran.\n\nhttps://github.com/kujolang/workcell/blob/189d7ab6e975301a0e5100b65e8ad3fe4a584573/examples/hello/workcell.json",
+      "caption": "I want to review the settings before agent work starts. Workcell can show the resolved network policy, filesystem settings, and resource limits from one definition. This example uses inspect to make that preflight easy to read.\n\nhttps://github.com/kujolang/workcell/blob/189d7ab6e975301a0e5100b65e8ad3fe4a584573/examples/hello/workcell.json",
       "cta": "",
       "notes": "Execution settings are hard to review when they are buried in launch commands. Executed validate and inspect --summary on the unchanged hello definition. No container was launched; Docker was unavailable. Network none and resource limits are resolved policy, not observed enforcement. Output shown here, when present, was observed in evidence/verified/workcell/stdout.txt. Full commands and artifacts are in the verification report."
     },
     {
       "id": "packwrite",
       "title": "PackWrite",
-      "tagline": "Offline pack checks. No model call.",
+      "tagline": "Check the handoff before the next agent.",
       "file": "examples/packwrite.sh",
       "language": "bash",
       "variant": "social",
@@ -185,12 +185,12 @@
       "show_url": false,
       "font_file": "assets/DepartureMono-Regular.woff2",
       "background_image": "assets/packwrite-code.png",
-      "alt": "Verified with Kujo: PackWrite. Offline pack checks. No model call.",
+      "alt": "Verified with Kujo: PackWrite. Check the handoff before the next agent.",
       "concepts": [
         "Verified with Kujo"
       ],
       "expected_output": "{\"errors\":[],\"ok\":true,\"warnings\":[]}\n{\"errors\":[],\"missing_files\":[],\"next_command\":\"packwrite prompt deepseek\",\"ok\":true,\"output_dir\":\"agent\",\"phase_count\":6,\"warnings\":[]}",
-      "caption": "An agent handoff is only useful if the pieces are there. Here PackWrite validates an existing six-phase fixture and reports no missing files. This is the offline validation path, not a claim about a freshly generated plan.\n\nhttps://github.com/kujolang/packwrite/blob/721dcc0ad41eaedc159d84f34a06396f92ede79f/README.md#commands",
+      "caption": "Before handing a pack to the next agent, check that it is complete. PackWrite validates the files and reports the phase count and anything missing. This six-phase sample is a quick way to try the workflow locally.\n\nhttps://github.com/kujolang/packwrite/blob/721dcc0ad41eaedc159d84f34a06396f92ede79f/README.md#commands",
       "cta": "",
       "notes": "An incomplete agent pack can send the next session into guesswork. Executed validate and summary on the released golden-agent fixture with six phases. The fixture is a test input, not newly generated model output. No provider was called. Output shown here, when present, was observed in evidence/verified/packwrite/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -211,7 +211,7 @@
         "Verified with Kujo"
       ],
       "expected_output": "Started run: 2026-11-13-scripted-example-record-a-showcase-run-001\n  storage:      /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json\n  repo:         /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/..\n  start commit: 769af8827ab7f32e3b5f009d50f7643a45144fea\n\nNext: runledger finish 2026-11-13-scripted-example-record-a-showcase-run-001 --status <pass|partial|fail|abandoned> --verdict \"...\"\nFinished run: 2026-11-13-scripted-example-record-a-showcase-run-001\n  status:       pass\n  end commit:   769af8827ab7f32e3b5f009d50f7643a45144fea\n  changed files: 88\nWrote report to /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/report.md\n{\n  \"errors\": [],\n  \"valid\": 1\n}",
-      "caption": "I do not want run history trapped in chat. This RunLedger example starts a local receipt, finishes it, writes a report, and checks the ledger. The verdict is supplied by the caller. Token usage and costs stay unset.\n\nhttps://github.com/kujolang/runledger/blob/ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13/README.md#quick-start",
+      "caption": "Agent work should leave something useful after the chat closes. With RunLedger I can start a run, record how it finished, and write a report. The receipt stays in the repo workflow, ready for the next person picking up the work.\n\nhttps://github.com/kujolang/runledger/blob/ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13/README.md#quick-start",
       "cta": "",
       "notes": "An agent session ends, and its run context disappears into chat history. Executed a scripted receipt lifecycle using provider local and model scripted-example. Pass is a supplied demonstration verdict. No token usage, costs, model invocation, or automated quality judgment is claimed. Output shown here, when present, was observed in evidence/verified/runledger/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -232,7 +232,7 @@
         "Verified with Kujo"
       ],
       "expected_output": "Lens completed: PASS\nReport: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/lens/artifacts/lens-report.md",
-      "caption": "“Looks fine here” is not much evidence. Lens checked this local dashboard at desktop and mobile sizes, applied the supported spec assertions, and saved screenshots plus reports. Useful handoff material without an LLM judging the page.\n\nhttps://github.com/kujolang/lens/blob/85778065ca329c93293b387a0e7011437b6d0c60/examples/specs/dashboard.json",
+      "caption": "Built a page? Give the next developer more than a screenshot from your laptop. This Lens example checks a local dashboard at desktop and mobile sizes and saves screenshots, browser findings, and a report they can inspect.\n\nhttps://github.com/kujolang/lens/blob/85778065ca329c93293b387a0e7011437b6d0c60/examples/specs/dashboard.json",
       "cta": "",
       "notes": "A page can look fine at one size and still have console or layout problems. Executed a local dashboard fixture with desktop/mobile screenshots, accessibility and link checks. Adapted the canonical spec by removing unsupported not_exists. No accessibility certification or production-site coverage is claimed. Output shown here, when present, was observed in evidence/verified/lens/stdout.txt. Full commands and artifacts are in the verification report."
     },
@@ -253,7 +253,7 @@
         "Verified with Kujo"
       ],
       "expected_output": "",
-      "caption": "Release prep should not depend on remembering every file. ShipCheck gates this pinned repo checkout on its readiness checks and returns JSON plus an exit code. It checks release signals; it does not run the project tests for you.\n\nhttps://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics",
+      "caption": "I would rather put the release checklist in a command than keep it in my head. ShipCheck looks for the repo signals I need before shipping and gives me JSON plus a gate exit code. Here is the small example to try in a local checkout.\n\nhttps://github.com/kujolang/shipcheck/blob/7eedd9e02d8730d65e06e16f4984d909d23539bc/README.md#gate-semantics",
       "cta": "",
       "notes": "A release checklist is easy to forget when shipping gets busy. Executed gate --format json against the pinned ShipCheck release checkout. This checks repository readiness signals, not test execution, artifact integrity, or release certification. Output shown here, when present, was observed in evidence/verified/shipcheck/stdout.txt. Full commands and artifacts are in the verification report."
     }

@@ -45,7 +45,7 @@ An agent session ends, and its run context disappears into chat history. Execute
 
 ---
 
-I do not want run history trapped in chat. This RunLedger example starts a local receipt, finishes it, writes a report, and checks the ledger. The verdict is supplied by the caller. Token usage and costs stay unset.
+Agent work should leave something useful after the chat closes. With RunLedger I can start a run, record how it finished, and write a report. The receipt stays in the repo workflow, ready for the next person picking up the work.
 
 https://github.com/kujolang/runledger/blob/ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13/README.md#quick-start
 

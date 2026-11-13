@@ -23,7 +23,7 @@ Dictionary insertion order creates noisy diffs and unstable machine output. Redu
 
 ---
 
-Noisy JSON diffs waste review time. Kujo serializes these nested dictionaries identically even though the keys were inserted in a different order. Tiny example, useful property for files that people and tools both read.
+Same data, different key order, identical JSON. Kujo sorts dictionary keys when it serializes them, including nested dictionaries. Handy when you want generated files to produce useful diffs instead of rearranging themselves every run.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/examples/helper&#95;hlp&#95;015&#95;canonical&#95;json.kujo
 

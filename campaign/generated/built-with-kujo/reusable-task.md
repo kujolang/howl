@@ -25,7 +25,7 @@ Reading a completed task once should not consume its result. Extracted the reusa
 
 ---
 
-A task result should not disappear because something already waited for it. This Kujo example awaits the same task twice and gets the same value. Cancelling it after completion returns false. Useful behavior to make explicit.
+Run the task once. Read the result wherever you need it. Kujo lets you await the same task handle more than once, so a second reader gets the completed result too. Six lines that make task coordination a little less annoying.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/language&#95;task&#95;contracts.rs
 

@@ -1,3 +1,3 @@
-“Looks fine here” is not much evidence. Lens checked this local dashboard at desktop and mobile sizes, applied the supported spec assertions, and saved screenshots plus reports. Useful handoff material without an LLM judging the page.
+Built a page? Give the next developer more than a screenshot from your laptop. This Lens example checks a local dashboard at desktop and mobile sizes and saves screenshots, browser findings, and a report they can inspect.
 
 https://github.com/kujolang/lens/blob/85778065ca329c93293b387a0e7011437b6d0c60/examples/specs/dashboard.json

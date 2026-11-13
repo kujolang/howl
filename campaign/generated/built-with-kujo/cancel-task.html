@@ -27,7 +27,7 @@ except err { print(&quot;cancelled&quot;) }
 cancelled</code></pre>
 <div class="concepts"><span class="chip">Built with Kujo</span></div>
 <p class="note">A background task needs a deliberate stop path. Reduced the lifecycle cancellation contract. The shared started flag prevents a start/cancel race. Cancellation is cooperative; this does not promise interruption of arbitrary blocking native calls. Output shown here, when present, was observed in evidence/verified/cancel-task/stdout.txt. Full commands and artifacts are in the verification report.</p>
-<div class="caption">Background work needs a stop path. This Kujo example waits until a task starts, cancels it, and handles the rejected await. It demonstrates cooperative cancellation, not a magic undo button for side effects.
+<div class="caption">Start a task, wait until it is running, cancel it, handle the result. This is what cooperative task cancellation looks like in Kujo. The stop path lives right alongside the work, where the next developer can actually find it.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/concurrency_lifecycle_contracts.rs
 

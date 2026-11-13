@@ -1,3 +1,3 @@
-Before running agent work, I want to see the boundaries. Workcell resolves this hello definition into a compact policy summary: network off, read-only root, explicit limits. This card verifies preflight; it does not claim a container ran.
+I want to review the settings before agent work starts. Workcell can show the resolved network policy, filesystem settings, and resource limits from one definition. This example uses inspect to make that preflight easy to read.
 
 https://github.com/kujolang/workcell/blob/189d7ab6e975301a0e5100b65e8ad3fe4a584573/examples/hello/workcell.json

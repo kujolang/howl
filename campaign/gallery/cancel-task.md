@@ -29,7 +29,7 @@ A background task needs a deliberate stop path. Reduced the lifecycle cancellati
 
 ---
 
-Background work needs a stop path. This Kujo example waits until a task starts, cancels it, and handles the rejected await. It demonstrates cooperative cancellation, not a magic undo button for side effects.
+Start a task, wait until it is running, cancel it, handle the result. This is what cooperative task cancellation looks like in Kujo. The stop path lives right alongside the work, where the next developer can actually find it.
 
 https://github.com/kujolang/kujo/blob/2cfaf185ad03059c89ef4f72fb061074255d00fc/tests/concurrency&#95;lifecycle&#95;contracts.rs
 

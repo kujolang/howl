@@ -85,6 +85,116 @@
       "stderr": ""
     }
   ],
+  "codeLayouts": [
+    {
+      "id": "bounded-map",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 417,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "reusable-task",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 452,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "cancel-task",
+      "fontSize": 26,
+      "lineHeight": 29,
+      "bottom": 532,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "canonical-json",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 382,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "process-result",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 487,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "secret-output",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 382,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "eval",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 487,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "workcell",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 452,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "packwrite",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 382,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "runledger",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 522,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "lens",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 557,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    },
+    {
+      "id": "shipcheck",
+      "fontSize": 30,
+      "lineHeight": 35,
+      "bottom": 382,
+      "width": 1024,
+      "foreground": "#ffffff",
+      "background": "#111111"
+    }
+  ],
   "browser": "149.0.7827.55",
-  "conversion": "Playwright Chromium screenshot of generated SVG, 1200x630, deviceScaleFactor 1; awaited document.fonts.ready"
+  "conversion": "Playwright Chromium screenshot of publication-styled Howl SVG, 1200x630, deviceScaleFactor 1; awaited document.fonts.ready"
 }

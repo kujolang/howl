@@ -10,7 +10,7 @@
 <main class="card">
 <p class="eyebrow">Verified with Kujo</p>
 <h1>Eval</h1>
-<p class="tagline">Check a command and its manifest fixture.</p>
+<p class="tagline">Turn workflow expectations into checks.</p>
 <pre><code>#!/usr/bin/env bash
 set -euo pipefail
 &quot;$KUJO&quot; run &quot;$RELEASES/eval-source/main.kujo&quot; run \
@@ -18,7 +18,7 @@ set -euo pipefail
 </code></pre>
 <div class="concepts"><span class="chip">Verified with Kujo</span></div>
 <p class="note">A successful command alone is not a complete release smoke check. Executed the unchanged canonical three-check release suite against its copied kennel.toml fixture. This checks a command, file existence, and file size; it does not evaluate model quality. Output shown here, when present, was observed in evidence/verified/eval/stdout.txt. Full commands and artifacts are in the verification report.</p>
-<div class="caption">“It ran” is a weak handoff. This Eval example runs the canonical release smoke suite: a command succeeds, the manifest exists, and its size clears the check. The JSON results stay available for the next tool or reviewer.
+<div class="caption">Here is a small Eval suite you can actually run: check that a command succeeds, that a manifest exists, and that the file clears a size check. Three explicit checks, with JSON results ready for the next step in your workflow.
 
 https://github.com/kujolang/eval/blob/71e66dff780d6930bcbe093c046bf31aa26411df/examples/release_gate_suite.json
 
