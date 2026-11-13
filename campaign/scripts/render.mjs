@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {createRequire} from 'node:module';
 import {spawnSync} from 'node:child_process';
 import {styleSocialSvg} from './social-layout.mjs';
+import {highlight, palette} from './syntax-highlight.mjs';
 const C=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const releases=path.resolve(process.argv[2] || '');
 if(!process.argv[2]) throw Error('Usage: node scripts/render.mjs RELEASES_DIRECTORY');
@@ -19,7 +20,7 @@ const font=fs.readFileSync(path.join(C,'assets/DepartureMono-Regular.woff2')).to
 const logo=fs.readFileSync(path.join(C,'assets/kujo-logomark-black.svg')).toString('base64');
 const browser=await chromium.launch();
 const page=await browser.newPage({viewport:{width:1200,height:630},deviceScaleFactor:1});
-const style=`@font-face{font-family:Departure;src:url(data:font/woff2;base64,${font})}*{box-sizing:border-box}body{margin:0;background:white;color:black;font-family:Departure,monospace}.panel{position:absolute;left:64px;top:222px;width:1072px;height:354px;background:#111}pre{position:absolute;left:88px;top:242px;width:1024px;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:#fff;font:30px/35px Departure,monospace}.mark{position:absolute;left:1080px;top:58px;width:48px;height:48px}.label{position:absolute;right:64px;top:192px;font-size:12px;letter-spacing:1px}`;
+const style=`@font-face{font-family:Departure;src:url(data:font/woff2;base64,${font})}*{box-sizing:border-box}body{margin:0;background:white;color:black;font-family:Departure,monospace}.panel{position:absolute;left:64px;top:222px;width:1072px;height:354px;background:#111}pre{position:absolute;left:88px;top:242px;width:1024px;margin:0;white-space:pre-wrap;overflow-wrap:normal;tab-size:4;color:#f1f5f9;font:30px/35px Departure,monospace}.mark{position:absolute;left:1080px;top:58px;width:48px;height:48px}.label{position:absolute;right:64px;top:192px;font-size:12px;letter-spacing:1px}`;
 const commands=[];
 const codeLayouts=[];
 function howl(args){
@@ -37,13 +38,45 @@ for(const card of catalog){
  if(card.id==='runledger'){from=8;to=14;}
  if(card.id==='packwrite'){from=2;to=6;}
  if(card.id==='shipcheck'){from=2;to=4;}
- const code=fs.readFileSync(path.join(C,previewFile),'utf8').split('\n').slice(from,to).join('\n').trimEnd();
- // Every preview is a literal contiguous source excerpt; wrapping is visual only.
- await page.setContent(`<!doctype html><html lang="en"><head><style>${style}</style></head><body><img class="mark" alt="Kujo" src="data:image/svg+xml;base64,${logo}"><div class="label">SOURCE EXCERPT</div><div class="panel"></div><pre>${esc(code)}</pre></body></html>`);
+ const sourceCode=fs.readFileSync(path.join(C,previewFile),'utf8').split('\n').slice(from,to).join('\n').trimEnd();
+ let code=sourceCode;
+ // Reflow this long CLI invocation at argument boundaries, preserving every word.
+ if(card.id==='shipcheck'){
+   code=code.replace(' run ', ' run \\\n  ').replace('gate --dir ', 'gate \\\n  --dir ').replace(' --format ', ' \\\n  --format ');
+ }
+ const shellWords=s=>s.replace(/\\\r?\n/g,' ').match(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s]+/g);
+ const sourcePreserved=code===sourceCode||(card.id==='shipcheck'&&JSON.stringify(shellWords(code))===JSON.stringify(shellWords(sourceCode)));
+ if(!sourcePreserved)throw Error('Preview changed source tokens');
+ const language=previewFile.endsWith('.json')?'json':previewFile.endsWith('.kujo')?'kujo':'bash';
+ const colored=highlight(code,language);
+ // Source tokens are preserved; only presentation and verified CLI line continuations change.
+ await page.setContent(`<!doctype html><html lang="en"><head><style>${style}</style></head><body><img class="mark" alt="Kujo" src="data:image/svg+xml;base64,${logo}"><div class="label">SOURCE EXCERPT</div><div class="panel"></div><pre>${colored.html}</pre></body></html>`);
  await page.evaluate(()=>document.fonts.ready);
- if(await page.locator('pre').evaluate(e=>e.getBoundingClientRect().bottom)>558) await page.locator('pre').evaluate(e=>{e.style.fontSize='26px';e.style.lineHeight='29px';});
- if(await page.locator('pre').evaluate(e=>e.getBoundingClientRect().bottom)>558) throw Error('Code preview overflows: '+card.id);
- codeLayouts.push({id:card.id,...await page.locator('pre').evaluate(e=>({fontSize:parseFloat(getComputedStyle(e).fontSize),lineHeight:parseFloat(getComputedStyle(e).lineHeight),bottom:e.getBoundingClientRect().bottom,width:e.getBoundingClientRect().width,foreground:'#ffffff',background:'#111111'}))});
+ const layout=await page.locator('pre').evaluate((e,expected)=>{
+   if(e.textContent!==expected)throw Error('Highlighted DOM differs from source');
+   const maxHeight=310;
+   let chosen=null;
+   // Preserve source line structure first. Wrap only when no readable size fits.
+   for(const wrapping of ['pre','pre-wrap']){
+     e.style.whiteSpace=wrapping;
+     for(let size=44;size>=26;size-=2){
+       const leading=Math.round(size*1.16*10)/10;
+       e.style.fontSize=size+'px';e.style.lineHeight=leading+'px';
+       if(e.getBoundingClientRect().height<=maxHeight&&e.scrollWidth<=1024){chosen={size,leading,wrapping};break;}
+     }
+     if(chosen)break;
+   }
+   if(!chosen)throw Error('Code does not fit at the minimum readable font size');
+   const rows=Math.round(e.getBoundingClientRect().height/chosen.leading);
+   const leading=Math.min(Math.floor(maxHeight/rows*10)/10,chosen.size*1.65);
+   e.style.lineHeight=leading+'px';
+   const height=e.getBoundingClientRect().height;
+   e.style.top=(222+(354-height)/2)+'px';
+   const box=e.getBoundingClientRect();
+   return {fontSize:chosen.size,lineHeight:leading,wrapping:chosen.wrapping,visualRows:rows,top:box.top,bottom:box.bottom,height:box.height,width:box.width,foreground:'#f1f5f9',background:'#111111',textMatchesPreview:e.textContent===expected};
+ },code);
+ if(layout.bottom>558||layout.top<240)throw Error('Code preview overflows: '+card.id);
+ codeLayouts.push({id:card.id,language,previewFile,fromLine:from+1,toLine:to,tokenKinds:colored.kinds,sourcePreserved,...layout});
  await page.screenshot({path:path.join(C,'assets',card.id+'-code.png')});
  const raw=fs.readFileSync(path.join(C,'evidence/verified',card.id,'stdout.txt'),'utf8').trimEnd();
  // Large JSON reports remain in evidence; no fabricated shortened output is substituted.
@@ -86,7 +119,7 @@ for(const card of catalog){
  await page.evaluate(()=>document.fonts.ready);
  await page.screenshot({path:path.join(gallery,card.id+'.png')});
 }
-fs.writeFileSync(path.join(C,'evidence/render.json'),JSON.stringify({commands,codeLayouts,browser:await browser.version(),conversion:'Playwright Chromium screenshot of publication-styled Howl SVG, 1200x630, deviceScaleFactor 1; awaited document.fonts.ready'},null,2)+'\n');
+fs.writeFileSync(path.join(C,'evidence/render.json'),JSON.stringify({commands,codeLayouts,syntaxPalette:palette,browser:await browser.version(),conversion:'Playwright Chromium screenshot of publication-styled Howl SVG, 1200x630, deviceScaleFactor 1; awaited document.fonts.ready'},null,2)+'\n');
 await browser.close();
 fs.writeFileSync(path.join(C,'POSTS.md'),'# X drafts\n\nNot published. Links point to pinned source. Each draft fits 280 characters with X URL weighting (23 characters per URL).\n\n'+catalog.map(c=>'## '+c.collection+' — '+c.title+'\n\n'+c.post+'\n\n'+c.upstream+'\n').join('\n'));
 console.log('Rendered 12 social cards, two collection galleries, combined gallery, PNGs and X drafts.');
