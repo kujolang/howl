@@ -1,7 +1,19 @@
 {
   "code_font_min_px": 26,
-  "code_font_max_px": 30,
-  "code_contrast": "white on #111111; no wash or grain overlay",
+  "code_font_max_px": 44,
+  "code_spacing": "adaptive leading and vertical centering",
+  "syntax_contrast_ratios": {
+    "plain": 17.236663231699445,
+    "keyword": 7.848230982766543,
+    "string": 11.488542021982193,
+    "number": 12.594715498309043,
+    "function": 11.791429191585038,
+    "property": 12.66245482739457,
+    "variable": 13.56109725718556,
+    "operator": 10.328162824433697,
+    "comment": 8.62935444998535
+  },
+  "code_contrast": "IDE syntax colors on #111111; no wash or grain overlay",
   "bottom_left_accent": false,
   "examples": 12,
   "executed": 12,
