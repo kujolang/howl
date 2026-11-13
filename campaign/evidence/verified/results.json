@@ -1,0 +1,455 @@
+[
+  {
+    "id": "bounded-map",
+    "started_at_utc": "2026-11-13T01:20:33.857856+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "/private/tmp/howl-campaign-releases/kujo",
+      "run",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/bounded-map.kujo"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-qg10hg3b",
+    "source": "examples/bounded-map.kujo",
+    "source_sha256": "41bf8932ace9dd7b063e5feabf4626648b6c32e1af5c467e17b4f96ed1e79ede",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/bounded-map/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "reusable-task",
+    "started_at_utc": "2026-11-13T01:20:33.948705+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "/private/tmp/howl-campaign-releases/kujo",
+      "run",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/reusable-task.kujo"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-fgl6dubg",
+    "source": "examples/reusable-task.kujo",
+    "source_sha256": "a43adeb163fcc5b5847d29e070f1a08353c6afbaaa9b82b1436a043e66339aa4",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/reusable-task/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "cancel-task",
+    "started_at_utc": "2026-11-13T01:20:33.993430+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "/private/tmp/howl-campaign-releases/kujo",
+      "run",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/cancel-task.kujo"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-t7ot_xkq",
+    "source": "examples/cancel-task.kujo",
+    "source_sha256": "92598122e4ddf0d3a4a8806c42f97b125c5dd50f7eccf6c6ab528f59008582de",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/cancel-task/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "canonical-json",
+    "started_at_utc": "2026-11-13T01:20:34.047899+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "/private/tmp/howl-campaign-releases/kujo",
+      "run",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/canonical-json.kujo"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-x4yqueo_",
+    "source": "examples/canonical-json.kujo",
+    "source_sha256": "066d047c91c0c9743d6dd3aa6a4de7c3b2ac091050fcf2511428af6809df3759",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/canonical-json/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "process-result",
+    "started_at_utc": "2026-11-13T01:20:34.098686+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "/private/tmp/howl-campaign-releases/kujo",
+      "run",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/process-result.kujo"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-x5pyrguj",
+    "source": "examples/process-result.kujo",
+    "source_sha256": "7e0bf4b32022cd675af7b8c50bb179063f0e95d4191701a307201e2db2cccfc9",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/process-result/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "secret-output",
+    "started_at_utc": "2026-11-13T01:20:34.167783+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "/private/tmp/howl-campaign-releases/kujo",
+      "run",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/secret-output.kujo"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-ndjure7v",
+    "source": "examples/secret-output.kujo",
+    "source_sha256": "33ded79c8fb001cddada290351f700e05cb8d6892935a8cf41a87419f4830b64",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/secret-output/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "eval",
+    "started_at_utc": "2026-11-13T01:20:34.212866+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "bash",
+      "-x",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/eval.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-co9o_i9w",
+    "source": "examples/eval.sh",
+    "source_sha256": "7f0ab8f0f9298c35696a161399387ebdf611628e7a30693062787572a301baaa",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/eval/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": [
+      {
+        "path": "artifacts/artifact-manifest.json",
+        "sha256": "c4405120082b486c8faf8453f53517d8154260fdde8d864a5971510b6a189668"
+      },
+      {
+        "path": "artifacts/badge.json",
+        "sha256": "2aa3373046f88b55b3bfa82133237b39ede7e84a993a24c06ded41a1626a62c7"
+      },
+      {
+        "path": "artifacts/cli-summary.json",
+        "sha256": "270afdabed29fb79ad1abd2f9b87799c745acfc11d306b68a8e8474357ede354"
+      },
+      {
+        "path": "artifacts/eval-report.md",
+        "sha256": "c4ce9f2ebc5ef141d956956a609cf6460b3035cfde2d97a9fb447f4b6d139f16"
+      },
+      {
+        "path": "artifacts/eval-report.md.cache.json",
+        "sha256": "240b3dce33f76002e72a176eebbc7ee76184a5f3861497a8e41c53edeec6c65f"
+      },
+      {
+        "path": "artifacts/evaluation-result.json",
+        "sha256": "9aaf6a48d84f1ebf56272e05d3f404064c2a1326156fad84b24d71166145efff"
+      },
+      {
+        "path": "artifacts/history.json",
+        "sha256": "867f53346b252b097ac5a91e120f44cf3b6fc9060362c27c7780d833327dde56"
+      },
+      {
+        "path": "artifacts/last_failures.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/last_run.json",
+        "sha256": "185fe1cbe18d478b00177f8949fa5627bfdf2f854d51eadbb6878dd4feda3986"
+      },
+      {
+        "path": "artifacts/summary.json",
+        "sha256": "2bf884f54dc9ec5cfa45b302a13bc23c9e5408fd7825422107ee4f7d49ab4d74"
+      }
+    ]
+  },
+  {
+    "id": "workcell",
+    "started_at_utc": "2026-11-13T01:20:34.896053+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "bash",
+      "-x",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/workcell.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-juqe7xhe",
+    "source": "examples/workcell.sh",
+    "source_sha256": "2321b4f4825c382b962ec703e048f46cb4ecceb032babc2164275a3ecd53bfac",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/workcell/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": []
+  },
+  {
+    "id": "packwrite",
+    "started_at_utc": "2026-11-13T01:20:36.420395+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "bash",
+      "-x",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/packwrite.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-6aok0ss5",
+    "source": "examples/packwrite.sh",
+    "source_sha256": "fad7e5f05980ea2fccadcb9c69ec422ee040175c1964ffb19834c36c7efa0850",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/packwrite/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": [
+      {
+        "path": "artifacts/validated-pack/CODEX_REVIEW_PROMPT.md",
+        "sha256": "595ebe17194464ebacb11201a9e1283098145ff755a32f745a15064cc531ceb2"
+      },
+      {
+        "path": "artifacts/validated-pack/DECISIONS.md",
+        "sha256": "c19b051f011ec48a05599c38526dcaf33014aeaedecdfc2208c2a47d0d63c1d4"
+      },
+      {
+        "path": "artifacts/validated-pack/DEEPSEEK_START.md",
+        "sha256": "249e28f5405a4d585ba0213439b3bc047275f9f3ca612931070c89d405af7235"
+      },
+      {
+        "path": "artifacts/validated-pack/HANDOFF.md",
+        "sha256": "54a3221f00be829628fd160192e7746532ef68651045686b199aefa2932ecb3c"
+      },
+      {
+        "path": "artifacts/validated-pack/MASTER.md",
+        "sha256": "b6787736638de4d07506448627454b81d4380dcae8340b678f5be815d39602e4"
+      },
+      {
+        "path": "artifacts/validated-pack/REVIEW_CHECKLIST.md",
+        "sha256": "19e0f63b3026c625800997f4144385b942f44f8d645365611761339dd2999be6"
+      },
+      {
+        "path": "artifacts/validated-pack/TODO.md",
+        "sha256": "f7bdaada1b138f02acff1d7b31fa33903ecc91cab1985fec4f04c431925a859d"
+      },
+      {
+        "path": "artifacts/validated-pack/phases/00-project-brief.md",
+        "sha256": "6fd9fdbd27161fcb244acfed191e46c1005b31dc3ea74dbee80e96c669213219"
+      },
+      {
+        "path": "artifacts/validated-pack/phases/01-alpha.md",
+        "sha256": "31fa3102ce49f0f59422fd7bd700015eb50791bbd9e2980b5b3d9033ec846b54"
+      },
+      {
+        "path": "artifacts/validated-pack/phases/02-beta.md",
+        "sha256": "1da96fb84658c7473b294fc7185048a11d753624068fd1700b1ab480cfbc3618"
+      },
+      {
+        "path": "artifacts/validated-pack/phases/03-gamma.md",
+        "sha256": "60198ff6f4dd9c73c8000ef8384ed9503f69a6662155c707d1fa76d088bdbc03"
+      },
+      {
+        "path": "artifacts/validated-pack/phases/04-delta.md",
+        "sha256": "6becaeb2dde75726f8ab3f8daac3855ccebfb8e0796d721205f1b5b33e71fa14"
+      },
+      {
+        "path": "artifacts/validated-pack/phases/05-epsilon.md",
+        "sha256": "07dbc39ac28fe5d8af4836076ad814ac598bc5e49be0efa54c16545ee9c0579b"
+      }
+    ]
+  },
+  {
+    "id": "runledger",
+    "started_at_utc": "2026-11-13T01:20:37.104003+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "bash",
+      "-x",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/runledger.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-pffjbbsy",
+    "source": "examples/runledger.sh",
+    "source_sha256": "e246196187675c70509b206479b68fe43a5de17f48d34680b799337bdb378da3",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": [
+      {
+        "path": "artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json",
+        "sha256": "430681e20d573c626aab10ac37ac793a3e73f2088f9b7f71611426446fea8d94"
+      },
+      {
+        "path": "artifacts/report.md",
+        "sha256": "c7f94646b8205c2a1d2eda75f7f3d349957121bb6419133098954c8d4d9c7d75"
+      }
+    ]
+  },
+  {
+    "id": "lens",
+    "started_at_utc": "2026-11-13T01:20:38.410604+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "bash",
+      "-x",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/lens.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-ppp2ma9c",
+    "source": "examples/lens.sh",
+    "source_sha256": "ca81fcad3fe3f003ba98c22265cc66216625764ac2b4f7dd5715ca73baf59054",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/lens/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": [
+      {
+        "path": "artifacts/accessibility.json",
+        "sha256": "9b3d3014264646c9b938d94794f38d774c0974c03c2757a1aa508de03154b4b7"
+      },
+      {
+        "path": "artifacts/console.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/dom-summary.json",
+        "sha256": "b3fd4806bafa7fbb4cb5647b9f5fab0b9eabc3bd6ff41fd7a06a626004a4dfc7"
+      },
+      {
+        "path": "artifacts/lens-report.html",
+        "sha256": "e6fe22207e05cfc5dc84425dc1855f339ca6374ae8a7411947dc5abc44667aa0"
+      },
+      {
+        "path": "artifacts/lens-report.json",
+        "sha256": "9040e6fb994f93baba0b6887226487ecb7ca766c5fb67a9c4f3b5a9171d6733d"
+      },
+      {
+        "path": "artifacts/lens-report.md",
+        "sha256": "24f5d85743cf2521c5f156f32320b95e37cc86a0d1e1d23878153ec612562851"
+      },
+      {
+        "path": "artifacts/links.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/metadata.json",
+        "sha256": "c806ea29372e013e89b72172634311bd0399f6f24d8b25fb8cabf86a48f4365f"
+      },
+      {
+        "path": "artifacts/network.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "artifacts/screenshots/desktop.png",
+        "sha256": "5f5b027490a577dff0f4660ac0ef3bc0a4c25732b8007b68e1860c644817fbec"
+      },
+      {
+        "path": "artifacts/screenshots/mobile.png",
+        "sha256": "590a037f870c5c01f0888c1e5f1bcf02d10a43139f90cca3fc90143d1b1055a3"
+      }
+    ]
+  },
+  {
+    "id": "shipcheck",
+    "started_at_utc": "2026-11-13T01:20:46.636943+00:00",
+    "runtime": "kujo 1.9.0",
+    "command": [
+      "bash",
+      "-x",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/shipcheck.sh"
+    ],
+    "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-5hzl0kp5",
+    "source": "examples/shipcheck.sh",
+    "source_sha256": "5b2ce9da08dbb261a558df35bdffe14a09b34b651ac02568616c69a1088b45cf",
+    "exit_code": 0,
+    "assertions_passed": true,
+    "status": "executed-successfully",
+    "environment": {
+      "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+      "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+      "RELEASES": "/private/tmp/howl-campaign-releases",
+      "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+      "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/shipcheck/artifacts",
+      "LENS_URL": "http://127.0.0.1:63886"
+    },
+    "artifacts": [
+      {
+        "path": "artifacts/scan.json",
+        "sha256": "7c562ca49c5d98bf1922562066441aa675e2874610c8c524826d3fd1b3654284"
+      }
+    ]
+  }
+]

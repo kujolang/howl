@@ -1,0 +1,54 @@
+[package]
+name = "eval"
+version = "1.1.0"
+description = "Evaluation framework for AI-native software — 27 deterministic checks, 5 report formats, snapshot testing, retry support, security hardened. Contract v2.0.0."
+license = "MIT"
+authors = ["Kujolang <contact@kujolang.ai"]
+homepage = ""
+repository = "https://github.com/kujolang/eval"
+documentation = ""
+keywords = ["kujo", "eval", "testing", "agents", "quality"]
+categories = ["ai", "developer-tools", "testing"]
+readme = "README.md"
+
+[package.status]
+stage = "production"
+stability = "stable"
+public_api = true
+notes = "27 checks, 5 report formats, 14 CLI commands, 7 test suites, and a 5-layer security model. Release gates are mandatory and currently green, and the repository includes a pinned-runtime Docker workflow."
+
+[kujo]
+minimum_version = "1.8.1"
+entry = "main.kujo"
+sources = ["src", "."]
+includes = ["README.md", "tests", "examples", "schema", "docs"]
+excludes = [".git", "kennel_packages", "dist", "build", "node_modules"]
+
+[build]
+command = ""
+output = "dist"
+artifacts = []
+
+[dependencies]
+
+[dev-dependencies]
+
+[scripts]
+test = "kujo test"
+smoke = "kujo run main.kujo run examples/basic_suite.json --json"
+init = "kujo run main.kujo init"
+
+[package.exports]
+common = "src/common.kujo"
+cli = "src/cli.kujo"
+core = "src/eval_core.kujo"
+checks = "src/checks.kujo"
+report = "src/report.kujo"
+snapshot = "src/snapshot.kujo"
+config = "src/config.kujo"
+
+[registry]
+index = ""
+publish = ""
+
+[trust]

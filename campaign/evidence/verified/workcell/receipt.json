@@ -1,0 +1,25 @@
+{
+  "id": "workcell",
+  "started_at_utc": "2026-11-13T01:20:34.896053+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "bash",
+    "-x",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/workcell.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-juqe7xhe",
+  "source": "examples/workcell.sh",
+  "source_sha256": "2321b4f4825c382b962ec703e048f46cb4ecceb032babc2164275a3ecd53bfac",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/workcell/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": []
+}

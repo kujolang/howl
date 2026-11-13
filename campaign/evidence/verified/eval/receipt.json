@@ -1,0 +1,66 @@
+{
+  "id": "eval",
+  "started_at_utc": "2026-11-13T01:20:34.212866+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "bash",
+    "-x",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/eval.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-co9o_i9w",
+  "source": "examples/eval.sh",
+  "source_sha256": "7f0ab8f0f9298c35696a161399387ebdf611628e7a30693062787572a301baaa",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/eval/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": [
+    {
+      "path": "artifacts/artifact-manifest.json",
+      "sha256": "c4405120082b486c8faf8453f53517d8154260fdde8d864a5971510b6a189668"
+    },
+    {
+      "path": "artifacts/badge.json",
+      "sha256": "2aa3373046f88b55b3bfa82133237b39ede7e84a993a24c06ded41a1626a62c7"
+    },
+    {
+      "path": "artifacts/cli-summary.json",
+      "sha256": "270afdabed29fb79ad1abd2f9b87799c745acfc11d306b68a8e8474357ede354"
+    },
+    {
+      "path": "artifacts/eval-report.md",
+      "sha256": "c4ce9f2ebc5ef141d956956a609cf6460b3035cfde2d97a9fb447f4b6d139f16"
+    },
+    {
+      "path": "artifacts/eval-report.md.cache.json",
+      "sha256": "240b3dce33f76002e72a176eebbc7ee76184a5f3861497a8e41c53edeec6c65f"
+    },
+    {
+      "path": "artifacts/evaluation-result.json",
+      "sha256": "9aaf6a48d84f1ebf56272e05d3f404064c2a1326156fad84b24d71166145efff"
+    },
+    {
+      "path": "artifacts/history.json",
+      "sha256": "867f53346b252b097ac5a91e120f44cf3b6fc9060362c27c7780d833327dde56"
+    },
+    {
+      "path": "artifacts/last_failures.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/last_run.json",
+      "sha256": "185fe1cbe18d478b00177f8949fa5627bfdf2f854d51eadbb6878dd4feda3986"
+    },
+    {
+      "path": "artifacts/summary.json",
+      "sha256": "2bf884f54dc9ec5cfa45b302a13bc23c9e5408fd7825422107ee4f7d49ab4d74"
+    }
+  ]
+}

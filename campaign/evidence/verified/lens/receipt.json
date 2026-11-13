@@ -1,0 +1,70 @@
+{
+  "id": "lens",
+  "started_at_utc": "2026-11-13T01:20:38.410604+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "bash",
+    "-x",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/lens.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-ppp2ma9c",
+  "source": "examples/lens.sh",
+  "source_sha256": "ca81fcad3fe3f003ba98c22265cc66216625764ac2b4f7dd5715ca73baf59054",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/lens/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": [
+    {
+      "path": "artifacts/accessibility.json",
+      "sha256": "9b3d3014264646c9b938d94794f38d774c0974c03c2757a1aa508de03154b4b7"
+    },
+    {
+      "path": "artifacts/console.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/dom-summary.json",
+      "sha256": "b3fd4806bafa7fbb4cb5647b9f5fab0b9eabc3bd6ff41fd7a06a626004a4dfc7"
+    },
+    {
+      "path": "artifacts/lens-report.html",
+      "sha256": "e6fe22207e05cfc5dc84425dc1855f339ca6374ae8a7411947dc5abc44667aa0"
+    },
+    {
+      "path": "artifacts/lens-report.json",
+      "sha256": "9040e6fb994f93baba0b6887226487ecb7ca766c5fb67a9c4f3b5a9171d6733d"
+    },
+    {
+      "path": "artifacts/lens-report.md",
+      "sha256": "24f5d85743cf2521c5f156f32320b95e37cc86a0d1e1d23878153ec612562851"
+    },
+    {
+      "path": "artifacts/links.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/metadata.json",
+      "sha256": "c806ea29372e013e89b72172634311bd0399f6f24d8b25fb8cabf86a48f4365f"
+    },
+    {
+      "path": "artifacts/network.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "artifacts/screenshots/desktop.png",
+      "sha256": "5f5b027490a577dff0f4660ac0ef3bc0a4c25732b8007b68e1860c644817fbec"
+    },
+    {
+      "path": "artifacts/screenshots/mobile.png",
+      "sha256": "590a037f870c5c01f0888c1e5f1bcf02d10a43139f90cca3fc90143d1b1055a3"
+    }
+  ]
+}

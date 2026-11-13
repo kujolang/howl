@@ -1,0 +1,61 @@
+# Kujo showcase campaign
+
+Twelve runnable examples: six **Built with Kujo**, six **Verified with Kujo**.
+
+Open [the branded static gallery](gallery/index.html). Each entry links its source view, SVG, PNG, Markdown, execution receipt, and X draft. The [verification report](VERIFICATION.md) defines exactly what ran. [POSTS.md](POSTS.md) collects the twelve drafts; nothing has been posted.
+
+## Reproduce
+
+Requirements: Git, GitHub CLI (`gh`), Python 3, Bash, and a Node version supported by Lens's pinned `bridge/package.json`. The examples need no model credentials. Workcell only validates/inspects its definition, so this campaign does not require Docker. Bootstrap downloads released source, the platform runtime binary, Lens's locked dependencies, and Chromium.
+
+From this directory:
+
+```bash
+python3 scripts/bootstrap.py --destination /tmp/kujo-showcase-releases
+python3 scripts/verify.py --releases /tmp/kujo-showcase-releases --out /tmp/kujo-showcase-evidence
+node scripts/render.mjs /tmp/kujo-showcase-releases
+node scripts/audit.mjs /tmp/kujo-showcase-releases
+```
+
+Use a **new** destination/output directory. Verification refuses to overwrite earlier evidence. Add `--only lens` (or another card ID) to run one example. The render step deliberately uses the checked-in `evidence/verified/` snapshot; it does not silently promote a rerun. Review a rerun's commands, assertions, and artifacts before deliberately replacing that snapshot and regenerating.
+
+For a language example alone:
+
+```bash
+/tmp/kujo-showcase-releases/kujo run examples/bounded-map.kujo
+```
+
+For tool examples, `scripts/verify.py` sets `KUJO`, `KUJO_BIN`, `RELEASES`, `CAMPAIGN`, and `OUTPUT`, creates an isolated working directory, copies the declared inputs, and starts a loopback fixture server for Lens. The actual shell programs are `examples/*.sh`; expanded commands are captured in each `stderr.txt`. Source content, stdout, stderr, exit code, working directory, allowlisted environment values, and artifact hashes are retained. Temporary working directories are cleaned after execution. Absolute paths in receipts document the observed run; use the runner for portable replay.
+
+## Howl workflow and presentation
+
+Howl **1.2.0 is unchanged**. Its release was reviewed through README, AGENTS, CLI, manifest loading, SVG renderer, and tests. Howl validates paths and renders text; it does not execute examples. This campaign executes them separately before rendering.
+
+- `catalog.json`: editorial intent, scope, pinned upstream links, and post copy.
+- `howl.json`: all twelve cards; `built-with-kujo.json` and `verified-with-kujo.json`: six cards each.
+- `generated/`: unmodified output from released Howl, including its static galleries.
+- `gallery/`: publication copies. SVGs and Markdown are byte-identical to Howl output. HTML receives only a publication stylesheet and navigation/preview links.
+- `assets/*-code.png`: deterministic, locally rendered source excerpts used through Howl's existing `background_image` field. They are code, not AI-generated art. Howl's existing `social` variant supplies the typography, title, label, border, and layout.
+- `gallery/*.png`: Chromium rasterizations of the generated 1200×630 SVGs, after the embedded font loads.
+
+The standard Howl SVG theme has a blue accent, rounded code panels, and system fonts. Rather than modify that renderer, every campaign card uses its supported `social` variant with Departure Mono, square framing, a white code background, and the official Kujo logomark. Original HTML output similarly retains Howl's theme; publication-only CSS makes the gallery and source pages grayscale, square, and Departure Mono. Keep `generated/` as the auditable raw output.
+
+Howl names its manifest field `expected_output`. Here that field contains **verbatim observed stdout**, never a prediction. Large JSON output is omitted from the card rather than rewritten; the complete output remains in the receipt directory. Howl's field label is unchanged, and each card's notes clarify the distinction. Social images use literal source excerpts; full runnable source is always available in HTML and Markdown.
+
+## Source selection and boundaries
+
+`catalog.json` records one problem and one scope explanation per card. Prefer canonical examples: the language examples reduce `test_parallel_simple`, HLP-013, HLP-015, and `secrets_redaction`; the two task examples extract released lifecycle contracts because no small task-control example exists under `examples/`. They are explicitly identified as contract extractions, not original upstream example files.
+
+Eval uses its unchanged three-check release suite and copied manifest fixture. Workcell uses its unchanged hello definition. PackWrite uses the released `tests/fixtures/golden-agent` pack, since its canonical getting-started generation path needs a model call; only offline validation is demonstrated. RunLedger follows its README lifecycle using an explicitly scripted local run. Lens uses its canonical dashboard spec with the unsupported `selectors.not_exists` assertion removed, a small authored local page, and link checking enabled. ShipCheck gates its own pinned release checkout.
+
+No speedup, token saving, cost, live provider, container enforcement, test-running capability of ShipCheck, or production readiness certification is implied. These are focused demonstrations, not exhaustive tool qualification.
+
+## Asset provenance
+
+Departure Mono and its license, and the official black Kujo logomark, were copied unchanged from `kujolang/docs.kujolang.ai` commit `12977e425e8be3923cc1882e6b51a0d71040c1f0`:
+
+- `assets/sitekit/fonts/DepartureMono-Regular.woff2`
+- `assets/sitekit/DepartureMono-LICENSE.txt`
+- `assets/img/kujo-logomark-black.svg`
+
+Upstream Kujo/tool files retain their original repository licenses. Pinned repositories and release commits are in `releases.json`; the PackWrite fixture's upstream location is `tests/fixtures/golden-agent/` at its pinned commit. Campaign artwork only combines these assets with the actual example source.

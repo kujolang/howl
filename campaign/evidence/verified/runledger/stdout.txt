@@ -1,0 +1,15 @@
+Started run: 2026-11-13-scripted-example-record-a-showcase-run-001
+  storage:      /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json
+  repo:         /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/..
+  start commit: 769af8827ab7f32e3b5f009d50f7643a45144fea
+
+Next: runledger finish 2026-11-13-scripted-example-record-a-showcase-run-001 --status <pass|partial|fail|abandoned> --verdict "..."
+Finished run: 2026-11-13-scripted-example-record-a-showcase-run-001
+  status:       pass
+  end commit:   769af8827ab7f32e3b5f009d50f7643a45144fea
+  changed files: 88
+Wrote report to /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/report.md
+{
+  "errors": [],
+  "valid": 1
+}

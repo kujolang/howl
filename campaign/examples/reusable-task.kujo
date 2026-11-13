@@ -1,0 +1,6 @@
+func work() { return 21 }
+handle := spawn_task(work)
+first := await await_task(handle)
+second := await await_task(handle)
+print(first + second)
+print(cancel_task(handle))

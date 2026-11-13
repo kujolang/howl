@@ -1,0 +1,7 @@
+result := spawn_process(["printf", "ready"],
+    {"max_output_bytes": 4096})
+assert(result.success == true)
+assert(result.exitcode == 0)
+print(result.stdout)
+print(result.timed_out)
+print(result.stdout_truncated)

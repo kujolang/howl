@@ -1,0 +1,25 @@
+{
+  "id": "cancel-task",
+  "started_at_utc": "2026-11-13T01:20:33.993430+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "/private/tmp/howl-campaign-releases/kujo",
+    "run",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/cancel-task.kujo"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-t7ot_xkq",
+  "source": "examples/cancel-task.kujo",
+  "source_sha256": "92598122e4ddf0d3a4a8806c42f97b125c5dd50f7eccf6c6ab528f59008582de",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/cancel-task/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": []
+}

@@ -1,0 +1,2 @@
++ set -euo pipefail
++ /private/tmp/howl-campaign-releases/kujo run /private/tmp/howl-campaign-releases/eval-source/main.kujo run /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/inputs/eval.json --output-dir /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/eval/artifacts --json

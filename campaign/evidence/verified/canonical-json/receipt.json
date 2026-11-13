@@ -1,0 +1,25 @@
+{
+  "id": "canonical-json",
+  "started_at_utc": "2026-11-13T01:20:34.047899+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "/private/tmp/howl-campaign-releases/kujo",
+    "run",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/canonical-json.kujo"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-x4yqueo_",
+  "source": "examples/canonical-json.kujo",
+  "source_sha256": "066d047c91c0c9743d6dd3aa6a4de7c3b2ac091050fcf2511428af6809df3759",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/canonical-json/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": []
+}

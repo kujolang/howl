@@ -1,0 +1,8 @@
+[output]
+dir = "agent"
+[pack]
+min_phases = 6
+max_phases = 12
+include_deepseek_prompt = true
+include_codex_review_prompt = true
+include_review_checklist = true

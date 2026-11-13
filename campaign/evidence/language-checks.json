@@ -1,0 +1,62 @@
+[
+  {
+    "command": [
+      "/tmp/howl-campaign-releases/kujo",
+      "check",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/bounded-map.kujo"
+    ],
+    "exit_code": 0,
+    "stdout": "check passed: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/bounded-map.kujo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/tmp/howl-campaign-releases/kujo",
+      "check",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/cancel-task.kujo"
+    ],
+    "exit_code": 0,
+    "stdout": "check passed: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/cancel-task.kujo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/tmp/howl-campaign-releases/kujo",
+      "check",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/canonical-json.kujo"
+    ],
+    "exit_code": 0,
+    "stdout": "check passed: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/canonical-json.kujo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/tmp/howl-campaign-releases/kujo",
+      "check",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/process-result.kujo"
+    ],
+    "exit_code": 0,
+    "stdout": "check passed: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/process-result.kujo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/tmp/howl-campaign-releases/kujo",
+      "check",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/reusable-task.kujo"
+    ],
+    "exit_code": 0,
+    "stdout": "check passed: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/reusable-task.kujo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/tmp/howl-campaign-releases/kujo",
+      "check",
+      "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/secret-output.kujo"
+    ],
+    "exit_code": 0,
+    "stdout": "check passed: /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/secret-output.kujo\n",
+    "stderr": ""
+  }
+]

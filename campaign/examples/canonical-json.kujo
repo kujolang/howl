@@ -1,0 +1,4 @@
+first := {"z": 1, "a": {"b": 2, "a": 1}}
+second := {"a": {"a": 1, "b": 2}, "z": 1}
+print(to_json(first))
+print(to_json(first) == to_json(second))

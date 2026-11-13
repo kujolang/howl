@@ -1,0 +1,78 @@
+{
+  "id": "packwrite",
+  "started_at_utc": "2026-11-13T01:20:36.420395+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "bash",
+    "-x",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/packwrite.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-6aok0ss5",
+  "source": "examples/packwrite.sh",
+  "source_sha256": "fad7e5f05980ea2fccadcb9c69ec422ee040175c1964ffb19834c36c7efa0850",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/packwrite/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": [
+    {
+      "path": "artifacts/validated-pack/CODEX_REVIEW_PROMPT.md",
+      "sha256": "595ebe17194464ebacb11201a9e1283098145ff755a32f745a15064cc531ceb2"
+    },
+    {
+      "path": "artifacts/validated-pack/DECISIONS.md",
+      "sha256": "c19b051f011ec48a05599c38526dcaf33014aeaedecdfc2208c2a47d0d63c1d4"
+    },
+    {
+      "path": "artifacts/validated-pack/DEEPSEEK_START.md",
+      "sha256": "249e28f5405a4d585ba0213439b3bc047275f9f3ca612931070c89d405af7235"
+    },
+    {
+      "path": "artifacts/validated-pack/HANDOFF.md",
+      "sha256": "54a3221f00be829628fd160192e7746532ef68651045686b199aefa2932ecb3c"
+    },
+    {
+      "path": "artifacts/validated-pack/MASTER.md",
+      "sha256": "b6787736638de4d07506448627454b81d4380dcae8340b678f5be815d39602e4"
+    },
+    {
+      "path": "artifacts/validated-pack/REVIEW_CHECKLIST.md",
+      "sha256": "19e0f63b3026c625800997f4144385b942f44f8d645365611761339dd2999be6"
+    },
+    {
+      "path": "artifacts/validated-pack/TODO.md",
+      "sha256": "f7bdaada1b138f02acff1d7b31fa33903ecc91cab1985fec4f04c431925a859d"
+    },
+    {
+      "path": "artifacts/validated-pack/phases/00-project-brief.md",
+      "sha256": "6fd9fdbd27161fcb244acfed191e46c1005b31dc3ea74dbee80e96c669213219"
+    },
+    {
+      "path": "artifacts/validated-pack/phases/01-alpha.md",
+      "sha256": "31fa3102ce49f0f59422fd7bd700015eb50791bbd9e2980b5b3d9033ec846b54"
+    },
+    {
+      "path": "artifacts/validated-pack/phases/02-beta.md",
+      "sha256": "1da96fb84658c7473b294fc7185048a11d753624068fd1700b1ab480cfbc3618"
+    },
+    {
+      "path": "artifacts/validated-pack/phases/03-gamma.md",
+      "sha256": "60198ff6f4dd9c73c8000ef8384ed9503f69a6662155c707d1fa76d088bdbc03"
+    },
+    {
+      "path": "artifacts/validated-pack/phases/04-delta.md",
+      "sha256": "6becaeb2dde75726f8ab3f8daac3855ccebfb8e0796d721205f1b5b33e71fa14"
+    },
+    {
+      "path": "artifacts/validated-pack/phases/05-epsilon.md",
+      "sha256": "07dbc39ac28fe5d8af4836076ad814ac598bc5e49be0efa54c16545ee9c0579b"
+    }
+  ]
+}

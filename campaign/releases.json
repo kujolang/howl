@@ -1,0 +1,45 @@
+{
+  "kujo": {
+    "tag": "v1.9.0",
+    "commit": "2cfaf185ad03059c89ef4f72fb061074255d00fc",
+    "release_url": "https://github.com/kujolang/kujo/releases/tag/v1.9.0",
+    "archive": "kujo-v1.9.0-macos-x64.tar.gz",
+    "archive_sha256": "107605ce0d6734408243a29730b84ce67d05643ae215fc78411e6a31484ec2f6",
+    "binary_sha256": "657879720c5f51e9598715ec4b5455f51d18774cc89b919b8863b41db4cfc007"
+  },
+  "howl": {
+    "tag": "v1.2.0",
+    "commit": "769af8827ab7f32e3b5f009d50f7643a45144fea",
+    "release_url": "https://github.com/kujolang/howl/releases/tag/v1.2.0"
+  },
+  "eval": {
+    "tag": "v1.1.0",
+    "commit": "71e66dff780d6930bcbe093c046bf31aa26411df",
+    "release_url": "https://github.com/kujolang/eval/releases/tag/v1.1.0"
+  },
+  "workcell": {
+    "tag": "v1.3.0",
+    "commit": "189d7ab6e975301a0e5100b65e8ad3fe4a584573",
+    "release_url": "https://github.com/kujolang/workcell/releases/tag/v1.3.0"
+  },
+  "packwrite": {
+    "tag": "v1.1.1",
+    "commit": "721dcc0ad41eaedc159d84f34a06396f92ede79f",
+    "release_url": "https://github.com/kujolang/packwrite/releases/tag/v1.1.1"
+  },
+  "runledger": {
+    "tag": "v1.2.1",
+    "commit": "ab0ec5d2edb7ffd913f48d092aa6fc17cab58d13",
+    "release_url": "https://github.com/kujolang/runledger/releases/tag/v1.2.1"
+  },
+  "lens": {
+    "tag": "v1.1.1",
+    "commit": "85778065ca329c93293b387a0e7011437b6d0c60",
+    "release_url": "https://github.com/kujolang/lens/releases/tag/v1.1.1"
+  },
+  "shipcheck": {
+    "tag": "v1.0.2",
+    "commit": "7eedd9e02d8730d65e06e16f4984d909d23539bc",
+    "release_url": "https://github.com/kujolang/shipcheck/releases/tag/v1.0.2"
+  }
+}

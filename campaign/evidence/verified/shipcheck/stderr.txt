@@ -1,0 +1,2 @@
++ set -euo pipefail
++ /private/tmp/howl-campaign-releases/kujo run /private/tmp/howl-campaign-releases/shipcheck-source/shipcheck.kujo gate --dir /private/tmp/howl-campaign-releases/shipcheck-source --format json

@@ -1,0 +1,8 @@
++ set -euo pipefail
++ ledger=/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger
++ /private/tmp/howl-campaign-releases/runledger-source/bin/runledger start --provider local --model scripted-example --task 'Record a showcase run' --repo /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/.. --ledger /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger
+++ basename /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json .json
++ id=2026-11-13-scripted-example-record-a-showcase-run-001
++ /private/tmp/howl-campaign-releases/runledger-source/bin/runledger finish 2026-11-13-scripted-example-record-a-showcase-run-001 --status pass --verdict 'Receipt lifecycle exercised' --ledger /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger
++ /private/tmp/howl-campaign-releases/runledger-source/bin/runledger report --ledger /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger --output /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/report.md
++ /private/tmp/howl-campaign-releases/runledger-source/bin/runledger verify --ledger /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts/ledger --json

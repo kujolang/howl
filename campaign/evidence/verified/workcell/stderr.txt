@@ -1,0 +1,3 @@
++ set -euo pipefail
++ /private/tmp/howl-campaign-releases/workcell-source/bin/workcell validate --file /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/inputs/workcell.json
++ /private/tmp/howl-campaign-releases/workcell-source/bin/workcell inspect --file /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/inputs/workcell.json --repo /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/.. --summary

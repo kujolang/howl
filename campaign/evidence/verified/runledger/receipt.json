@@ -1,0 +1,34 @@
+{
+  "id": "runledger",
+  "started_at_utc": "2026-11-13T01:20:37.104003+00:00",
+  "runtime": "kujo 1.9.0",
+  "command": [
+    "bash",
+    "-x",
+    "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/examples/runledger.sh"
+  ],
+  "cwd": "/var/folders/wb/0cck3lgd08n55g_8ly9qmf_00000gn/T/howl-example-pffjbbsy",
+  "source": "examples/runledger.sh",
+  "source_sha256": "e246196187675c70509b206479b68fe43a5de17f48d34680b799337bdb378da3",
+  "exit_code": 0,
+  "assertions_passed": true,
+  "status": "executed-successfully",
+  "environment": {
+    "KUJO": "/private/tmp/howl-campaign-releases/kujo",
+    "KUJO_BIN": "/private/tmp/howl-campaign-releases/kujo",
+    "RELEASES": "/private/tmp/howl-campaign-releases",
+    "CAMPAIGN": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign",
+    "OUTPUT": "/Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/runledger/artifacts",
+    "LENS_URL": "http://127.0.0.1:63886"
+  },
+  "artifacts": [
+    {
+      "path": "artifacts/ledger/runs/2026-11-13-scripted-example-record-a-showcase-run-001.json",
+      "sha256": "430681e20d573c626aab10ac37ac793a3e73f2088f9b7f71611426446fea8d94"
+    },
+    {
+      "path": "artifacts/report.md",
+      "sha256": "c7f94646b8205c2a1d2eda75f7f3d349957121bb6419133098954c8d4d9c7d75"
+    }
+  ]
+}

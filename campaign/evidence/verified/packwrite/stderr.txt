@@ -1,0 +1,3 @@
++ set -euo pipefail
++ /private/tmp/howl-campaign-releases/packwrite-source/bin/packwrite validate --output agent --config packwrite.toml --json
++ /private/tmp/howl-campaign-releases/packwrite-source/bin/packwrite summary --output agent --config packwrite.toml --json

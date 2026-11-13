@@ -1,0 +1,3 @@
++ set -euo pipefail
++ cd /private/tmp/howl-campaign-releases/lens-source
++ ./lens check http://127.0.0.1:63886/dashboard/ --spec /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/inputs/dashboard.json --html --accessibility --check-links --out /Users/robertdevore/2026/Kujolang/kujo-repos/howl/campaign/evidence/verified/lens/artifacts

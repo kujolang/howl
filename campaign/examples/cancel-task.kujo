@@ -1,0 +1,10 @@
+shared_set("started", false)
+func work() {
+    shared_set("started", true)
+    loop {}
+}
+handle := spawn_task(work)
+while shared_get("started") == false {}
+print(cancel_task(handle))
+try { await await_task(handle) }
+except err { print("cancelled") }
